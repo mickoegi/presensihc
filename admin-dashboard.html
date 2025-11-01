@@ -15,6 +15,14 @@
     button.logout{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
     .container{max-width:1100px;margin:20px auto;padding:0 16px 40px 16px;}
     h2{margin:0 0 12px 0;color:#0f172a;}
+    .legend{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+    .legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:#475569;}
+    .legend-dot{width:12px;height:12px;border-radius:999px;}
+    .dot-siswa{background:#22c55e;}
+    .dot-alumni{background:#f97316;}
+    .dot-guru{background:#0ea5e9;}
+    .dot-non32{background:#94a3b8;}
+    /* tabel */
     .table-wrapper{background:white;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(15,23,42,.08);}
     .table-header,.table-row{display:grid;grid-template-columns:45px 1.4fr 1fr 1fr 120px;gap:12px;align-items:center;padding:10px 16px;}
     .table-header{background:#e2e8f0;font-size:12px;font-weight:600;text-transform:uppercase;color:#475569;}
@@ -32,6 +40,20 @@
     .bullet.kosong{background:#e2e8f0;}
     .time-text{font-size:12px;color:#94a3b8;}
     .empty{text-align:center;padding:30px 10px;color:#94a3b8;}
+    .badge-tipe{
+      display:inline-block;
+      padding:1px 8px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:600;
+      margin-top:2px;
+      width:fit-content;
+    }
+    .tipe-siswa{background:rgba(34,197,94,.14);color:#15803d;}
+    .tipe-alumni{background:rgba(249,115,22,.15);color:#c2410c;}
+    .tipe-guru{background:rgba(14,165,233,.15);color:#0369a1;}
+    .tipe-non32{background:rgba(148,163,184,.15);color:#475569;}
+
     #no-token{max-width:480px;margin:40px auto;background:white;padding:20px 16px;border-radius:14px;text-align:center;box-shadow:0 10px 25px rgba(15,23,42,.08);}
     @media(max-width:820px){
       .table-header,.table-row{grid-template-columns:40px 1.4fr 1fr;}
@@ -52,17 +74,24 @@
   <div id="no-token" style="display:none;">
     <h3 style="margin:0 0 10px 0;">Tidak ada token</h3>
     <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
-      Buka dashboard ini lewat tombol <b>Login Pengurus</b> di Google Sites, supaya tokennya ikut.
+      Buka dashboard ini dari tombol <b>Login Pengurus</b> di Google Sites supaya tokennya ikut.
     </p>
   </div>
 
   <div class="container" id="dash-content" style="display:none;">
+
     <h2>Presensi Terbaru</h2>
-    <p style="color:#64748b;font-size:13px;margin-bottom:12px;">150 presensi terakhir</p>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot dot-siswa"></span> Siswa aktif</div>
+      <div class="legend-item"><span class="legend-dot dot-alumni"></span> Alumni</div>
+      <div class="legend-item"><span class="legend-dot dot-guru"></span> Guru</div>
+      <div class="legend-item"><span class="legend-dot dot-non32"></span> Non 32</div>
+    </div>
+
     <div class="table-wrapper">
       <div class="table-header">
         <div>#</div>
-        <div>Nama / NIS</div>
+        <div>Nama / NIS / Tipe</div>
         <div>Pertemuan</div>
         <div>Status</div>
         <div>Waktu</div>
@@ -72,27 +101,25 @@
   </div>
 
   <script>
-    // backend kamu
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
 
-    // ambil token dan info dari querystring (ini penting)
-    const url = new URL(window.location.href);
+    // ambil token & info dari querystring (karena kita buka dari Google Sites)
+    const url     = new URL(window.location.href);
     const qsToken = url.searchParams.get("token");
     const qsNama  = url.searchParams.get("n");
     const qsUser  = url.searchParams.get("u");
     const qsRole  = url.searchParams.get("r");
     const qsTipe  = url.searchParams.get("t");
 
-    // kalau ada token di URL, simpan ke localStorage juga (boleh)
+    // simpan ke localStorage supaya refresh nggak hilang
     if (qsToken) {
       localStorage.setItem("hc32_admin_token", qsToken);
-      if (qsNama)  localStorage.setItem("hc32_admin_nama", qsNama);
-      if (qsUser)  localStorage.setItem("hc32_admin_username", qsUser);
-      if (qsRole)  localStorage.setItem("hc32_admin_role", qsRole);
-      if (qsTipe)  localStorage.setItem("hc32_admin_tipe", qsTipe);
+      if (qsNama) localStorage.setItem("hc32_admin_nama", qsNama);
+      if (qsUser) localStorage.setItem("hc32_admin_username", qsUser);
+      if (qsRole) localStorage.setItem("hc32_admin_role", qsRole);
+      if (qsTipe) localStorage.setItem("hc32_admin_tipe", qsTipe);
     }
 
-    // ambil lagi dari localStorage (fallback)
     const token     = qsToken || localStorage.getItem("hc32_admin_token");
     const namaAdmin = qsNama  || localStorage.getItem("hc32_admin_nama") || "Pengurus";
     const roleAdmin = qsRole  || localStorage.getItem("hc32_admin_role") || "pengurus";
@@ -102,7 +129,6 @@
     document.getElementById("admin-meta").textContent = tipeAdmin + " • " + roleAdmin;
 
     if (!token) {
-      // nggak ada token sama sekali
       document.getElementById("no-token").style.display = "block";
     } else {
       document.getElementById("dash-content").style.display = "block";
@@ -121,7 +147,7 @@
         const out = await res.json();
         if (out.status !== "ok") {
           document.getElementById("table-body").innerHTML =
-            '<div class="empty">' + (out.message || 'Gagal memuat data') + '</div>';
+            '<div class="empty">'+(out.message || 'Gagal memuat data')+'</div>';
           return;
         }
         renderPresensi(out.data || []);
@@ -138,12 +164,17 @@
         container.innerHTML = '<div class="empty">Belum ada presensi.</div>';
         return;
       }
+
       list.forEach((item, idx) => {
         const row = document.createElement("div");
         row.className = "table-row";
-        if (idx === 0) row.style.borderLeftColor = "#0f766e";
-        if (idx === 1) row.style.borderLeftColor = "#0ea5e9";
-        if (idx === 2) row.style.borderLeftColor = "#f97316";
+
+        // garis kiri warna sesuai tipe
+        const tipe = (item.tipe || '').toLowerCase();
+        if (tipe === 'guru')      row.style.borderLeftColor = "#0ea5e9";
+        else if (tipe === 'alumni') row.style.borderLeftColor = "#f97316";
+        else if (tipe === 'non-32' || tipe === 'non32') row.style.borderLeftColor = "#94a3b8";
+        else row.style.borderLeftColor = "#22c55e"; // siswa aktif
 
         const bullets = `
           <div class="status-bullets">
@@ -163,11 +194,23 @@
           timeText = item.jam;
         }
 
+        // tentukan kelas badge tipe
+        let tipeClass = "tipe-siswa";
+        let tipeLabel = "Siswa aktif";
+        if (tipe === "alumni") {
+          tipeClass = "tipe-alumni"; tipeLabel = "Alumni";
+        } else if (tipe === "guru") {
+          tipeClass = "tipe-guru"; tipeLabel = "Guru";
+        } else if (tipe === "non-32" || tipe === "non32") {
+          tipeClass = "tipe-non32"; tipeLabel = "Non 32";
+        }
+
         row.innerHTML = `
           <div class="rank">${idx + 1}</div>
           <div class="nama">
             <span class="main">${item.nama || '(tanpa nama)'}</span>
             <span class="sub">${item.nis || '-'}</span>
+            <span class="badge-tipe ${tipeClass}">${tipeLabel}</span>
           </div>
           <div><span class="badge-pertemuan">${item.pertemuan || 'Pertemuan'}</span></div>
           <div>${bullets}</div>
@@ -177,14 +220,13 @@
       });
     }
 
-    // logout: cuma hapus localStorage
     document.getElementById("logout-btn").addEventListener("click", () => {
       localStorage.removeItem("hc32_admin_token");
       localStorage.removeItem("hc32_admin_nama");
       localStorage.removeItem("hc32_admin_username");
       localStorage.removeItem("hc32_admin_role");
       localStorage.removeItem("hc32_admin_tipe");
-      location.href = location.pathname; // reload tanpa query
+      location.href = location.pathname;
     });
   </script>
 </body>
