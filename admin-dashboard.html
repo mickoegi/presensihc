@@ -2,104 +2,40 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <title>Dashboard Pengurus • History Club 32</title>
+  <title>Dashboard Pengurus • HC 32</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
-    :root {
-      --hc-blue: #005A9C;
-      --bg: #f1f5f9;
-    }
-    * { box-sizing: border-box; }
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: var(--bg);
-      margin: 0;
-      min-height: 100vh;
-    }
-    header {
-      background: var(--hc-blue);
-      color: white;
-      padding: 14px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .brand { font-weight: 700; }
-    .topbar-user { display: flex; gap: 10px; align-items: center; font-size: 12px; }
-    .tag { background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.15); padding: 2px 10px; border-radius: 999px; font-size: 11px; }
-    button.logout {
-      background: rgba(255,255,255,.12);
-      border: 1px solid rgba(255,255,255,.2);
-      color: white;
-      border-radius: 6px;
-      padding: 4px 10px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-    .container { max-width: 1100px; margin: 20px auto; padding: 0 16px 40px 16px; }
-    h2 { margin: 0 0 12px 0; color: #0f172a; }
-    /* tabel */
-    .table-wrapper {
-      background: white;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(15,23,42,.08);
-    }
-    .table-header, .table-row {
-      display: grid;
-      grid-template-columns: 45px 1.4fr 1fr 1fr 120px;
-      gap: 12px;
-      align-items: center;
-      padding: 10px 16px;
-    }
-    .table-header {
-      background: #e2e8f0;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      color: #475569;
-    }
-    .table-row:nth-child(even) { background: #f8fafc; }
-    .table-row { border-left: 4px solid transparent; transition: background .15s; }
-    .table-row:hover { background: #eff6ff; }
-    .rank { font-weight: 600; font-size: 14px; color: #0f172a; }
-    .nama { display: flex; flex-direction: column; }
-    .nama .main { font-weight: 600; color: #0f172a; }
-    .nama .sub { font-size: 12px; color: #94a3b8; }
-    .badge-pertemuan { background: #e2e8f0; color: #0f172a; font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; width: fit-content; }
-    .status-bullets { display: flex; gap: 6px; }
-    .bullet { width: 18px; height: 18px; border-radius: 999px; }
-    .bullet.hadir { background: #22c55e; }
-    .bullet.kosong { background: #e2e8f0; }
-    .time-text { font-size: 12px; color: #94a3b8; }
-    .empty { text-align: center; padding: 30px 10px; color: #94a3b8; }
-
-    /* layar minta login (kalau di iframe) */
-    #need-login-box {
-      max-width: 420px;
-      margin: 40px auto;
-      background: white;
-      padding: 20px 18px;
-      border-radius: 14px;
-      text-align: center;
-      box-shadow: 0 10px 25px rgba(15,23,42,.08);
-      display: none;
-    }
-    #need-login-box button {
-      background: #005A9C;
-      color: white;
-      border: 0;
-      border-radius: 8px;
-      padding: 8px 14px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    @media (max-width: 820px) {
-      .table-header, .table-row {
-        grid-template-columns: 40px 1.4fr 1fr;
-      }
-      .status-bullets, .time-text { display: none; }
+    :root { --hc-blue:#005A9C; --bg:#f1f5f9; }
+    *{box-sizing:border-box;}
+    body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);margin:0;min-height:100vh;}
+    header{background:var(--hc-blue);color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;}
+    .brand{font-weight:700;}
+    .topbar-user{display:flex;gap:10px;align-items:center;font-size:12px;}
+    .tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.15);padding:2px 10px;border-radius:999px;font-size:11px;}
+    button.logout{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
+    .container{max-width:1100px;margin:20px auto;padding:0 16px 40px 16px;}
+    h2{margin:0 0 12px 0;color:#0f172a;}
+    .table-wrapper{background:white;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(15,23,42,.08);}
+    .table-header,.table-row{display:grid;grid-template-columns:45px 1.4fr 1fr 1fr 120px;gap:12px;align-items:center;padding:10px 16px;}
+    .table-header{background:#e2e8f0;font-size:12px;font-weight:600;text-transform:uppercase;color:#475569;}
+    .table-row:nth-child(even){background:#f8fafc;}
+    .table-row{border-left:4px solid transparent;transition:background .15s;}
+    .table-row:hover{background:#eff6ff;}
+    .rank{font-weight:600;font-size:14px;}
+    .nama{display:flex;flex-direction:column;}
+    .nama .main{font-weight:600;color:#0f172a;}
+    .nama .sub{font-size:12px;color:#94a3b8;}
+    .badge-pertemuan{background:#e2e8f0;color:#0f172a;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;width:fit-content;}
+    .status-bullets{display:flex;gap:6px;}
+    .bullet{width:18px;height:18px;border-radius:999px;}
+    .bullet.hadir{background:#22c55e;}
+    .bullet.kosong{background:#e2e8f0;}
+    .time-text{font-size:12px;color:#94a3b8;}
+    .empty{text-align:center;padding:30px 10px;color:#94a3b8;}
+    #no-token{max-width:480px;margin:40px auto;background:white;padding:20px 16px;border-radius:14px;text-align:center;box-shadow:0 10px 25px rgba(15,23,42,.08);}
+    @media(max-width:820px){
+      .table-header,.table-row{grid-template-columns:40px 1.4fr 1fr;}
+      .status-bullets,.time-text{display:none;}
     }
   </style>
 </head>
@@ -108,24 +44,22 @@
     <div class="brand">HC 32 • Dashboard Pengurus</div>
     <div class="topbar-user">
       <span id="admin-name">Pengurus</span>
-      <span id="admin-meta" class="tag">...</span>
+      <span id="admin-meta" class="tag">-</span>
       <button class="logout" id="logout-btn">Keluar</button>
     </div>
   </header>
 
-  <!-- ini buat kasus: dibuka dalam iframe & belum login -->
-  <div id="need-login-box">
-    <h3 style="margin:0 0 10px 0;">Login dibutuhkan</h3>
-    <p style="font-size:13px;color:#64748b;margin-bottom:14px;">
-      Dashboard tidak bisa menampilkan data ketika dibuka di dalam Google Sites tanpa token.
+  <div id="no-token" style="display:none;">
+    <h3 style="margin:0 0 10px 0;">Tidak ada token</h3>
+    <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
+      Buka dashboard ini lewat tombol <b>Login Pengurus</b> di Google Sites, supaya tokennya ikut.
     </p>
-    <button id="open-new-tab">Buka dashboard di tab baru</button>
   </div>
 
-  <div class="container" id="dashboard-content" style="display:none;">
+  <div class="container" id="dash-content" style="display:none;">
     <h2>Presensi Terbaru</h2>
-    <p style="color:#64748b;font-size:13px;margin-bottom:12px;">150 presensi terakhir, urut terbaru.</p>
-    <div id="table-presensi" class="table-wrapper">
+    <p style="color:#64748b;font-size:13px;margin-bottom:12px;">150 presensi terakhir</p>
+    <div class="table-wrapper">
       <div class="table-header">
         <div>#</div>
         <div>Nama / NIS</div>
@@ -138,42 +72,44 @@
   </div>
 
   <script>
-    // BACKEND kamu
+    // backend kamu
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
-    const LOGIN_URL   = "https://sites.google.com/view/history-club-32/keanggotaan/login-pengurus"; // web utama
 
-    // cek apakah kita di dalam iframe
-    const inIframe = (window.self !== window.top);
+    // ambil token dan info dari querystring (ini penting)
+    const url = new URL(window.location.href);
+    const qsToken = url.searchParams.get("token");
+    const qsNama  = url.searchParams.get("n");
+    const qsUser  = url.searchParams.get("u");
+    const qsRole  = url.searchParams.get("r");
+    const qsTipe  = url.searchParams.get("t");
 
-    // ambil data login dari localStorage
-    const token     = localStorage.getItem("hc32_admin_token");
-    const namaAdmin = localStorage.getItem("hc32_admin_nama") || "Pengurus";
-    const roleAdmin = localStorage.getItem("hc32_admin_role") || "pengurus";
-    const tipeAdmin = localStorage.getItem("hc32_admin_tipe") || "siswa-aktif";
+    // kalau ada token di URL, simpan ke localStorage juga (boleh)
+    if (qsToken) {
+      localStorage.setItem("hc32_admin_token", qsToken);
+      if (qsNama)  localStorage.setItem("hc32_admin_nama", qsNama);
+      if (qsUser)  localStorage.setItem("hc32_admin_username", qsUser);
+      if (qsRole)  localStorage.setItem("hc32_admin_role", qsRole);
+      if (qsTipe)  localStorage.setItem("hc32_admin_tipe", qsTipe);
+    }
+
+    // ambil lagi dari localStorage (fallback)
+    const token     = qsToken || localStorage.getItem("hc32_admin_token");
+    const namaAdmin = qsNama  || localStorage.getItem("hc32_admin_nama") || "Pengurus";
+    const roleAdmin = qsRole  || localStorage.getItem("hc32_admin_role") || "pengurus";
+    const tipeAdmin = qsTipe  || localStorage.getItem("hc32_admin_tipe") || "siswa-aktif";
 
     document.getElementById("admin-name").textContent = namaAdmin;
     document.getElementById("admin-meta").textContent = tipeAdmin + " • " + roleAdmin;
 
     if (!token) {
-      // kalau tidak ada token & dia di embed → tampilkan pesan saja, jangan redirect
-      if (inIframe) {
-        document.getElementById("need-login-box").style.display = "block";
-      } else {
-        // kalau dibuka langsung (bukan iframe) → boleh redirect ke sites.google.com
-        window.location.href = LOGIN_URL;
-      }
+      // nggak ada token sama sekali
+      document.getElementById("no-token").style.display = "block";
     } else {
-      // ada token → tampilkan dashboard & load data
-      document.getElementById("dashboard-content").style.display = "block";
-      loadPresensi();
+      document.getElementById("dash-content").style.display = "block";
+      loadPresensi(token);
     }
 
-    // tombol "buka di tab baru"
-    document.getElementById("open-new-tab").addEventListener("click", () => {
-      window.open(window.location.href, "_blank");
-    });
-
-    async function loadPresensi() {
+    async function loadPresensi(token) {
       try {
         const res = await fetch(WEB_APP_URL, {
           method: "POST",
@@ -184,43 +120,31 @@
         });
         const out = await res.json();
         if (out.status !== "ok") {
-          // kalau token udah nggak valid → kalau bukan iframe, balikin ke login
-          if (!inIframe) {
-            alert(out.message || "Sesi habis, silakan login lagi.");
-            window.location.href = LOGIN_URL;
-          } else {
-            // kalau embed → kasih pesan aja
-            document.getElementById("need-login-box").style.display = "block";
-            document.getElementById("dashboard-content").style.display = "none";
-          }
+          document.getElementById("table-body").innerHTML =
+            '<div class="empty">' + (out.message || 'Gagal memuat data') + '</div>';
           return;
         }
         renderPresensi(out.data || []);
       } catch (err) {
-        console.log(err);
-        if (!inIframe) alert("Gagal memuat data.");
+        document.getElementById("table-body").innerHTML =
+          '<div class="empty">Tidak bisa terhubung ke server.</div>';
       }
     }
 
     function renderPresensi(list) {
       const container = document.getElementById("table-body");
       container.innerHTML = "";
-
       if (!list.length) {
         container.innerHTML = '<div class="empty">Belum ada presensi.</div>';
         return;
       }
-
       list.forEach((item, idx) => {
         const row = document.createElement("div");
         row.className = "table-row";
-
-        // warna 3 teratas
         if (idx === 0) row.style.borderLeftColor = "#0f766e";
         if (idx === 1) row.style.borderLeftColor = "#0ea5e9";
         if (idx === 2) row.style.borderLeftColor = "#f97316";
 
-        // bullets ala EPL
         const bullets = `
           <div class="status-bullets">
             <span class="bullet hadir"></span>
@@ -233,11 +157,8 @@
 
         let timeText = "-";
         if (item.timestamp) {
-          try {
-            timeText = new Date(item.timestamp).toLocaleString("id-ID");
-          } catch (e) {
-            timeText = item.timestamp;
-          }
+          try { timeText = new Date(item.timestamp).toLocaleString("id-ID"); }
+          catch(e){ timeText = item.timestamp; }
         } else if (item.jam) {
           timeText = item.jam;
         }
@@ -256,20 +177,205 @@
       });
     }
 
-    // logout
+    // logout: cuma hapus localStorage
     document.getElementById("logout-btn").addEventListener("click", () => {
       localStorage.removeItem("hc32_admin_token");
       localStorage.removeItem("hc32_admin_nama");
       localStorage.removeItem("hc32_admin_username");
       localStorage.removeItem("hc32_admin_role");
       localStorage.removeItem("hc32_admin_tipe");
-      if (inIframe) {
-        // di iframe: cuma bersihin & tampilkan pesan
-        document.getElementById("dashboard-content").style.display = "none";
-        document.getElementById("need-login-box").style.display = "block";
-      } else {
-        window.location.href = LOGIN_URL;
+      location.href = location.pathname; // reload tanpa query
+    });
+  </script>
+</body>
+</html>
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Dashboard Pengurus • HC 32</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root { --hc-blue:#005A9C; --bg:#f1f5f9; }
+    *{box-sizing:border-box;}
+    body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);margin:0;min-height:100vh;}
+    header{background:var(--hc-blue);color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;}
+    .brand{font-weight:700;}
+    .topbar-user{display:flex;gap:10px;align-items:center;font-size:12px;}
+    .tag{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.15);padding:2px 10px;border-radius:999px;font-size:11px;}
+    button.logout{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;}
+    .container{max-width:1100px;margin:20px auto;padding:0 16px 40px 16px;}
+    h2{margin:0 0 12px 0;color:#0f172a;}
+    .table-wrapper{background:white;border-radius:16px;overflow:hidden;box-shadow:0 10px 25px rgba(15,23,42,.08);}
+    .table-header,.table-row{display:grid;grid-template-columns:45px 1.4fr 1fr 1fr 120px;gap:12px;align-items:center;padding:10px 16px;}
+    .table-header{background:#e2e8f0;font-size:12px;font-weight:600;text-transform:uppercase;color:#475569;}
+    .table-row:nth-child(even){background:#f8fafc;}
+    .table-row{border-left:4px solid transparent;transition:background .15s;}
+    .table-row:hover{background:#eff6ff;}
+    .rank{font-weight:600;font-size:14px;}
+    .nama{display:flex;flex-direction:column;}
+    .nama .main{font-weight:600;color:#0f172a;}
+    .nama .sub{font-size:12px;color:#94a3b8;}
+    .badge-pertemuan{background:#e2e8f0;color:#0f172a;font-size:12px;font-weight:600;padding:2px 10px;border-radius:999px;width:fit-content;}
+    .status-bullets{display:flex;gap:6px;}
+    .bullet{width:18px;height:18px;border-radius:999px;}
+    .bullet.hadir{background:#22c55e;}
+    .bullet.kosong{background:#e2e8f0;}
+    .time-text{font-size:12px;color:#94a3b8;}
+    .empty{text-align:center;padding:30px 10px;color:#94a3b8;}
+    #no-token{max-width:480px;margin:40px auto;background:white;padding:20px 16px;border-radius:14px;text-align:center;box-shadow:0 10px 25px rgba(15,23,42,.08);}
+    @media(max-width:820px){
+      .table-header,.table-row{grid-template-columns:40px 1.4fr 1fr;}
+      .status-bullets,.time-text{display:none;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">HC 32 • Dashboard Pengurus</div>
+    <div class="topbar-user">
+      <span id="admin-name">Pengurus</span>
+      <span id="admin-meta" class="tag">-</span>
+      <button class="logout" id="logout-btn">Keluar</button>
+    </div>
+  </header>
+
+  <div id="no-token" style="display:none;">
+    <h3 style="margin:0 0 10px 0;">Tidak ada token</h3>
+    <p style="font-size:13px;color:#64748b;margin-bottom:12px;">
+      Buka dashboard ini lewat tombol <b>Login Pengurus</b> di Google Sites, supaya tokennya ikut.
+    </p>
+  </div>
+
+  <div class="container" id="dash-content" style="display:none;">
+    <h2>Presensi Terbaru</h2>
+    <p style="color:#64748b;font-size:13px;margin-bottom:12px;">150 presensi terakhir</p>
+    <div class="table-wrapper">
+      <div class="table-header">
+        <div>#</div>
+        <div>Nama / NIS</div>
+        <div>Pertemuan</div>
+        <div>Status</div>
+        <div>Waktu</div>
+      </div>
+      <div id="table-body"></div>
+    </div>
+  </div>
+
+  <script>
+    // backend kamu
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
+
+    // ambil token dan info dari querystring (ini penting)
+    const url = new URL(window.location.href);
+    const qsToken = url.searchParams.get("token");
+    const qsNama  = url.searchParams.get("n");
+    const qsUser  = url.searchParams.get("u");
+    const qsRole  = url.searchParams.get("r");
+    const qsTipe  = url.searchParams.get("t");
+
+    // kalau ada token di URL, simpan ke localStorage juga (boleh)
+    if (qsToken) {
+      localStorage.setItem("hc32_admin_token", qsToken);
+      if (qsNama)  localStorage.setItem("hc32_admin_nama", qsNama);
+      if (qsUser)  localStorage.setItem("hc32_admin_username", qsUser);
+      if (qsRole)  localStorage.setItem("hc32_admin_role", qsRole);
+      if (qsTipe)  localStorage.setItem("hc32_admin_tipe", qsTipe);
+    }
+
+    // ambil lagi dari localStorage (fallback)
+    const token     = qsToken || localStorage.getItem("hc32_admin_token");
+    const namaAdmin = qsNama  || localStorage.getItem("hc32_admin_nama") || "Pengurus";
+    const roleAdmin = qsRole  || localStorage.getItem("hc32_admin_role") || "pengurus";
+    const tipeAdmin = qsTipe  || localStorage.getItem("hc32_admin_tipe") || "siswa-aktif";
+
+    document.getElementById("admin-name").textContent = namaAdmin;
+    document.getElementById("admin-meta").textContent = tipeAdmin + " • " + roleAdmin;
+
+    if (!token) {
+      // nggak ada token sama sekali
+      document.getElementById("no-token").style.display = "block";
+    } else {
+      document.getElementById("dash-content").style.display = "block";
+      loadPresensi(token);
+    }
+
+    async function loadPresensi(token) {
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "getPresensiDashboard",
+            token: token
+          })
+        });
+        const out = await res.json();
+        if (out.status !== "ok") {
+          document.getElementById("table-body").innerHTML =
+            '<div class="empty">' + (out.message || 'Gagal memuat data') + '</div>';
+          return;
+        }
+        renderPresensi(out.data || []);
+      } catch (err) {
+        document.getElementById("table-body").innerHTML =
+          '<div class="empty">Tidak bisa terhubung ke server.</div>';
       }
+    }
+
+    function renderPresensi(list) {
+      const container = document.getElementById("table-body");
+      container.innerHTML = "";
+      if (!list.length) {
+        container.innerHTML = '<div class="empty">Belum ada presensi.</div>';
+        return;
+      }
+      list.forEach((item, idx) => {
+        const row = document.createElement("div");
+        row.className = "table-row";
+        if (idx === 0) row.style.borderLeftColor = "#0f766e";
+        if (idx === 1) row.style.borderLeftColor = "#0ea5e9";
+        if (idx === 2) row.style.borderLeftColor = "#f97316";
+
+        const bullets = `
+          <div class="status-bullets">
+            <span class="bullet hadir"></span>
+            <span class="bullet hadir"></span>
+            <span class="bullet hadir"></span>
+            <span class="bullet kosong"></span>
+            <span class="bullet kosong"></span>
+          </div>
+        `;
+
+        let timeText = "-";
+        if (item.timestamp) {
+          try { timeText = new Date(item.timestamp).toLocaleString("id-ID"); }
+          catch(e){ timeText = item.timestamp; }
+        } else if (item.jam) {
+          timeText = item.jam;
+        }
+
+        row.innerHTML = `
+          <div class="rank">${idx + 1}</div>
+          <div class="nama">
+            <span class="main">${item.nama || '(tanpa nama)'}</span>
+            <span class="sub">${item.nis || '-'}</span>
+          </div>
+          <div><span class="badge-pertemuan">${item.pertemuan || 'Pertemuan'}</span></div>
+          <div>${bullets}</div>
+          <div><div class="time-text">${timeText}</div></div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    // logout: cuma hapus localStorage
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      localStorage.removeItem("hc32_admin_token");
+      localStorage.removeItem("hc32_admin_nama");
+      localStorage.removeItem("hc32_admin_username");
+      localStorage.removeItem("hc32_admin_role");
+      localStorage.removeItem("hc32_admin_tipe");
+      location.href = location.pathname; // reload tanpa query
     });
   </script>
 </body>
