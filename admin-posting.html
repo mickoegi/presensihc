@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Kelola Posting • HC 32</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root{--hc-blue:#005A9C;--bg:#f1f5f9;}
+    body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);margin:0;}
+    header{background:var(--hc-blue);color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;}
+    .brand{font-weight:700;}
+    .container{max-width:1100px;margin:20px auto;padding:0 16px 40px 16px;}
+    h2{margin-bottom:12px;color:#0f172a;}
+    form{background:white;padding:14px;border-radius:12px;box-shadow:0 10px 25px rgba(15,23,42,.06);margin-bottom:16px;}
+    label{display:block;font-size:12px;font-weight:600;margin-bottom:3px;}
+    input,textarea,select{width:100%;padding:7px 8px;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:10px;font-size:13px;}
+    textarea{resize:vertical;}
+    button{background:var(--hc-blue);color:white;border:0;border-radius:8px;padding:6px 14px;font-weight:600;cursor:pointer;}
+    table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;box-shadow:0 10px 25px rgba(15,23,42,.06);}
+    th,td{padding:8px 10px;font-size:13px;border-bottom:1px solid #e2e8f0;vertical-align:top;text-align:left;}
+    th{background:#e2e8f0;}
+    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;}
+    .badge-hasil{background:rgba(14,165,233,.15);color:#0369a1;}
+    .badge-infogram{background:rgba(249,115,22,.15);color:#c2410c;}
+    .btn-del{background:#ef4444;color:white;border:0;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;}
+    #msg{font-size:13px;margin-bottom:10px;}
+    @media(max-width:768px){
+      table,thead,tbody,th,td,tr{display:block;}
+      th{display:none;}
+      td{border-bottom:1px solid #e2e8f0;margin-bottom:8px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">HC 32 • Kelola Posting</div>
+    <div id="admin-info" style="font-size:12px;"></div>
+  </header>
+
+  <div class="container">
+    <h2>Tambah Posting</h2>
+    <form id="form-posting">
+      <div id="msg"></div>
+      <label>Judul *</label>
+      <input id="judul" required placeholder="Laporan Kunjungan Museum Nasional">
+
+      <label>Tanggal Kegiatan *</label>
+      <input id="tanggal" type="date" required>
+
+      <label>Kategori</label>
+      <select id="kategori">
+        <option value="hasil-kegiatan">Hasil kegiatan</option>
+        <option value="info-gram">Info-gram</option>
+        <option value="pengumuman">Pengumuman</option>
+      </select>
+
+      <label>Isi singkat</label>
+      <textarea id="isi" rows="3" placeholder="Ringkasan kegiatan / caption"></textarea>
+
+      <label>URL Gambar (opsi)</label>
+      <input id="gambar" placeholder="https://...">
+
+      <label>Status</label>
+      <select id="status">
+        <option value="published">Published</option>
+        <option value="draft">Draft</option>
+      </select>
+
+      <button type="submit">Simpan Posting</button>
+    </form>
+
+    <h2>Posting Terbaru</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Tanggal</th>
+          <th>Judul</th>
+          <th>Kategori</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="post-body">
+        <tr><td colspan="5">Memuat...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
+
+    // token dari query / localStorage
+    const url = new URL(window.location.href);
+    const qToken = url.searchParams.get("token");
+    if (qToken) localStorage.setItem("hc32_admin_token", qToken);
+    const token = qToken || localStorage.getItem("hc32_admin_token");
+    const nama  = localStorage.getItem("hc32_admin_nama") || "";
+    document.getElementById("admin-info").textContent = nama ? ("Login sebagai: " + nama) : "";
+
+    if (!token) {
+      alert("Tidak ada token. Buka dari halaman login pengurus.");
+    } else {
+      loadPosting();
+    }
+
+    async function loadPosting() {
+      const res = await fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "listPostingAdmin", token })
+      });
+      const out = await res.json();
+      const tbody = document.getElementById("post-body");
+      tbody.innerHTML = "";
+      if (out.status !== "ok" || !out.data.length) {
+        tbody.innerHTML = "<tr><td colspan='5'>Belum ada posting.</td></tr>";
+        return;
+      }
+      out.data.forEach(post => {
+        const tr = document.createElement("tr");
+        const badge = post.kategori === "info-gram"
+          ? "<span class='badge badge-infogram'>Info-Gram</span>"
+          : (post.kategori === "pengumuman" ? "<span class='badge'>Pengumuman</span>" : "<span class='badge badge-hasil'>Hasil</span>");
+        const status = post.status === "published" ? "Published" : "Draft";
+        tr.innerHTML = `
+          <td>${post.tanggal || "-"}</td>
+          <td><strong>${post.judul}</strong><br><small>${(post.isi || "").substring(0,80)}</small></td>
+          <td>${badge}</td>
+          <td>${status}</td>
+          <td><button class="btn-del" data-id="${post.id}">Hapus</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.querySelectorAll(".btn-del").forEach(btn => {
+        btn.addEventListener("click", async () => {
+          if (!confirm("Hapus posting ini?")) return;
+          const id = btn.getAttribute("data-id");
+          const res = await fetch(WEB_APP_URL, {
+            method: "POST",
+            body: JSON.stringify({ action: "deletePosting", token, id })
+          });
+          const out = await res.json();
+          if (out.status === "ok") loadPosting();
+          else alert(out.message || "Gagal hapus");
+        });
+      });
+    }
+
+    document.getElementById("form-posting").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const msg = document.getElementById("msg");
+      msg.textContent = "Menyimpan...";
+      msg.style.color = "#0f172a";
+
+      const judul = document.getElementById("judul").value.trim();
+      const tanggal = document.getElementById("tanggal").value.trim();
+      const kategori = document.getElementById("kategori").value;
+      const isi = document.getElementById("isi").value.trim();
+      const gambar = document.getElementById("gambar").value.trim();
+      const status = document.getElementById("status").value;
+
+      const res = await fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "addPosting",
+          token,
+          judul,
+          tanggal,
+          kategori,
+          isi,
+          gambar,
+          status
+        })
+      });
+      const out = await res.json();
+      if (out.status === "ok") {
+        msg.textContent = "Posting tersimpan.";
+        msg.style.color = "green";
+        e.target.reset();
+        loadPosting();
+      } else {
+        msg.textContent = "Gagal: " + (out.message || "error");
+        msg.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
