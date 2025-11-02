@@ -1,213 +1,389 @@
 <!doctype html>
 <html lang="id">
 <head>
- <script src="config.js"></script>
-  <meta charset="utf-8">
-  <title>Dashboard Pengurus HC 32</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <title>Dashboard Pengurus • HC 32</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <script src="config.js"></script>
   <style>
-    body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:#f1f5f9; }
-    .topbar { background:#fff; border-bottom:1px solid #e2e8f0; height:54px; display:flex;align-items:center;justify-content:space-between;padding:0 .8rem;position:sticky;top:0;z-index:50; }
-    .logo { display:flex;gap:.5rem;align-items:center; }
-    .logo-circle { width:30px;height:30px;border-radius:999px;background:#005A9C;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem; }
-    .wrap { display:flex; }
-    .sidebar { width:210px;background:#0f172a;color:#fff;min-height:calc(100vh - 54px);padding:.8rem .6rem;position:sticky;top:54px; }
-    .nav { padding:.4rem .5rem;border-radius:.6rem;font-size:.7rem;cursor:pointer;display:flex;gap:.5rem;align-items:center; }
-    .nav.active { background:rgba(248,250,252,.1); }
-    .main { flex:1;padding:1rem 1rem 5rem 1rem; }
-    .card { background:#fff;border-radius:1rem;padding:.8rem 1rem;margin-bottom:.9rem;box-shadow:0 6px 20px rgba(15,23,42,.03); }
-    table { width:100%;border-collapse:collapse; }
-    th,td { padding:.4rem .4rem;border-bottom:1px solid #e2e8f0;font-size:.67rem; }
-    th { background:#f8fafc;text-align:left; }
-    .badge { padding:2px 8px;font-size:.6rem;border-radius:999px; }
-    .badge-siswa{background:rgba(34,197,94,.15);color:#166534;}
-    .badge-guru{background:rgba(14,165,233,.15);color:#0369a1;}
-    .badge-alumni{background:rgba(249,115,22,.15);color:#c2410c;}
-    .badge-non{background:rgba(148,163,184,.15);color:#475569;}
-    footer{background:#06243d;color:#fff;font-size:.6rem;text-align:center;padding:.5rem;position:fixed;bottom:0;left:0;width:100%;}
-    @media(max-width:900px){ .sidebar{position:fixed;left:-100%;transition:.2s;} .sidebar.open{left:0;} .wrap{flex-direction:column;} }
+    :root {
+      --hc-blue: #005A9C;
+      --hc-dark: #0f172a;
+      --bg: #f1f5f9;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+    }
+    /* SIDEBAR */
+    .sidebar {
+      width: 230px;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 50;
+      transition: transform .25s ease-in-out;
+    }
+    .sidebar-header {
+      padding: 14px 16px 10px 16px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.09);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    .nav-item {
+      padding: 9px 16px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      cursor: pointer;
+      font-size: .82rem;
+      border-left: 3px solid transparent;
+    }
+    .nav-item.active {
+      background: rgba(255,255,255,.06);
+      border-left-color: #38bdf8;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.03); }
+    @media(max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+    }
+    /* MAIN */
+    .main {
+      flex: 1;
+      margin-left: 230px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    @media(max-width: 900px) { .main { margin-left: 0; } }
+
+    header {
+      background: white;
+      padding: 8px 16px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    .left-head {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .logo-hc {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--hc-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .8rem;
+    }
+    #btn-open-sidebar {
+      display: none;
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      width: 30px;
+      height: 30px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    @media(max-width: 900px) { #btn-open-sidebar { display: inline-flex; } }
+
+    .content {
+      padding: 16px 18px 80px 18px;
+      flex: 1;
+    }
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(15,23,42,.03);
+      margin-bottom: 14px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th,td { padding: 6px 6px; border-bottom: 1px solid #e2e8f0; font-size: .78rem; }
+    th { background: #e2e8f0; text-align: left; }
+    .badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 999px;
+      font-size: .65rem;
+      font-weight: 600;
+    }
+    .badge-siswa { background: rgba(34,197,94,.14); color: #166534; }
+    .badge-alumni{ background: rgba(249,115,22,.14); color: #c2410c; }
+    .badge-guru  { background: rgba(14,165,233,.14); color: #0369a1; }
+    .badge-non32 { background: rgba(148,163,184,.14); color: #475569; }
+    .avatar-sm {
+      width: 30px;
+      height: 30px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      background: #e2e8f0;
+    }
+    .avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+    footer {
+      background: #06243d;
+      color: white;
+      text-align: center;
+      padding: 10px 12px 30px 12px;
+      font-size: .7rem;
+    }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1.3fr .7fr;
+      gap: 16px;
+    }
+    @media(max-width: 1024px) { .two-col { grid-template-columns: 1fr; } }
+    .small-title { font-size: .75rem; color: #475569; margin-bottom: 7px; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="logo">
-      <div class="logo-circle">HC</div>
-      <div style="line-height:1;">
-        <div style="font-weight:600;font-size:.8rem;">Pengurus HC</div>
-        <div id="top-meta" style="font-size:.6rem;color:#94a3b8;"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="avatar" id="sb-avatar">HC</div>
+      <div>
+        <div id="sb-name" style="font-size:.85rem;">Pengurus</div>
+        <div id="sb-role" style="font-size:.65rem;opacity:.6;">-</div>
       </div>
     </div>
-    <button id="btn-menu" style="background:transparent;border:none;display:none;">
-      ☰
-    </button>
-  </div>
+    <div class="nav-item active" data-link="admin-dashboard.html">📊 Dashboard & Presensi</div>
+    <div class="nav-item" data-link="admin-agenda.html">🗓 Agenda</div>
+    <div class="nav-item" data-link="admin-posting.html">📰 Posting</div>
+    <div class="nav-item" data-link="admin-anggota.html">👥 Anggota</div>
+    <div class="nav-item" data-link="admin-kepengurusan.html">🏛 Kepengurusan</div>
+    <div class="nav-item" id="btn-logout">🚪 Keluar</div>
+  </aside>
 
-  <div class="wrap">
-    <aside class="sidebar" id="sidebar">
-      <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.7rem;">
-        <div id="sb-avatar" style="width:34px;height:34px;border-radius:999px;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-weight:600;">HC</div>
+  <!-- MAIN -->
+  <div class="main">
+    <header>
+      <div class="left-head">
+        <button id="btn-open-sidebar">☰</button>
+        <div class="logo-hc">HC</div>
         <div>
-          <div id="sb-name" style="font-size:.7rem;font-weight:600;">Pengurus</div>
-          <div id="sb-role" style="font-size:.6rem;opacity:.6;">-</div>
+          <div style="font-weight:600;">Pengurus HC</div>
+          <div style="font-size:.65rem;color:#94a3b8;margin-top:1px;">Dashboard & Presensi</div>
         </div>
       </div>
-      <div class="nav active" data-view="dashboard">📊 Ringkasan & Presensi</div>
-      <div class="nav" onclick="window.location.href='admin-agenda.html'">🗓 Agenda</div>
-      <div class="nav" onclick="window.location.href='admin-posting.html'">📰 Posting</div>
-      <div class="nav" onclick="window.location.href='admin-anggota.html'">👥 Anggota</div>
-      <div class="nav" onclick="window.location.href='admin-kepengurusan.html'">🏛 Kepengurusan</div>
-      <div class="nav" id="btn-logout">🚪 Keluar</div>
-    </aside>
+      <div style="font-size:.7rem;color:#64748b;" id="top-info"></div>
+    </header>
 
-    <main class="main">
-      <div class="card">
-        <h3 style="margin:0 0 .5rem 0;font-size:.8rem;">Presensi terbaru</h3>
-        <div id="dash-presensi">Memuat...</div>
-      </div>
+    <div class="content">
+      <div class="two-col">
+        <!-- LEFT: PRESENSI TERBARU -->
+        <div>
+          <div class="card">
+            <h2 style="margin:0 0 6px 0;">Presensi Terbaru</h2>
+            <p style="font-size:.7rem;color:#94a3b8;">150 baris terakhir.</p>
+            <div id="dash-presensi">Memuat...</div>
+          </div>
+        </div>
 
-      <div class="card">
-        <h3 style="margin:0 0 .5rem 0;font-size:.8rem;">Presensi per pertemuan</h3>
-        <div style="display:flex;gap:.5rem;margin-bottom:.5rem;">
-          <select id="presensi-pertemuan" style="padding:.3rem .4rem;font-size:.7rem;"></select>
-          <button id="btn-load-ptm" style="padding:.3rem .7rem;font-size:.7rem;">Tampilkan</button>
-          <button id="btn-export" style="padding:.3rem .7rem;font-size:.7rem;">Export CSV</button>
-        </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Anggota</th>
-                <th>NIS</th>
-                <th>Kelas</th>
-                <th>Pertemuan</th>
-                <th>Waktu</th>
-                <th>Tipe</th>
-              </tr>
-            </thead>
-            <tbody id="body-presensi"><tr><td colspan="7">Pilih pertemuan dulu.</td></tr></tbody>
-          </table>
+        <!-- RIGHT: PRESENSI PER PERTEMUAN -->
+        <div>
+          <div class="card">
+            <h2 style="margin-top:0;">Presensi per Pertemuan</h2>
+            <p class="small-title">Pilih pertemuan untuk lihat daftar hadir.</p>
+            <div style="display:flex;gap:6px;margin-bottom:6px;">
+              <select id="presensi-pertemuan" style="flex:1;padding:5px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:.75rem;"></select>
+              <button id="btn-show-presensi" style="padding:5px 10px;border:none;background:var(--hc-blue);color:white;border-radius:6px;font-size:.7rem;cursor:pointer;">Tampil</button>
+              <button id="btn-export" style="padding:5px 10px;border:1px solid #cbd5e1;background:white;border-radius:6px;font-size:.7rem;cursor:pointer;">CSV</button>
+            </div>
+            <div id="presensi-result" style="max-height:300px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px;"></div>
+          </div>
         </div>
       </div>
-    </main>
+    </div>
+
+    <footer>
+      © 2025 History Club SMAN 32 Jakarta. All rights reserved.
+      <br />Dibuat dan dikembangkan oleh <b>@vitezegi</b>.
+    </footer>
   </div>
-
-  <footer>
-    © 2025 History Club SMAN 32 Jakarta. Dibuat dan dikembangkan oleh @vitezegi.
-  </footer>
 
   <script>
-    // harus login
-    const token = hc32_requireLogin();
-    const prof  = hc32_getProfile();
-    document.getElementById("sb-name").textContent = prof.nama;
-    document.getElementById("sb-role").textContent = (prof.tipe||"-") + " • " + (prof.role||"-");
-    document.getElementById("sb-avatar").textContent = prof.nama.substring(0,2).toUpperCase();
-    document.getElementById("top-meta").textContent = prof.nama;
+    // cek login
+    const token = hc32_getToken();
+    if (!token) {
+      window.location.href = "admin.html";
+    }
 
-    // menu hp
+    // set nama di header & sidebar
+    const nm = localStorage.getItem("hc32_admin_nama") || "Pengurus HC";
+    const rl = localStorage.getItem("hc32_admin_role") || "pengurus";
+    const tp = localStorage.getItem("hc32_admin_tipe") || "-";
+    document.getElementById("sb-name").textContent = nm;
+    document.getElementById("sb-role").textContent = tp + " • " + rl;
+    document.getElementById("top-info").textContent = nm + " • " + rl;
+
+    // toggle sidebar hp
     const sb = document.getElementById("sidebar");
-    const btnMenu = document.getElementById("btn-menu");
-    if (window.innerWidth < 900) btnMenu.style.display = "inline-block";
-    btnMenu.addEventListener("click", ()=> sb.classList.toggle("open"));
+    document.getElementById("btn-open-sidebar").addEventListener("click", () => {
+      sb.classList.toggle("open");
+    });
 
-    // logout
-    document.getElementById("btn-logout").onclick = ()=> hc32_logout();
+    // nav klik
+    document.querySelectorAll(".nav-item[data-link]").forEach(item => {
+      item.addEventListener("click", () => {
+        const url = item.getAttribute("data-link");
+        if (url) window.location.href = url;
+      });
+    });
 
-    // presensi dashboard
-    loadPresensiDashboard();
-    loadPertemuanList();
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      hc32_logout();
+    });
 
-    async function loadPresensiDashboard() {
+    // ========== LOAD PRESENSI TERBARU ==========
+    async function loadPresensiTerbaru() {
       const out = await hc32_post("getPresensiDashboard", { token });
       const wrap = document.getElementById("dash-presensi");
       if (out.status !== "ok") {
-        wrap.textContent = "Gagal memuat.";
+        wrap.innerHTML = "<p>Gagal memuat presensi.</p>";
         return;
       }
       const list = out.data || [];
-      let html = '<table><thead><tr><th>Anggota</th><th>NIS</th><th>Kelas</th><th>Pertemuan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>';
-      list.forEach(item=>{
-        const tipe = (item.tipe||"").toLowerCase();
-        const badge = tipe==="alumni" ? '<span class="badge badge-alumni">Alumni</span>' :
-                      tipe==="guru" ? '<span class="badge badge-guru">Guru</span>' :
-                      (tipe==="non-32"||tipe==="non32") ? '<span class="badge badge-non">Non 32</span>' :
-                      '<span class="badge badge-siswa">Siswa</span>';
+      let html = `<div style="overflow-x:auto;"><table>
+        <thead><tr><th>Anggota</th><th>NIS</th><th>Kelas</th><th>Pertemuan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>`;
+      list.forEach(item => {
+        const tipe = (item.tipe || "").toLowerCase();
+        const badge = tipe === "alumni" ? '<span class="badge badge-alumni">Alumni</span>'
+          : tipe === "guru" ? '<span class="badge badge-guru">Guru</span>'
+          : (tipe === "non-32" || tipe === "non32") ? '<span class="badge badge-non32">Non 32</span>'
+          : '<span class="badge badge-siswa">Siswa aktif</span>';
+        const foto = item.foto || "https://placehold.co/60x60/0f172a/fff?text=HC";
+        const rColor = hc32_roleColor(item.roleTag);
         html += `<tr>
-          <td>${item.nama||"-"}</td>
-          <td>${item.nis||"-"}</td>
-          <td>${item.kelas||"-"}</td>
-          <td>${item.pertemuan||"-"}</td>
-          <td>${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : item.jam||"-"}</td>
+          <td>
+            <span class="avatar-sm" style="border:3px solid ${rColor};"><img src="${foto}" /></span>
+            ${item.nama || '-'}
+            ${item.roleTag ? `<div style="font-size:10px;color:${rColor};">${item.roleTag}</div>` : ''}
+          </td>
+          <td>${item.nis || '-'}</td>
+          <td>${item.kelas || '-'}</td>
+          <td>${item.pertemuan || '-'}</td>
+          <td>${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : item.jam || '-'}</td>
+          <td>${badge}</td>
+        </tr>`;
+      });
+      html += "</tbody></table></div>";
+      wrap.innerHTML = html;
+    }
+
+    // ========== LIST PERTEMUAN ==========
+    async function loadPertemuan() {
+      const out = await hc32_post("listPertemuan", { token });
+      const sel = document.getElementById("presensi-pertemuan");
+      sel.innerHTML = "";
+      if (out.status !== "ok") {
+        sel.innerHTML = "<option>Gagal</option>";
+        return;
+      }
+      (out.data || []).forEach(ptm => {
+        const opt = document.createElement("option");
+        opt.value = ptm;
+        opt.textContent = ptm;
+        sel.appendChild(opt);
+      });
+    }
+
+    // ========== TAMPIL PRESENSI PER PERTEMUAN ==========
+    async function showPresensiPertemuan() {
+      const ptm = document.getElementById("presensi-pertemuan").value;
+      if (!ptm) return;
+      const out = await hc32_post("listPresensiByPertemuan", { token, pertemuan: ptm });
+      const box = document.getElementById("presensi-result");
+      if (out.status !== "ok" || !out.data.length) {
+        box.innerHTML = "<p style='padding:6px;'>Tidak ada presensi.</p>";
+        return;
+      }
+      let html = `<table><thead><tr><th>#</th><th>Nama</th><th>NIS</th><th>Kelas</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>`;
+      out.data.forEach((item, idx) => {
+        const tipe = (item.tipe || "").toLowerCase();
+        const badge = tipe === "alumni" ? '<span class="badge badge-alumni">Alumni</span>'
+          : tipe === "guru" ? '<span class="badge badge-guru">Guru</span>'
+          : (tipe === "non-32" || tipe === "non32") ? '<span class="badge badge-non32">Non 32</span>'
+          : '<span class="badge badge-siswa">Siswa aktif</span>';
+        const foto = item.foto || "https://placehold.co/60x60/0f172a/fff?text=HC";
+        const rColor = hc32_roleColor(item.roleTag);
+        html += `<tr>
+          <td>${idx+1}</td>
+          <td>
+            <span class="avatar-sm" style="border:3px solid ${rColor};"><img src="${foto}" /></span>
+            ${item.nama || '-'}
+            ${item.roleTag ? `<div style="font-size:10px;color:${rColor};">${item.roleTag}</div>` : ''}
+          </td>
+          <td>${item.nis || '-'}</td>
+          <td>${item.kelas || '-'}</td>
+          <td>${item.timestamp ? new Date(item.timestamp).toLocaleString("id-ID") : item.jam || '-'}</td>
           <td>${badge}</td>
         </tr>`;
       });
       html += "</tbody></table>";
-      wrap.innerHTML = html;
+      box.innerHTML = html;
+
+      // simpan data untuk eksport
+      window.__HC32_LAST_PRESENSI = out.data;
+      window.__HC32_LAST_PRESENSI_PTM = ptm;
     }
 
-    async function loadPertemuanList() {
-      const out = await hc32_post("listPertemuan", { token });
-      const sel = document.getElementById("presensi-pertemuan");
-      sel.innerHTML = "";
-      if (out.status !== "ok") { sel.innerHTML = "<option>Gagal</option>"; return; }
-      (out.data || []).forEach(ptm=>{
-        const o = document.createElement("option");
-        o.value = ptm; o.textContent = ptm;
-        sel.appendChild(o);
-      });
-    }
+    document.getElementById("btn-show-presensi").addEventListener("click", showPresensiPertemuan);
 
-    document.getElementById("btn-load-ptm").addEventListener("click", loadPresensiByPertemuan);
-
-    async function loadPresensiByPertemuan() {
-      const ptm = document.getElementById("presensi-pertemuan").value;
-      const out = await hc32_post("listPresensiByPertemuan", { token, pertemuan: ptm });
-      const tb = document.getElementById("body-presensi");
-      tb.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length) {
-        tb.innerHTML = '<tr><td colspan="7">Tidak ada data.</td></tr>';
-        return;
-      }
-      out.data.forEach((r,i)=>{
-        const tipe = (r.tipe||"").toLowerCase();
-        const badge = tipe==="alumni" ? '<span class="badge badge-alumni">Alumni</span>' :
-                      tipe==="guru" ? '<span class="badge badge-guru">Guru</span>' :
-                      (tipe==="non-32"||tipe==="non32") ? '<span class="badge badge-non">Non 32</span>' :
-                      '<span class="badge badge-siswa">Siswa</span>';
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${i+1}</td>
-          <td>${r.nama||"-"}</td>
-          <td>${r.nis||"-"}</td>
-          <td>${r.kelas||"-"}</td>
-          <td>${r.pertemuan||"-"}</td>
-          <td>${r.timestamp ? new Date(r.timestamp).toLocaleString("id-ID") : r.jam||"-"}</td>
-          <td>${badge}</td>
-        `;
-        tb.appendChild(tr);
-      });
-    }
-
-    // export
-    document.getElementById("btn-export").onclick = async ()=>{
-      const ptm = document.getElementById("presensi-pertemuan").value;
-      if (!ptm) { alert("Pilih pertemuan dulu"); return; }
-      const out = await hc32_post("listPresensiByPertemuan", { token, pertemuan: ptm });
-      if (out.status !== "ok") { alert("Gagal ambil data"); return; }
+    // ========== EXPORT CSV ==========
+    document.getElementById("btn-export").addEventListener("click", () => {
+      const rows = window.__HC32_LAST_PRESENSI || [];
+      const ptm  = window.__HC32_LAST_PRESENSI_PTM || "pertemuan";
+      if (!rows.length) { alert("Tampilkan presensi dulu"); return; }
       let csv = "Nama,NIS,Kelas,Pertemuan,Waktu,Tipe,Jabatan\n";
-      (out.data||[]).forEach(r=>{
+      rows.forEach(r => {
         csv += `"${r.nama||""}","${r.nis||""}","${r.kelas||""}","${r.pertemuan||""}","${r.timestamp||r.jam||""}","${r.tipe||""}","${r.roleTag||""}"\n`;
       });
-      const blob = new Blob([csv], {type:"text/csv"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement("a");
       a.href = url;
-      a.download = "presensi_"+ptm.replace(/\s+/g,"_")+".csv";
-      a.click();
+      a.download = "presensi_" + ptm.replace(/\s+/g,'_') + ".csv";
+      document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
-    }
+    });
+
+    // init
+    loadPresensiTerbaru();
+    loadPertemuan();
   </script>
+
 </body>
 </html>
