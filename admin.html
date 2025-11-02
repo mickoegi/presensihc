@@ -2,12 +2,15 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <title>HC 32 • Panel Pengurus</title>
+  <title>Panel Pengurus • History Club 32</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     :root {
       --hc-blue: #005A9C;
+      --hc-dark: #0f172a;
       --bg: #f1f5f9;
+      --surface: #ffffff;
+      --radius-lg: 1.1rem;
       --role-ketua: #0F766E;
       --role-wakil: #0EA5E9;
       --role-pembina: #0F172A;
@@ -21,177 +24,320 @@
       background: var(--bg);
       min-height: 100vh;
       display: flex;
-    }
-    .sidebar {
-      width: 220px;
-      background: #0f172a;
-      color: white;
-      display: flex;
       flex-direction: column;
-      position: fixed;
-      top: 0;
-      left: 0;
-      height: 100vh;
-      z-index: 50;
-      transition: transform .25s ease-in-out;
     }
-    .sidebar-header { padding: 16px 16px 10px 16px; font-weight: 700; }
-    .sidebar small { font-size: 11px; opacity: .6; }
-    .nav-link {
-      padding: 9px 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      border-left: 3px solid transparent;
-    }
-    .nav-link.active {
-      background: rgba(255,255,255,.07);
-      border-left-color: #38bdf8;
-    }
-    @media(max-width: 900px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-    }
-    .main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      margin-left: 220px;
-      width: calc(100% - 220px);
-    }
-    @media(max-width: 900px) {
-      .main { margin-left: 0; width: 100%; }
-    }
-    header {
-      background: white;
-      padding: 10px 18px;
+
+    /* HEADER ATAS */
+    .topbar {
+      height: 58px;
+      background: #fff;
       border-bottom: 1px solid #e2e8f0;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem 0 1.1rem;
       position: sticky;
       top: 0;
-      z-index: 20;
+      z-index: 50;
     }
-    #sidebar-toggle {
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .logo-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: var(--hc-blue);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: .8rem;
+    }
+    .top-title {
+      line-height: 1.1;
+    }
+    .top-title small {
+      display: block;
+      color: #94a3b8;
+      font-size: .64rem;
+      font-weight: 500;
+    }
+    #top-burger {
+      background: transparent;
+      border: none;
+      width: 34px;
+      height: 34px;
       display: none;
-      background: white;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 3px 8px;
-      font-size: 16px;
+      align-items: center;
+      justify-content: center;
+      border-radius: .6rem;
       cursor: pointer;
     }
-    @media(max-width: 900px) { #sidebar-toggle { display: inline-block; } }
-
-    .content { padding: 20px; flex: 1; overflow-y: auto; }
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 14px;
-      box-shadow: 0 6px 20px rgba(15,23,42,.05);
-      margin-bottom: 18px;
+    #top-burger:hover { background: #e2e8f0; }
+    @media(max-width: 960px) {
+      #top-burger { display: flex; }
     }
+
+    /* LAYOUT */
+    .wrapper {
+      display: flex;
+      min-height: calc(100vh - 58px);
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 230px;
+      background: #0f172a;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: .8rem .8rem 1rem .8rem;
+      gap: .7rem;
+      position: sticky;
+      top: 58px;
+      height: calc(100vh - 58px);
+      z-index: 60;
+      transition: transform .25s ease-in-out;
+    }
+    .sidebar-header {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .4rem .2rem .7rem .2rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      margin-bottom: .3rem;
+    }
+    .profile-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: .75rem;
+    }
+    .profile-meta {
+      line-height: 1.1;
+    }
+    .profile-meta .name {
+      font-weight: 600;
+      font-size: .8rem;
+    }
+    .profile-meta .role {
+      font-size: .64rem;
+      opacity: .6;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: .65rem;
+      font-size: .74rem;
+      padding: .5rem .55rem;
+      border-radius: .65rem;
+      cursor: pointer;
+      transition: .15s;
+    }
+    .nav-link:hover {
+      background: rgba(255,255,255,.04);
+    }
+    .nav-link.active {
+      background: rgba(248,250,252,.1);
+    }
+
+    @media(max-width: 960px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 58px;
+        transform: translateX(-100%);
+      }
+      .sidebar.open {
+        transform: translateX(0);
+      }
+    }
+
+    /* MAIN CONTENT */
+    .main {
+      flex: 1;
+      padding: 1.1rem 1.1rem 5rem 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(200px,1fr));
+      gap: .85rem;
+    }
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 10px 35px rgba(15,23,42,.03);
+      border: 1px solid rgba(148,163,184,.12);
+      padding: .95rem 1rem;
+    }
+    .card-title {
+      font-weight: 600;
+      margin-bottom: .4rem;
+    }
+    .muted { color: #94a3b8; font-size: .71rem; }
+
     table { width: 100%; border-collapse: collapse; }
-    th,td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
-    th { background: #e2e8f0; text-align: left; }
+    th,td { padding: .45rem .4rem; font-size: .7rem; border-bottom: 1px solid #e2e8f0; text-align: left; }
+    th { background: #f8fafc; font-size: .67rem; color: #475569; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: .6rem;
+      font-weight: 600;
+    }
+    .badge-siswa { background: rgba(34,197,94,.16); color:#166534; }
+    .badge-alumni{ background: rgba(249,115,22,.15); color:#c2410c; }
+    .badge-guru  { background: rgba(14,165,233,.15); color:#0369a1; }
+    .badge-non32 { background: rgba(148,163,184,.15); color:#475569; }
+
+    .avatar-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      overflow: hidden;
+      background: #e2e8f0;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: .4rem;
+    }
+    .avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+
+    .input, select, textarea {
+      width: 100%;
+      padding: .4rem .45rem;
+      border: 1px solid #cbd5e1;
+      border-radius: .55rem;
+      font-size: .7rem;
+      background: white;
+    }
+
     .btn {
       background: var(--hc-blue);
-      color: white;
+      color: #fff;
       border: none;
-      border-radius: 6px;
-      padding: 5px 11px;
+      border-radius: .5rem;
+      padding: .35rem .7rem;
+      font-size: .68rem;
       cursor: pointer;
-      font-size: 13px;
     }
     .btn-secondary {
-      background: white;
+      background: #fff;
       border: 1px solid #cbd5e1;
       color: #0f172a;
     }
-    .input {
+
+    /* FOOTER */
+    footer {
+      background: #06243d;
+      color: #fff;
+      text-align: center;
+      padding: .7rem .5rem .7rem .5rem;
+      font-size: .6rem;
+      position: fixed;
+      bottom: 0;
+      left: 0;
       width: 100%;
-      padding: 5px 7px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 12px;
+      z-index: 30;
     }
-    .badge {
-      display: inline-block;
-      padding: 1px 7px;
-      border-radius: 999px;
-      font-size: 11px;
+    footer b { font-weight: 600; }
+
+    /* SCROLL AREA */
+    .scroll-box {
+      overflow-x: auto;
+    }
+    /* small tweaks */
+    .section-title {
+      font-size: .78rem;
       font-weight: 600;
+      margin-bottom: .35rem;
     }
-    .badge-siswa { background: rgba(34,197,94,.16); color: #166534; }
-    .badge-alumni{ background: rgba(249,115,22,.15); color: #c2410c; }
-    .badge-guru  { background: rgba(14,165,233,.15); color: #0369a1; }
-    .badge-non32 { background: rgba(148,163,184,.15); color: #475569; }
-    .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media(max-width: 700px) { .col-2 { grid-template-columns: 1fr; } }
-    .avatar-sm {
-      width: 38px;
-      height: 38px;
-      border-radius: 999px;
-      overflow: hidden;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 6px;
-      background: #e2e8f0;
-    }
-    .avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
   </style>
 </head>
 <body>
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      HC 32
-      <div id="sb-user" style="margin-top:6px;font-size:12px;"></div>
-      <small id="sb-meta"></small>
+
+  <!-- HEADER ATAS -->
+  <div class="topbar">
+    <div class="top-left">
+      <div class="logo-circle">HC</div>
+      <div class="top-title">
+        <div style="font-weight:600;font-size:.78rem;">Pengurus HC</div>
+        <small>History Club SMAN 32 Jakarta</small>
+      </div>
     </div>
-    <div class="nav-link active" data-view="dashboard">📊 Dashboard</div>
-    <div class="nav-link" data-view="presensi">📝 Presensi</div>
-    <div class="nav-link" data-view="agenda">🗓 Agenda</div>
-    <div class="nav-link" data-view="posting">📰 Posting</div>
-    <div class="nav-link" data-view="anggota">👥 Anggota</div>
-    <div class="nav-link" data-view="kepengurusan">🏛 Kepengurusan</div>
-    <div class="nav-link" id="btn-logout">🚪 Keluar</div>
-  </aside>
+    <button id="top-burger" aria-label="buka menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" /></svg>
+    </button>
+  </div>
 
-  <div class="main">
-    <header>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button id="sidebar-toggle">☰</button>
-        <div id="page-title">Dashboard</div>
-      </div>
-      <div>
-        <span id="top-user" style="font-size:13px;margin-right:10px;"></span>
-        <button class="btn-secondary" id="btn-open-sites">Buka Web Utama</button>
-      </div>
-    </header>
-
-    <div class="content">
-      <!-- DASHBOARD -->
-      <div id="view-dashboard">
-        <div class="card">
-          <h2 style="margin-bottom:10px;">Presensi Terbaru</h2>
-          <p style="font-size:12px;color:#64748b;">150 baris terakhir.</p>
-          <div id="dash-presensi">Memuat...</div>
+  <div class="wrapper">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="profile-circle" id="sb-avatar">HC</div>
+        <div class="profile-meta">
+          <div class="name" id="sb-user">Pengurus</div>
+          <div class="role" id="sb-meta">siswa-aktif • pengurus</div>
         </div>
       </div>
+      <div class="nav-link active" data-view="home">📊 Ringkasan & Presensi</div>
+      <div class="nav-link" data-view="agenda">🗓 Agenda</div>
+      <div class="nav-link" data-view="posting">📰 Posting</div>
+      <div class="nav-link" data-view="anggota">👥 Anggota</div>
+      <div class="nav-link" data-view="kepengurusan">🏛 Kepengurusan</div>
+      <div class="nav-link" id="btn-logout">🚪 Keluar</div>
+    </aside>
 
-      <!-- PRESENSI -->
-      <div id="view-presensi" style="display:none;">
-        <div class="card">
-          <h2>Presensi</h2>
-          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-            <select id="presensi-pertemuan" class="input" style="max-width:220px;"></select>
-            <button class="btn" id="btn-load-presensi-ptm">Tampilkan</button>
-            <button class="btn-secondary" id="btn-export-csv">Export CSV</button>
+    <!-- MAIN -->
+    <main class="main">
+      <!-- HOME (Dashboard + Presensi) -->
+      <section id="view-home">
+        <div class="cards-row">
+          <div class="card">
+            <div class="card-title">Presensi hari ini</div>
+            <div id="stat-today" style="font-size:1.3rem;font-weight:700;">—</div>
+            <p class="muted">Diambil dari sheet Presensi.</p>
           </div>
-          <div style="overflow-x:auto;">
+          <div class="card">
+            <div class="card-title">Pertemuan aktif</div>
+            <div id="stat-meeting" style="font-size:.9rem;font-weight:600;">—</div>
+            <p class="muted">Atur di menu Agenda.</p>
+          </div>
+          <div class="card">
+            <div class="card-title">Anggota terdaftar</div>
+            <div id="stat-anggota" style="font-size:1.1rem;font-weight:700;">—</div>
+            <p class="muted">Total dari pendaftaran.</p>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:1.1rem;">
+          <div class="section-title">Presensi terbaru</div>
+          <p class="muted" style="margin-bottom:.6rem;">150 baris terakhir.</p>
+          <div id="dash-presensi" class="scroll-box">Memuat...</div>
+        </div>
+
+        <div class="card" style="margin-top:1.1rem;">
+          <div class="section-title">Presensi per pertemuan</div>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;">
+            <select id="presensi-pertemuan" class="input" style="max-width:210px;"></select>
+            <button class="btn" id="btn-load-presensi-ptm">Tampilkan</button>
+            <button class="btn btn-secondary" id="btn-export-csv">Export CSV</button>
+          </div>
+          <div class="scroll-box">
             <table>
               <thead>
                 <tr>
@@ -210,84 +356,87 @@
             </table>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- AGENDA -->
-      <div id="view-agenda" style="display:none;">
+      <section id="view-agenda" style="display:none;">
         <div class="card">
-          <h2>Agenda</h2>
-          <form id="form-agenda" class="col-2" style="margin-bottom:12px;">
+          <div class="section-title">Buat agenda</div>
+          <form id="form-agenda" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin-bottom:1rem;">
             <div>
-              <label>Judul *</label>
+              <label style="font-size:.7rem;">Judul *</label>
               <input class="input" id="ag-judul" required>
             </div>
             <div>
-              <label>Tanggal *</label>
+              <label style="font-size:.7rem;">Tanggal *</label>
               <input class="input" id="ag-tanggal" type="date" required>
             </div>
             <div>
-              <label>Waktu</label>
-              <input class="input" id="ag-waktu" placeholder="08.00-10.00">
+              <label style="font-size:.7rem;">Waktu</label>
+              <input class="input" id="ag-waktu">
             </div>
             <div>
-              <label>Tempat</label>
-              <input class="input" id="ag-tempat" placeholder="Ruang ...">
+              <label style="font-size:.7rem;">Tempat</label>
+              <input class="input" id="ag-tempat">
             </div>
             <div>
-              <label>Kategori</label>
+              <label style="font-size:.7rem;">Kategori</label>
               <select class="input" id="ag-kategori">
                 <option value="umum">Umum</option>
                 <option value="internal">Internal</option>
               </select>
             </div>
             <div>
-              <label>Status</label>
+              <label style="font-size:.7rem;">Status</label>
               <select class="input" id="ag-status">
                 <option value="aktif">Aktif</option>
                 <option value="selesai">Selesai</option>
               </select>
             </div>
-            <div style="grid-column:1 / span 2;">
-              <label>Deskripsi</label>
+            <div style="grid-column:1/-1;">
+              <label style="font-size:.7rem;">Deskripsi</label>
               <textarea class="input" id="ag-deskripsi" rows="2"></textarea>
             </div>
-            <div style="grid-column:1 / span 2;">
-              <button class="btn" type="submit">Simpan Agenda</button>
-              <span id="ag-msg" style="font-size:12px;margin-left:8px;"></span>
+            <div style="grid-column:1/-1;">
+              <button class="btn" type="submit">Simpan</button>
+              <span id="ag-msg" style="font-size:.65rem;margin-left:.5rem;"></span>
             </div>
           </form>
-          <table>
-            <thead>
-              <tr>
-                <th>Tanggal</th>
-                <th>Judul</th>
-                <th>Tempat</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="body-agenda">
-              <tr><td colspan="5">Memuat...</td></tr>
-            </tbody>
-          </table>
+
+          <div class="scroll-box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Judul</th>
+                  <th>Tempat</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="body-agenda">
+                <tr><td colspan="5">Memuat...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </section>
 
       <!-- POSTING -->
-      <div id="view-posting" style="display:none;">
+      <section id="view-posting" style="display:none;">
         <div class="card">
-          <h2>Posting</h2>
-          <form id="form-posting" class="col-2" style="margin-bottom:12px;">
+          <div class="section-title">Posting</div>
+          <form id="form-posting" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.6rem;margin-bottom:1rem;">
             <div>
-              <label>Judul *</label>
+              <label style="font-size:.7rem;">Judul *</label>
               <input id="po-judul" class="input" required>
             </div>
             <div>
-              <label>Tanggal *</label>
+              <label style="font-size:.7rem;">Tanggal *</label>
               <input id="po-tanggal" type="date" class="input" required>
             </div>
             <div>
-              <label>Kategori</label>
+              <label style="font-size:.7rem;">Kategori</label>
               <select id="po-kategori" class="input">
                 <option value="hasil-kegiatan">Hasil kegiatan</option>
                 <option value="info-gram">Info-gram</option>
@@ -295,48 +444,51 @@
               </select>
             </div>
             <div>
-              <label>Status</label>
+              <label style="font-size:.7rem;">Status</label>
               <select id="po-status" class="input">
                 <option value="published">Published</option>
                 <option value="draft">Draft</option>
               </select>
             </div>
-            <div style="grid-column:1 / span 2;">
-              <label>Isi singkat</label>
+            <div style="grid-column:1/-1;">
+              <label style="font-size:.7rem;">Isi singkat</label>
               <textarea id="po-isi" class="input" rows="2"></textarea>
             </div>
-            <div style="grid-column:1 / span 2;">
-              <label>URL Gambar (opsi)</label>
+            <div style="grid-column:1/-1;">
+              <label style="font-size:.7rem;">URL gambar (opsi)</label>
               <input id="po-gambar" class="input">
             </div>
-            <div style="grid-column:1 / span 2;">
-              <button class="btn" type="submit">Simpan Posting</button>
-              <span id="po-msg" style="font-size:12px;margin-left:8px;"></span>
+            <div style="grid-column:1/-1;">
+              <button class="btn" type="submit">Simpan</button>
+              <span id="po-msg" style="font-size:.65rem;margin-left:.5rem;"></span>
             </div>
           </form>
-          <table>
-            <thead>
-              <tr>
-                <th>Tanggal</th>
-                <th>Judul</th>
-                <th>Kategori</th>
-                <th>Status</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="body-posting">
-              <tr><td colspan="5">Memuat...</td></tr>
-            </tbody>
-          </table>
+
+          <div class="scroll-box">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Judul</th>
+                  <th>Kategori</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="body-posting">
+                <tr><td colspan="5">Memuat...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </section>
 
       <!-- ANGGOTA -->
-      <div id="view-anggota" style="display:none;">
+      <section id="view-anggota" style="display:none;">
         <div class="card">
-          <h2>Anggota</h2>
-          <p style="font-size:12px;color:#64748b;">Foto, jabatan eksternal, tahun lulus & tanggal lahir ikut disimpan.</p>
-          <div style="overflow-x:auto;">
+          <div class="section-title">Anggota</div>
+          <p class="muted">Ubah data lalu klik simpan.</p>
+          <div class="scroll-box">
             <table>
               <thead>
                 <tr>
@@ -357,16 +509,14 @@
             </table>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- KEPENGURUSAN -->
-      <div id="view-kepengurusan" style="display:none;">
+      <section id="view-kepengurusan" style="display:none;">
         <div class="card">
-          <h2>Struktur Kepengurusan</h2>
-          <p style="font-size:12px;color:#64748b;margin-bottom:10px;">
-            Isi <b>NIS</b> saja → nama & foto otomatis diisi dari keanggotaan.
-          </p>
-          <div style="overflow-x:auto;">
+          <div class="section-title">Struktur Kepengurusan</div>
+          <p class="muted">Isi NIS → nama & foto ikut keisi.</p>
+          <div class="scroll-box">
             <table>
               <thead>
                 <tr>
@@ -387,12 +537,9 @@
           </div>
         </div>
 
-        <div class="card">
-          <h2>Arsip Kepengurusan</h2>
-          <p style="font-size:12px;color:#64748b;margin-bottom:10px;">
-            Isi NIS Ketua / Wakil / Sekretaris lalu simpan → nama & foto otomatis.
-          </p>
-          <div style="overflow-x:auto;">
+        <div class="card" style="margin-top:1rem;">
+          <div class="section-title">Arsip Kepengurusan</div>
+          <div class="scroll-box">
             <table>
               <thead>
                 <tr>
@@ -411,23 +558,27 @@
             </table>
           </div>
         </div>
-      </div>
-
-    </div>
+      </section>
+    </main>
   </div>
+
+  <footer>
+    Dibuat dan dikembangkan oleh <b>@vitezegi</b>.
+  </footer>
 
   <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
     const LOGIN_URL   = "https://sites.google.com/view/history-club-32";
     const PLACEHOLDER = "https://placehold.co/80x80/0F172A/fff?text=HC";
 
-    // ambil query / localstorage
+    // ambil token dari query/localstorage
     const url = new URL(window.location.href);
     const qToken = url.searchParams.get("token");
     const qNama  = url.searchParams.get("n");
     const qUser  = url.searchParams.get("u");
     const qRole  = url.searchParams.get("r");
     const qTipe  = url.searchParams.get("t");
+
     if (qToken) {
       localStorage.setItem("hc32_admin_token", qToken);
       if (qNama) localStorage.setItem("hc32_admin_nama", qNama);
@@ -435,51 +586,45 @@
       if (qRole) localStorage.setItem("hc32_admin_role", qRole);
       if (qTipe) localStorage.setItem("hc32_admin_tipe", qTipe);
     }
+
     const token = qToken || localStorage.getItem("hc32_admin_token");
     const nama  = qNama  || localStorage.getItem("hc32_admin_nama") || "Pengurus";
     const role  = qRole  || localStorage.getItem("hc32_admin_role") || "pengurus";
     const tipe  = qTipe  || localStorage.getItem("hc32_admin_tipe") || "siswa-aktif";
 
-    document.getElementById("sb-user").textContent = nama;
-    document.getElementById("sb-meta").textContent = tipe + " • " + role;
-    document.getElementById("top-user").textContent = nama;
-
+    // kalau ga ada token → balik
     if (!token) {
       window.location.href = LOGIN_URL;
-    } else {
-      loadPresensiDashboard();
-      loadPertemuanList();
-      loadAgenda();
-      loadPosting();
-      loadAnggota();
-      loadStruktur();
-      loadArsip();
     }
 
-    // sidebar hp
+    // isi profil sidebar
+    document.getElementById("sb-user").textContent = nama;
+    document.getElementById("sb-meta").textContent = (tipe || "—") + " • " + (role || "—");
+    document.getElementById("sb-avatar").textContent = (nama || "HC").substring(0,2).toUpperCase();
+
+    // sidebar open/close (HP)
     const sidebar = document.getElementById("sidebar");
-    document.getElementById("sidebar-toggle").addEventListener("click", () => {
+    document.getElementById("top-burger").addEventListener("click", ()=>{
       sidebar.classList.toggle("open");
     });
 
     // nav
     document.querySelectorAll(".nav-link").forEach(link => {
       link.addEventListener("click", () => {
-        const view = link.getAttribute("data-view");
-        if (!view && link.id === "btn-logout") {
+        if (link.id === "btn-logout") {
           doLogout();
           return;
         }
+        const view = link.getAttribute("data-view");
         document.querySelectorAll(".nav-link").forEach(l => l.classList.remove("active"));
         link.classList.add("active");
-        document.querySelectorAll("[id^='view-']").forEach(v => v.style.display = "none");
+        document.querySelectorAll("main > section").forEach(sec => sec.style.display = "none");
         document.getElementById("view-" + view).style.display = "block";
-        document.getElementById("page-title").textContent = view.charAt(0).toUpperCase()+view.slice(1);
         sidebar.classList.remove("open");
       });
     });
 
-    // ================== DASHBOARD PRESENSI ==================
+    // =================== HELPER ROLE COLOR ===================
     function roleColor(roleTag){
       if (!roleTag) return "#E11D48";
       const r = roleTag.toLowerCase();
@@ -490,7 +635,17 @@
       return "#E11D48";
     }
 
-    async function loadPresensiDashboard() {
+    // =================== LOAD DATA AWAL ===================
+    loadHome();   // presensi + stat
+    loadPertemuanList();
+    loadAgenda();
+    loadPosting();
+    loadAnggota();
+    loadStruktur();
+    loadArsip();
+
+    async function loadHome(){
+      // presensi dashboard
       const res = await fetch(WEB_APP_URL, {
         method: "POST",
         body: JSON.stringify({ action: "getPresensiDashboard", token })
@@ -502,24 +657,32 @@
         return;
       }
       const list = out.data || [];
-      let html = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
+      // hitung hari ini
+      const today = new Date().toISOString().slice(0,10);
+      let countToday = 0;
+      list.forEach(item=>{
+        if (item.timestamp && item.timestamp.slice(0,10) === today) countToday++;
+      });
+      document.getElementById("stat-today").textContent = countToday;
+
+      // meeting aktif → ambil dari baris pertama (kalau ada)
+      document.getElementById("stat-meeting").textContent = list[0]?.pertemuan || '—';
+
+      let html = `<div class="scroll-box"><table>
         <thead><tr><th>Anggota</th><th>NIS</th><th>Kelas</th><th>Pertemuan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>`;
       list.forEach(item => {
         const tipe = (item.tipe || '').toLowerCase();
         const badge = tipe==='alumni' ? '<span class="badge badge-alumni">Alumni</span>'
-                    : tipe==='guru' ? '<span class="badge badge-guru">Guru</span>'
-                    : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Non 32</span>'
-                    : '<span class="badge badge-siswa">Siswa aktif</span>';
+                    : tipe==='guru' ? '<span class="badge badge-guru">Guru/Tendik</span>'
+                    : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Anggota Lain</span>'
+                    : '<span class="badge badge-siswa">Siswa</span>';
         const foto = item.foto || PLACEHOLDER;
         const rColor = roleColor(item.roleTag);
         const namaHtml = item.roleTag
-          ? `<div>${item.nama || '(tanpa nama)'}</div><div style="font-size:11px;color:${rColor};">${item.roleTag}</div>`
+          ? `<div>${item.nama || '(tanpa nama)'}</div><div style="font-size:.6rem;color:${rColor};">${item.roleTag}</div>`
           : `<div>${item.nama || '(tanpa nama)'}</div>`;
         html += `<tr>
-          <td>
-            <div class="avatar-sm" style="border:3px solid ${rColor};"><img src="${foto}"></div>
-            ${namaHtml}
-          </td>
+          <td><span class="avatar-sm" style="border:2px solid ${rColor};"><img src="${foto}" onerror="this.src='${PLACEHOLDER}'"></span>${namaHtml}</td>
           <td>${item.nis || '-'}</td>
           <td>${item.kelas || '-'}</td>
           <td>${item.pertemuan || '-'}</td>
@@ -529,9 +692,19 @@
       });
       html += "</tbody></table></div>";
       wrap.innerHTML = html;
+
+      // hitung anggota total (dari endpoint anggota admin)
+      const resAng = await fetch(WEB_APP_URL, {
+        method: "POST",
+        body: JSON.stringify({ action: "listAnggotaAdmin", token })
+      });
+      const outAng = await resAng.json();
+      if (outAng.status === "ok") {
+        document.getElementById("stat-anggota").textContent = (outAng.data || []).length;
+      }
     }
 
-    // ================== PRESENSI PER PERTEMUAN ==================
+    // =================== PRESENSI PER PERTEMUAN ===================
     async function loadPertemuanList() {
       const res = await fetch(WEB_APP_URL, {
         method: "POST",
@@ -569,21 +742,18 @@
       out.data.forEach((item, idx) => {
         const tipe = (item.tipe || '').toLowerCase();
         const badge = tipe==='alumni' ? '<span class="badge badge-alumni">Alumni</span>'
-                    : tipe==='guru' ? '<span class="badge badge-guru">Guru</span>'
-                    : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Non 32</span>'
-                    : '<span class="badge badge-siswa">Siswa aktif</span>';
+                    : tipe==='guru' ? '<span class="badge badge-guru">Guru/Tendik</span>'
+                    : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Anggota Lain</span>'
+                    : '<span class="badge badge-siswa">Siswa</span>';
         const foto = item.foto || PLACEHOLDER;
         const rColor = roleColor(item.roleTag);
         const namaHtml = item.roleTag
-          ? `<div>${item.nama || '(tanpa nama)'}</div><div style="font-size:11px;color:${rColor};">${item.roleTag}</div>`
+          ? `<div>${item.nama || '(tanpa nama)'}</div><div style="font-size:.6rem;color:${rColor};">${item.roleTag}</div>`
           : `<div>${item.nama || '(tanpa nama)'}</div>`;
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${idx+1}</td>
-          <td>
-            <div class="avatar-sm" style="border:3px solid ${rColor};"><img src="${foto}"></div>
-            ${namaHtml}
-          </td>
+          <td><span class="avatar-sm" style="border:2px solid ${rColor};"><img src="${foto}" onerror="this.src='${PLACEHOLDER}'"></span>${namaHtml}</td>
           <td>${item.nis || '-'}</td>
           <td>${item.kelas || '-'}</td>
           <td>${item.pertemuan || '-'}</td>
@@ -594,7 +764,7 @@
       });
     });
 
-    // export csv sama persis
+    // export CSV
     document.getElementById("btn-export-csv").addEventListener("click", async () => {
       const ptm = document.getElementById("presensi-pertemuan").value;
       if (!ptm) { alert("Pilih pertemuan dulu"); return; }
@@ -618,13 +788,16 @@
       URL.revokeObjectURL(urlDl);
     });
 
-    // ================== AGENDA ==================
-    async function loadAgenda(){ /* sama persis dengan versi sebelumnya */ 
+    // =============== AGENDA ===============
+    async function loadAgenda(){
       const res = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listKegiatanAdmin",token})});
       const out = await res.json();
       const tbody = document.getElementById("body-agenda");
       tbody.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length){ tbody.innerHTML = "<tr><td colspan='5'>Belum ada agenda.</td></tr>"; return; }
+      if (out.status !== "ok" || !out.data.length){
+        tbody.innerHTML = "<tr><td colspan='5'>Belum ada agenda.</td></tr>";
+        return;
+      }
       out.data.forEach(item=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -633,9 +806,10 @@
           <td>${item.tempat || '-'}</td>
           <td>${item.status || '-'}</td>
           <td>
-            <button class="btn-secondary" data-ptm="${item.judul}">Jadikan Pertemuan</button>
-            <button class="btn-secondary" data-del="${item.id}">Hapus</button>
-          </td>`;
+            <button class="btn btn-secondary" data-ptm="${item.judul}">Jadikan Pertemuan</button>
+            <button class="btn btn-secondary" data-del="${item.id}">Hapus</button>
+          </td>
+        `;
         tbody.appendChild(tr);
       });
       tbody.querySelectorAll("button[data-ptm]").forEach(btn=>{
@@ -645,6 +819,7 @@
           const out2 = await res2.json();
           alert(out2.message || "Pertemuan diubah ke: "+judul);
           loadPertemuanList();
+          loadHome();
         });
       });
       tbody.querySelectorAll("button[data-del]").forEach(btn=>{
@@ -657,6 +832,7 @@
         });
       });
     }
+
     document.getElementById("form-agenda").addEventListener("submit", async (e)=>{
       e.preventDefault();
       const msg = document.getElementById("ag-msg");
@@ -677,13 +853,16 @@
       else msg.textContent=out.message||"Gagal";
     });
 
-    // ================== POSTING ==================
-    async function loadPosting(){ /* sama juga */ 
+    // =============== POSTING ===============
+    async function loadPosting(){
       const res = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listPostingAdmin",token})});
       const out = await res.json();
       const tbody = document.getElementById("body-posting");
       tbody.innerHTML = "";
-      if (out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='5'>Belum ada posting.</td></tr>"; return; }
+      if (out.status!=="ok" || !out.data.length){
+        tbody.innerHTML="<tr><td colspan='5'>Belum ada posting.</td></tr>";
+        return;
+      }
       out.data.forEach(item=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `
@@ -691,7 +870,8 @@
           <td><b>${item.judul || '-'}</b><br><small>${(item.isi||'').substring(0,60)}</small></td>
           <td>${item.kategori || '-'}</td>
           <td>${item.status || '-'}</td>
-          <td><button class="btn-secondary" data-del="${item.id}">Hapus</button></td>`;
+          <td><button class="btn btn-secondary" data-del="${item.id}">Hapus</button></td>
+        `;
         tbody.appendChild(tr);
       });
       tbody.querySelectorAll("button[data-del]").forEach(btn=>{
@@ -704,6 +884,7 @@
         });
       });
     }
+
     document.getElementById("form-posting").addEventListener("submit", async(e)=>{
       e.preventDefault();
       const msg=document.getElementById("po-msg");
@@ -723,13 +904,16 @@
       else msg.textContent=out.message||"Gagal";
     });
 
-    // ================== ANGGOTA ==================
+    // =============== ANGGOTA ===============
     async function loadAnggota(){
       const res=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listAnggotaAdmin",token})});
       const out=await res.json();
       const tbody=document.getElementById("body-anggota");
       tbody.innerHTML="";
-      if(out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='9'>Belum ada anggota.</td></tr>"; return; }
+      if(out.status!=="ok" || !out.data.length){
+        tbody.innerHTML="<tr><td colspan='9'>Belum ada anggota.</td></tr>";
+        return;
+      }
       out.data.forEach(item=>{
         const tr=document.createElement("tr");
         tr.innerHTML=`
@@ -745,11 +929,11 @@
             <select class="input" data-nis="${item.nis}" data-field="tipe">
               <option value="">(tetap)</option>
               <option value="siswa-aktif"${item.tipe==='siswa-aktif'?' selected':''}>Siswa aktif</option>
-              <option value="guru"${item.tipe==='guru'?' selected':''}>Guru</option>
+              <option value="guru"${item.tipe==='guru'?' selected':''}>Guru/Tendik</option>
               <option value="alumni"${item.tipe==='alumni'?' selected':''}>Alumni</option>
-              <option value="non-32"${item.tipe==='non-32'?' selected':''}>Non 32</option>
+              <option value="non-32"${item.tipe==='non-32'?' selected':''}>Anggota lain</option>
             </select>
-            <button class="btn-secondary btn-simpan" data-nis="${item.nis}">Simpan</button>
+            <button class="btn btn-secondary btn-simpan" data-nis="${item.nis}">Simpan</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -785,13 +969,16 @@
       });
     }
 
-    // ================== KEPENGURUSAN ==================
+    // =============== KEPENGURUSAN ===============
     async function loadStruktur(){
       const res=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listStrukturKepengurusan",token})});
       const out=await res.json();
       const tbody=document.getElementById("body-struktur");
       tbody.innerHTML="";
-      if(out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='8'>Belum ada data.</td></tr>"; return; }
+      if(out.status!=="ok" || !out.data.length){
+        tbody.innerHTML="<tr><td colspan='8'>Belum ada data.</td></tr>";
+        return;
+      }
       out.data.forEach((row,i)=>{
         const sheetRow = i+2;
         const tr=document.createElement("tr");
@@ -803,7 +990,7 @@
           <td><input class="input" value="${row.foto||''}" disabled></td>
           <td><input class="input" value="${row.periode||''}" data-row="${sheetRow}" data-field="periode"></td>
           <td><input class="input" value="${row.keterangan||''}" data-row="${sheetRow}" data-field="keterangan"></td>
-          <td><button class="btn-secondary btn-save-struktur" data-row="${sheetRow}">Simpan</button></td>
+          <td><button class="btn btn-secondary btn-save-struktur" data-row="${sheetRow}">Simpan</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -826,7 +1013,10 @@
       const out=await res.json();
       const tbody=document.getElementById("body-arsip");
       tbody.innerHTML="";
-      if(out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='7'>Belum ada arsip.</td></tr>"; return; }
+      if(out.status!=="ok" || !out.data.length){
+        tbody.innerHTML="<tr><td colspan='7'>Belum ada arsip.</td></tr>";
+        return;
+      }
       out.data.forEach((row,i)=>{
         const sheetRow=i+2;
         const tr=document.createElement("tr");
@@ -837,7 +1027,7 @@
           <td><input class="input" value="${row.wakilNIS||''}" data-rowa="${sheetRow}" data-field="wakilNIS"></td>
           <td><input class="input" value="${row.sekNIS||''}" data-rowa="${sheetRow}" data-field="sekNIS"></td>
           <td><input class="input" value="${row.keterangan||''}" data-rowa="${sheetRow}" data-field="keterangan"></td>
-          <td><button class="btn-secondary btn-save-arsip" data-rowa="${sheetRow}">Simpan</button></td>
+          <td><button class="btn btn-secondary btn-save-arsip" data-rowa="${sheetRow}">Simpan</button></td>
         `;
         tbody.appendChild(tr);
       });
@@ -863,9 +1053,7 @@
       localStorage.removeItem("hc32_admin_tipe");
       window.location.href = LOGIN_URL;
     }
-    document.getElementById("btn-open-sites").addEventListener("click",()=>{
-      window.open(LOGIN_URL,"_blank");
-    });
+    document.getElementById("btn-logout").addEventListener("click", doLogout);
   </script>
 </body>
 </html>
