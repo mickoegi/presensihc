@@ -8,6 +8,18 @@ const HC32_WEBAPP = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1
 // Halaman login (kalau token habis / tidak ada)
 const HC32_LOGIN_PAGE = "admin.html";
 
+// ------------------------
+// helper URL
+// ------------------------
+function hc32_getQuery() {
+  const p = {};
+  const url = new URL(window.location.href);
+  url.searchParams.forEach((v, k) => {
+    p[k] = v;
+  });
+  return p;
+}
+
 // ambil token dari localStorage
 function hc32_getToken() {
   return localStorage.getItem("hc32_admin_token") || "";
@@ -39,7 +51,6 @@ async function hc32_post(action, payload = {}) {
     method: "POST",
     body: JSON.stringify(body),
   });
-  // kalau Apps Script kadang balikin HTML error, cegah JSON error
   const text = await res.text();
   try {
     return JSON.parse(text);
