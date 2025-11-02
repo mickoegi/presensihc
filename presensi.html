@@ -316,70 +316,59 @@
     }
 
     async function sendPresensi(id, source) {
-      const cleanId = (id || '').replace(/[^0-9]/g, '');
-      if (!cleanId) {
-        setStatus('error', 'Input kosong', 'Masukkan NIS / NISN / NIP yang valid.');
-        soundError && soundError.play().catch(()=>{});
-        return;
-      }
+  const cleanId = (id || '').replace(/[^0-9]/g, '');
+  if (!cleanId) {
+    setStatus('error', 'Input kosong', 'Masukkan NIS / NISN / NIP yang valid.');
+    soundError && soundError.play().catch(()=>{});
+    return;
+  }
 
-      if (source === 'scanner') scannerOverlay.style.display = 'flex';
-      if (source === 'manual') manualOverlay.style.display = 'flex';
+  if (source === 'scanner') scannerOverlay.style.display = 'flex';
+  if (source === 'manual') manualOverlay.style.display = 'flex';
+  setStatus('loading', 'Mengirim presensi...', 'Harap tunggu sebentar.');
 
-      setStatus('loading', 'Mengirim presensi...', 'Harap tunggu sebentar.');
+  try {
+    // ←← kirim pakai FormData
+    const fd = new FormData();
+    fd.append('action', 'presensi');
+    fd.append('nis', cleanId);
 
-      try {
-        const res = await fetch(WEB_APP_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          redirect: 'follow',
-          body: JSON.stringify({ action: 'presensi', nis: cleanId })
-        });
+    const res = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: fd
+    });
 
-        const text = await res.text();
-        let json = null;
-        try {
-          json = JSON.parse(text);
-        } catch (e) {
-          // bukan JSON -> kemungkinan bukan “Anyone”
-          throw new Error("Respon bukan JSON.\n" + text);
-        }
+    const text = await res.text();
+    const json = JSON.parse(text);
 
-        scannerOverlay.style.display = 'none';
-        manualOverlay.style.display = 'none';
-        scanAnim.classList.add('hidden');
+    scannerOverlay.style.display = 'none';
+    manualOverlay.style.display = 'none';
+    scanAnim.classList.add('hidden');
 
-        if (json.status === 'ok') {
-          setStatus('success', 'Presensi berhasil', `${json.nama} • ${json.pertemuan}`);
-          showResult(json);
-          soundSuccess && soundSuccess.play().catch(()=>{});
-          manualInput.value = '';
-        } else if (json.status === 'duplicate') {
-          setStatus('error', 'Presensi ditolak', 'Anggota ini sudah presensi hari ini.');
-          soundError && soundError.play().catch(()=>{});
-        } else if (json.status === 'not-registered') {
-          setStatus('error', 'ID tidak ditemukan', 'Periksa lagi NIS / NISN / NIP atau daftarkan dulu.');
-          soundError && soundError.play().catch(()=>{});
-        } else {
-          setStatus('error', 'Gagal mengirim', json.message || 'Terjadi kesalahan.');
-          soundError && soundError.play().catch(()=>{});
-        }
-
-      } catch (err) {
-        scannerOverlay.style.display = 'none';
-        manualOverlay.style.display = 'none';
-        scanAnim.classList.add('hidden');
-
-        // tampilkan isi error supaya kamu tahu
-        setStatus(
-          'error',
-          'Gagal terhubung',
-          'Periksa koneksi internet atau URL Apps Script.',
-          err.message
-        );
-        soundError && soundError.play().catch(()=>{});
-      }
+    if (json.status === 'ok') {
+      setStatus('success', 'Presensi berhasil', `${json.nama} • ${json.pertemuan}`);
+      showResult(json);
+      soundSuccess && soundSuccess.play().catch(()=>{});
+      manualInput.value = '';
+    } else if (json.status === 'duplicate') {
+      setStatus('error', 'Presensi ditolak', 'Anggota ini sudah presensi hari ini.');
+      soundError && soundError.play().catch(()=>{});
+    } else if (json.status === 'not-registered') {
+      setStatus('error', 'ID tidak ditemukan', 'Periksa lagi NIS / NISN / NIP atau daftarkan dulu.');
+      soundError && soundError.play().catch(()=>{});
+    } else {
+      setStatus('error', 'Gagal mengirim', json.message || 'Terjadi kesalahan.');
+      soundError && soundError.play().catch(()=>{});
     }
+
+  } catch (err) {
+    scannerOverlay.style.display = 'none';
+    manualOverlay.style.display = 'none';
+    scanAnim.classList.add('hidden');
+    setStatus('error', 'Gagal terhubung', 'Periksa koneksi internet atau URL Apps Script.', err.message);
+    soundError && soundError.play().catch(()=>{});
+  }
+}
 
     manualBtn.addEventListener('click', () => {
       sendPresensi(manualInput.value, 'manual');
