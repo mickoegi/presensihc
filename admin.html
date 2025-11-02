@@ -1,73 +1,7 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <!doctype html>
-<html lang="id">
-<head>
-  <meta charset="utf-8">
-  <title>Login Pengurus HC 32</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="config.js"></script>
-  <style>
-    body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; background:#e2e8f0; display:flex;min-height:100vh;align-items:center;justify-content:center; }
-    .box { background:#fff; padding:20px 22px; border-radius:14px; width:100%; max-width:370px; box-shadow:0 10px 35px rgba(15,23,42,.08); }
-    h1 { margin:0 0 16px 0; font-size:1.1rem; }
-    label { display:block; font-size:.7rem; margin-bottom:4px; }
-    input { width:100%; padding:7px 8px; border:1px solid #cbd5e1; border-radius:7px; outline:none; font-size:.78rem; }
-    button { width:100%; background:#005A9C; color:#fff; border:none; padding:7px 8px; border-radius:7px; margin-top:10px; cursor:pointer; }
-    .small { font-size:.65rem; color:#64748b; margin-top:8px; }
-    .err { background:#fee2e2; color:#b91c1c; padding:6px 8px; border-radius:6px; font-size:.67rem; margin-bottom:6px; display:none; }
-  </style>
-</head>
-<body>
-  <div class="box">
-    <h1>Pengurus HC 32</h1>
-    <div id="err" class="err"></div>
-    <label>Username</label>
-    <input id="u" autocomplete="off">
-    <label style="margin-top:8px;">Password</label>
-    <input id="p" type="password">
-    <button id="btn-login">Masuk</button>
-    <p class="small">Gunakan akun dari sheet <b>AkunPengurus</b>.</p>
-  </div>
-
-  <script>
-    document.getElementById("btn-login").addEventListener("click", async ()=>{
-      const u = document.getElementById("u").value.trim();
-      const p = document.getElementById("p").value.trim();
-      const err = document.getElementById("err");
-      err.style.display = "none";
-
-      if (!u || !p) {
-        err.textContent = "Lengkapi username & password.";
-        err.style.display = "block";
-        return;
-      }
-
-      try {
-        const res = await hc32_post("loginAdmin", { username: u, password: p });
-        if (res.status !== "ok") {
-          err.textContent = res.message || "Gagal login.";
-          err.style.display = "block";
-          return;
-        }
-        // simpan
-        localStorage.setItem("hc32_admin_token", res.token);
-        localStorage.setItem("hc32_admin_nama",  res.nama);
-        localStorage.setItem("hc32_admin_username", res.username);
-        localStorage.setItem("hc32_admin_role",  res.role);
-        localStorage.setItem("hc32_admin_tipe",  res.tipe);
-        // pindah
-        window.location.href = "admin-dashboard.html";
-      } catch(e) {
-        err.textContent = "Tidak bisa terhubung ke Apps Script.";
-        err.style.display = "block";
-      }
-    });
-  </script>
-</body>
-</html>
-
   <meta charset="utf-8">
   <title>Panel Pengurus • History Club 32</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
