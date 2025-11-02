@@ -241,7 +241,6 @@
 
   <!-- AUDIO -->
   <audio id="sound-success" preload="auto">
-    <!-- bunyi pendek -->
     <source src="data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAQAAAAAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A" type="audio/wav">
   </audio>
   <audio id="sound-error" preload="auto">
@@ -286,7 +285,7 @@
     let lastScannedCode = "";
     let lastScanTime    = 0;
 
-    /* ========== header dropdown ========== */
+    /* ===== HEADER DROPDOWN ===== */
     menuBtn.addEventListener('click', () => {
       menuDropdown.style.display = (menuDropdown.style.display === 'block') ? 'none' : 'block';
     });
@@ -296,7 +295,7 @@
       }
     });
 
-    /* ========== helper status ========== */
+    /* ===== STATUS HELPER ===== */
     function setStatus(type, title, msg, raw) {
       statusBox.className = "bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-4 flex gap-3 items-center";
       statusIcon.innerHTML = "";
@@ -337,7 +336,7 @@
       }
     }
 
-    /* ========== kirim presensi (POST + fallback GET) ========== */
+    /* ===== KIRIM PRESENSI ===== */
     async function sendPresensi(id, source) {
       const cleanId = (id || '').replace(/[^0-9]/g, '');
       if (!cleanId) {
@@ -346,35 +345,33 @@
         return;
       }
 
-      // tampilkan overlay sesuai sumber
       if (source === 'scanner') scannerOverlay.style.display = 'flex';
       if (source === 'manual')  manualOverlay.style.display  = 'flex';
       setStatus('loading', 'Mengirim presensi...', 'Harap tunggu sebentar.');
 
-      /* ===== 1. COBA POST (FormData) ===== */
+      // 1) coba POST JSON
       try {
-        const fd = new FormData();
-        fd.append('action', 'presensi');
-        fd.append('nis', cleanId);
-
-        const res  = await fetch(WEB_APP_URL, { method: 'POST', body: fd });
+        const res = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'presensi', nis: cleanId })
+        });
         const text = await res.text();
         const json = JSON.parse(text);
-
         handlePresensiResponse(json);
         return;
-      } catch (err1) {
-        console.warn('POST gagal, coba GET...', err1);
+      } catch (e1) {
+        console.warn('POST JSON gagal, coba GET...', e1);
       }
 
-      /* ===== 2. FALLBACK GET ===== */
+      // 2) fallback GET
       try {
         const url  = WEB_APP_URL + '?action=presensi&nis=' + encodeURIComponent(cleanId);
-        const res  = await fetch(url, { method: 'GET' });
+        const res  = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text);
         handlePresensiResponse(json);
-      } catch (err2) {
+      } catch (e2) {
         scannerOverlay.style.display = 'none';
         manualOverlay.style.display  = 'none';
         scanAnim.classList.add('hidden');
@@ -383,7 +380,7 @@
           'error',
           'Gagal terhubung',
           'Periksa lagi URL Apps Script atau pengaturan akses deploy.',
-          err2 && err2.message ? err2.message : ''
+          e2 && e2.message ? e2.message : ''
         );
         soundError && soundError.play().catch(()=>{});
       }
@@ -417,7 +414,7 @@
       }
     }
 
-    /* ========== input manual ========== */
+    /* ===== INPUT MANUAL ===== */
     manualBtn.addEventListener('click', () => {
       sendPresensi(manualInput.value, 'manual');
     });
@@ -427,7 +424,7 @@
       }
     });
 
-    /* ========== start kamera ========== */
+    /* ===== START KAMERA ===== */
     btnStartCamera.addEventListener('click', async () => {
       if (cameraOn) return;
       try {
@@ -442,7 +439,6 @@
           cameraConfig,
           (decodedText) => {
             const now = Date.now();
-            // anti dobel 1.5 detik
             if (decodedText === lastScannedCode && (now - lastScanTime) < 1500) {
               return;
             }
@@ -461,4 +457,7 @@
         qrPlaceholder.classList.remove('hidden');
         qrReaderDiv.classList.add('hidden');
       }
-    }
+    });
+  </script>
+</body>
+</html>
