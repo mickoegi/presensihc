@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Anggota • Pengurus HC 32</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="config.js"></script>
+  <style>
+    :root { --hc-blue:#005A9C; --bg:#f1f5f9; }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);min-height:100vh;display:flex;}
+    .sidebar{width:230px;background:#0f172a;color:white;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:50;transition:.25s;}
+    .sidebar-header{padding:14px 16px 10px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center;}
+    .avatar{width:38px;height:38px;border-radius:999px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:700;}
+    .nav-item{padding:9px 16px;display:flex;gap:8px;align-items:center;cursor:pointer;font-size:.82rem;border-left:3px solid transparent;}
+    .nav-item.active{background:rgba(255,255,255,.06);border-left-color:#38bdf8;}
+    .nav-item:hover{background:rgba(255,255,255,.03);}
+    @media(max-width:900px){.sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);}}
+    .main{flex:1;margin-left:230px;display:flex;flex-direction:column;min-height:100vh;}
+    @media(max-width:900px){.main{margin-left:0;}}
+    header{background:white;padding:8px 16px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;}
+    #btn-open-sidebar{display:none;background:white;border:1px solid #cbd5e1;border-radius:6px;width:30px;height:30px;align-items:center;justify-content:center;cursor:pointer;}
+    @media(max-width:900px){#btn-open-sidebar{display:inline-flex;}}
+    .content{padding:16px 18px 70px 18px;flex:1;}
+    .card{background:white;border-radius:14px;padding:14px;box-shadow:0 8px 24px rgba(15,23,42,.03);margin-bottom:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:6px 6px;border-bottom:1px solid #e2e8f0;font-size:.74rem;}
+    th{background:#e2e8f0;text-align:left;}
+    .input{width:100%;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:.7rem;}
+    .btn-secondary{background:white;border:1px solid #cbd5e1;border-radius:6px;padding:4px 7px;font-size:.68rem;cursor:pointer;margin-top:4px;}
+    footer{background:#06243d;color:white;text-align:center;padding:10px 12px 30px 12px;font-size:.7rem;}
+  </style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="avatar">HC</div>
+      <div>
+        <div id="sb-name">Pengurus</div>
+        <div id="sb-role" style="font-size:.65rem;opacity:.6;">-</div>
+      </div>
+    </div>
+    <div class="nav-item" data-link="admin-dashboard.html">📊 Dashboard & Presensi</div>
+    <div class="nav-item" data-link="admin-agenda.html">🗓 Agenda</div>
+    <div class="nav-item" data-link="admin-posting.html">📰 Posting</div>
+    <div class="nav-item active" data-link="admin-anggota.html">👥 Anggota</div>
+    <div class="nav-item" data-link="admin-kepengurusan.html">🏛 Kepengurusan</div>
+    <div class="nav-item" id="btn-logout">🚪 Keluar</div>
+  </aside>
+
+  <div class="main">
+    <header>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button id="btn-open-sidebar">☰</button>
+        <div style="font-weight:600;">Data Anggota</div>
+        <div style="font-size:.65rem;color:#94a3b8;">Pendaftaran → Anggota</div>
+      </div>
+      <div id="top-info" style="font-size:.7rem;color:#64748b;"></div>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <h2 style="margin-top:0;">Daftar Anggota</h2>
+        <p style="font-size:.65rem;color:#94a3b8;">Edit langsung di sini lalu klik Simpan.</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th>Kelas</th>
+                <th>Angkatan</th>
+                <th>No HP</th>
+                <th>Email</th>
+                <th>Foto</th>
+                <th>Jabatan/Tahun</th>
+                <th>Tipe</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="body-anggota">
+              <tr><td colspan="10">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      © 2025 History Club SMAN 32 Jakarta. Dibuat dan dikembangkan oleh @vitezegi.
+    </footer>
+  </div>
+
+  <script>
+    const token = hc32_getToken();
+    if (!token) window.location.href = "admin.html";
+
+    const nm = localStorage.getItem("hc32_admin_nama") || "Pengurus";
+    const rl = localStorage.getItem("hc32_admin_role") || "pengurus";
+    const tp = localStorage.getItem("hc32_admin_tipe") || "-";
+    document.getElementById("sb-name").textContent = nm;
+    document.getElementById("sb-role").textContent = tp + " • " + rl;
+    document.getElementById("top-info").textContent = nm + " • " + rl;
+
+    const sb = document.getElementById("sidebar");
+    document.getElementById("btn-open-sidebar").addEventListener("click", ()=> sb.classList.toggle("open"));
+
+    document.querySelectorAll(".nav-item[data-link]").forEach(i=>{
+      i.addEventListener("click", ()=> window.location.href = i.getAttribute("data-link"));
+    });
+    document.getElementById("btn-logout").addEventListener("click", ()=> hc32_logout());
+
+    async function loadAnggota(){
+      const out = await hc32_post("listAnggotaAdmin", { token });
+      const tbody = document.getElementById("body-anggota");
+      tbody.innerHTML = "";
+      if (out.status !== "ok" || !out.data.length) {
+        tbody.innerHTML = "<tr><td colspan='10'>Belum ada anggota.</td></tr>";
+        return;
+      }
+      out.data.forEach(item=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${item.nis}</td>
+          <td><input class="input" value="${item.nama||''}" data-nis="${item.nis}" data-field="nama"></td>
+          <td><input class="input" value="${item.kelas||''}" data-nis="${item.nis}" data-field="kelas"></td>
+          <td><input class="input" value="${item.angkatan||''}" data-nis="${item.nis}" data-field="angkatan"></td>
+          <td><input class="input" value="${item.nohp||''}" data-nis="${item.nis}" data-field="nohp"></td>
+          <td><input class="input" value="${item.email||''}" data-nis="${item.nis}" data-field="email"></td>
+          <td><input class="input" value="${item.foto||''}" data-nis="${item.nis}" data-field="foto"></td>
+          <td><input class="input" value="${item.jabatan||item.tahunLulus||''}" data-nis="${item.nis}" data-field="jabatan"></td>
+          <td>
+            <select class="input" data-nis="${item.nis}" data-field="tipe">
+              <option value="">(tetap)</option>
+              <option value="siswa-aktif"${item.tipe==='siswa-aktif'?' selected':''}>Siswa aktif</option>
+              <option value="guru"${item.tipe==='guru'?' selected':''}>Guru</option>
+              <option value="alumni"${item.tipe==='alumni'?' selected':''}>Alumni</option>
+              <option value="non-32"${item.tipe==='non-32'?' selected':''}>Non 32</option>
+            </select>
+          </td>
+          <td><button class="btn-secondary" data-nis="${item.nis}">Simpan</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("button[data-nis]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const nis = btn.getAttribute("data-nis");
+          const inputs = tbody.querySelectorAll(`[data-nis='${nis}']`);
+          const payload = { nis };
+          inputs.forEach(inp=>{
+            payload[inp.getAttribute("data-field")] = inp.value;
+          });
+          // simpan utama
+          const out1 = await hc32_post("updateAnggotaAdmin", {
+            token,
+            nis,
+            nama: payload.nama,
+            kelas: payload.kelas,
+            angkatan: payload.angkatan,
+            nohp: payload.nohp,
+            email: payload.email,
+            foto: payload.foto,
+            jabatan: payload.jabatan,
+            tahunLulus: payload.jabatan // sementara 1 kolom
+          });
+          if (out1.status !== "ok") {
+            alert(out1.message || "Gagal simpan.");
+            return;
+          }
+          if (payload.tipe) {
+            const out2 = await hc32_post("updateAnggotaTipe", { token, nis, tipe: payload.tipe });
+            if (out2.status !== "ok") {
+              alert(out2.message || "Gagal ubah tipe.");
+              return;
+            }
+          }
+          alert("Tersimpan.");
+          loadAnggota();
+        });
+      });
+    }
+
+    loadAnggota();
+  </script>
+</body>
+</html>
