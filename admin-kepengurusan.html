@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Kepengurusan • Pengurus HC 32</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="config.js"></script>
+  <style>
+    :root { --hc-blue:#005A9C; --bg:#f1f5f9; }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);min-height:100vh;display:flex;}
+    .sidebar{width:230px;background:#0f172a;color:white;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:50;transition:.25s;}
+    .sidebar-header{padding:14px 16px 10px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center;}
+    .avatar{width:38px;height:38px;border-radius:999px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-weight:700;}
+    .nav-item{padding:9px 16px;display:flex;gap:8px;align-items:center;cursor:pointer;font-size:.82rem;border-left:3px solid transparent;}
+    .nav-item.active{background:rgba(255,255,255,.06);border-left-color:#38bdf8;}
+    .nav-item:hover{background:rgba(255,255,255,.03);}
+    @media(max-width:900px){.sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);}}
+    .main{flex:1;margin-left:230px;display:flex;flex-direction:column;min-height:100vh;}
+    @media(max-width:900px){.main{margin-left:0;}}
+    header{background:white;padding:8px 16px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;}
+    #btn-open-sidebar{display:none;background:white;border:1px solid #cbd5e1;border-radius:6px;width:30px;height:30px;align-items:center;justify-content:center;cursor:pointer;}
+    @media(max-width:900px){#btn-open-sidebar{display:inline-flex;}}
+    .content{padding:16px 18px 70px 18px;flex:1;}
+    .card{background:white;border-radius:14px;padding:14px;box-shadow:0 8px 24px rgba(15,23,42,.03);margin-bottom:14px;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:6px 6px;border-bottom:1px solid #e2e8f0;font-size:.74rem;}
+    th{background:#e2e8f0;text-align:left;}
+    .input{width:100%;padding:4px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:.7rem;}
+    .btn-secondary{background:white;border:1px solid #cbd5e1;border-radius:6px;padding:4px 7px;font-size:.68rem;cursor:pointer;}
+    footer{background:#06243d;color:white;text-align:center;padding:10px 12px 30px 12px;font-size:.7rem;}
+  </style>
+</head>
+<body>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="avatar">HC</div>
+      <div>
+        <div id="sb-name">Pengurus</div>
+        <div id="sb-role" style="font-size:.65rem;opacity:.6;">-</div>
+      </div>
+    </div>
+    <div class="nav-item" data-link="admin-dashboard.html">📊 Dashboard & Presensi</div>
+    <div class="nav-item" data-link="admin-agenda.html">🗓 Agenda</div>
+    <div class="nav-item" data-link="admin-posting.html">📰 Posting</div>
+    <div class="nav-item" data-link="admin-anggota.html">👥 Anggota</div>
+    <div class="nav-item active" data-link="admin-kepengurusan.html">🏛 Kepengurusan</div>
+    <div class="nav-item" id="btn-logout">🚪 Keluar</div>
+  </aside>
+
+  <div class="main">
+    <header>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button id="btn-open-sidebar">☰</button>
+        <div style="font-weight:600;">Struktur & Arsip Kepengurusan</div>
+        <div style="font-size:.65rem;color:#94a3b8;">Data diambil dari sheet StrukturKepengurusan & ArsipKepengurusan</div>
+      </div>
+      <div id="top-info" style="font-size:.7rem;color:#64748b;"></div>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <h2 style="margin-top:0;">Struktur Berjalan</h2>
+        <p style="font-size:.65rem;color:#94a3b8;">Isi NIS saja → nama & foto langsung terisi dari keanggotaan.</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Jabatan</th>
+                <th>NIS</th>
+                <th>Nama</th>
+                <th>Foto</th>
+                <th>Periode</th>
+                <th>Keterangan</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="body-struktur">
+              <tr><td colspan="8">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0;">Arsip Kepengurusan</h2>
+        <p style="font-size:.65rem;color:#94a3b8;">Isi NIS Ketua / Wakil / Sekretaris lalu simpan.</p>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Periode</th>
+                <th>Ketua (NIS)</th>
+                <th>Wakil (NIS)</th>
+                <th>Sekretaris (NIS)</th>
+                <th>Keterangan</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="body-arsip">
+              <tr><td colspan="7">Memuat...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      © 2025 History Club SMAN 32 Jakarta. Dibuat dan dikembangkan oleh @vitezegi.
+    </footer>
+  </div>
+
+  <script>
+    const token = hc32_getToken();
+    if (!token) window.location.href = "admin.html";
+
+    const nm = localStorage.getItem("hc32_admin_nama") || "Pengurus";
+    const rl = localStorage.getItem("hc32_admin_role") || "pengurus";
+    const tp = localStorage.getItem("hc32_admin_tipe") || "-";
+    document.getElementById("sb-name").textContent = nm;
+    document.getElementById("sb-role").textContent = tp + " • " + rl;
+    document.getElementById("top-info").textContent = nm + " • " + rl;
+
+    const sb = document.getElementById("sidebar");
+    document.getElementById("btn-open-sidebar").addEventListener("click", ()=> sb.classList.toggle("open"));
+    document.querySelectorAll(".nav-item[data-link]").forEach(i=>{
+      i.addEventListener("click", ()=> window.location.href = i.getAttribute("data-link"));
+    });
+    document.getElementById("btn-logout").addEventListener("click", ()=> hc32_logout());
+
+    async function loadStruktur(){
+      const out = await hc32_post("listStrukturKepengurusan", { token });
+      const tbody = document.getElementById("body-struktur");
+      tbody.innerHTML = "";
+      if (out.status !== "ok" || !out.data.length) {
+        tbody.innerHTML = "<tr><td colspan='8'>Belum ada data.</td></tr>";
+        return;
+      }
+      out.data.forEach((row,i)=>{
+        const sheetRow = i+2;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i+1}</td>
+          <td><input class="input" value="${row.jabatan||''}" data-row="${sheetRow}" data-field="jabatan"></td>
+          <td><input class="input" value="${row.nis||''}" data-row="${sheetRow}" data-field="nis"></td>
+          <td><input class="input" value="${row.nama||''}" disabled></td>
+          <td><input class="input" value="${row.foto||''}" disabled></td>
+          <td><input class="input" value="${row.periode||''}" data-row="${sheetRow}" data-field="periode"></td>
+          <td><input class="input" value="${row.keterangan||''}" data-row="${sheetRow}" data-field="keterangan"></td>
+          <td><button class="btn-secondary" data-row="${sheetRow}">Simpan</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("button[data-row]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const row = btn.getAttribute("data-row");
+          const inputs = tbody.querySelectorAll(`[data-row='${row}']`);
+          const payload = { action:"saveStrukturKepengurusan", token, row };
+          inputs.forEach(inp=>{
+            payload[inp.getAttribute("data-field")] = inp.value;
+          });
+          const out2 = await hc32_post("saveStrukturKepengurusan", payload);
+          alert(out2.status === "ok" ? "Tersimpan." : (out2.message || "Gagal."));
+          loadStruktur();
+        });
+      });
+    }
+
+    async function loadArsip(){
+      const out = await hc32_post("listArsipKepengurusan", { token });
+      const tbody = document.getElementById("body-arsip");
+      tbody.innerHTML = "";
+      if (out.status !== "ok" || !out.data.length) {
+        tbody.innerHTML = "<tr><td colspan='7'>Belum ada arsip.</td></tr>";
+        return;
+      }
+      out.data.forEach((row,i)=>{
+        const sheetRow = i+2;
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${i+1}</td>
+          <td><input class="input" value="${row.periode||''}" data-rowa="${sheetRow}" data-field="periode"></td>
+          <td><input class="input" value="${row.ketuaNIS||''}" data-rowa="${sheetRow}" data-field="ketuaNIS"></td>
+          <td><input class="input" value="${row.wakilNIS||''}" data-rowa="${sheetRow}" data-field="wakilNIS"></td>
+          <td><input class="input" value="${row.sekNIS||''}" data-rowa="${sheetRow}" data-field="sekNIS"></td>
+          <td><input class="input" value="${row.keterangan||''}" data-rowa="${sheetRow}" data-field="keterangan"></td>
+          <td><button class="btn-secondary" data-rowa="${sheetRow}">Simpan</button></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("button[data-rowa]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const row = btn.getAttribute("data-rowa");
+          const inputs = tbody.querySelectorAll(`[data-rowa='${row}']`);
+          const payload = { action: "saveArsipKepengurusan", token, row };
+          inputs.forEach(inp=>{
+            payload[inp.getAttribute("data-field")] = inp.value;
+          });
+          const out2 = await hc32_post("saveArsipKepengurusan", payload);
+          alert(out2.status === "ok" ? "Tersimpan." : (out2.message || "Gagal."));
+          loadArsip();
+        });
+      });
+    }
+
+    loadStruktur();
+    loadArsip();
+  </script>
+</body>
+</html>
