@@ -64,10 +64,10 @@
 </head>
 <body>
 
-  <div class="box">
+  <div class="box" id="login-box">
     <div class="logo">HC</div>
     <h1>Panel Pengurus</h1>
-    <p>Masuk dengan NIS / NIP / NISN + password yang dibuat Ketua.</p>
+    <p>Masuk dengan NIS / NIP / NISN + password.</p>
 
     <label for="username">NIS / NIP / NISN</label>
     <input id="username" autocomplete="off" />
@@ -82,12 +82,28 @@
   </div>
 
   <script>
-    // kalau sudah login, langsung ke dashboard
-    const existing = hc32_getToken();
-    if (existing) {
+    // 1) cek apakah ada token di QUERY dari web utama
+    const q = hc32_getQuery();
+    if (q.token) {
+      // simpan ke localStorage
+      hc32_saveSession({
+        token: q.token,
+        username: q.u || "",
+        nama: q.n || "",
+        role: q.role || "",
+        tipe: q.t || ""
+      });
+      // langsung lempar ke dashboard
       window.location.href = "admin-dashboard.html";
+    } else {
+      // 2) kalau nggak ada token di URL, cek localStorage
+      const existing = hc32_getToken();
+      if (existing) {
+        window.location.href = "admin-dashboard.html";
+      }
     }
 
+    // 3) fallback: login manual
     document.getElementById("btn-login").addEventListener("click", doLogin);
     document.getElementById("password").addEventListener("keyup", e => {
       if (e.key === "Enter") doLogin();
