@@ -4,591 +4,461 @@
   <meta charset="UTF-8" />
   <title>Presensi Kegiatan HC 32</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <!-- QR -->
-  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.10/html5-qrcode.min.js"></script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- QR / Barcode -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
   <style>
     :root {
-      --hc-blue: #005a9c;
-      --hc-dark: #0a2540;
-      --hc-green: #2ebf6e;
-      --hc-red: #e53935;
-      --hc-bg: #dde6f0;
+      --hc-blue: #005A9C;
+      --hc-dark: #0A2540;
+      --hc-green: #0f766e;
+      --hc-red: #dc2626;
     }
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: #dde6f0;
+      background: #dfe8f2;
+      min-height: 100vh;
     }
-
-    /* HEADER */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 10px 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,.06);
-    }
-    .topbar-logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 999px;
-      background: var(--hc-blue);
-      color: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .topbar-title { flex: 1; }
-    .topbar-title h1 {
-      margin: 0;
-      font-size: 16px;
-      font-weight: 700;
-      color: #0c2138;
-    }
-    .topbar-title p {
-      margin: 0;
-      font-size: 12px;
-      color: #718096;
-    }
-    .topbar-menu { position: relative; }
-    .menu-btn {
-      width: 34px; height: 34px;
-      border: none; background: transparent;
-      border-radius: 999px;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
-      font-size: 20px;
-    }
-    .menu-panel {
-      position: absolute;
-      right: 0;
-      top: 42px;
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 10px 28px rgba(15,23,42,.12);
+    .scanner-frame {
+      border: 3px dashed var(--hc-blue);
+      border-radius: 1.5rem;
       overflow: hidden;
-      width: 170px;
-      display: none;
-      z-index: 50;
-    }
-    .menu-panel a {
-      display: block;
-      padding: 10px 14px;
-      text-decoration: none;
-      color: #0c2138;
-      font-size: 13px;
-    }
-    .menu-panel a:hover { background: #f1f5f9; }
-
-    .page {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 16px 16px 120px;
-    }
-
-    /* TOAST BAR */
-    .toast {
-      position: fixed;
-      top: 66px;
-      left: 50%;
-      transform: translateX(-50%);
-      min-width: min(92%, 440px);
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      background: #fff;
-      border-radius: 18px;
-      padding: 12px 14px 12px 12px;
-      box-shadow: 0 10px 30px rgba(15,23,42,.12);
-      z-index: 90;
-      border-left: 7px solid transparent;
-      transition: opacity .25s ease, transform .25s ease;
-    }
-    .toast--hidden {
-      opacity: 0;
-      pointer-events: none;
-      transform: translate(-50%, -10px);
-    }
-    .toast-icon {
-      width: 34px; height: 34px;
-      border-radius: 999px;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-size: 16px; font-weight: 700;
-      flex: 0 0 34px;
-    }
-    .toast-body { flex: 1; }
-    .toast-title { font-weight: 700; margin-bottom: 2px; }
-    .toast-text { font-size: 12px; color: #5f6974; }
-    .toast-success { border-left-color: #2ebf6e; }
-    .toast-success .toast-icon { background: #2ebf6e; }
-    .toast-error { border-left-color: #e53935; }
-    .toast-error .toast-icon { background: #e53935; }
-    .toast-info { border-left-color: #005a9c; }
-    .toast-info .toast-icon { background: #005a9c; }
-    .toast-close {
-      border: none; background: transparent;
-      font-size: 16px; cursor: pointer;
-      color: #475569;
-    }
-
-    /* scanner */
-    .scanner-card {
       background: #000;
-      border: 4px dashed var(--hc-blue);
-      border-radius: 24px;
-      overflow: hidden;
-      min-height: 180px;
+      position: relative;
     }
-    #reader { width: 100%; min-height: 180px; }
-
-    .card-white {
-      background: #fff;
-      border-radius: 24px;
-      padding: 18px 20px;
-      margin-top: 16px;
-      box-shadow: 0 6px 22px rgba(15,23,42,.05);
-    }
-
-    .btn-primary {
-      background: var(--hc-blue);
-      color: #fff;
-      border: none;
-      border-radius: 18px;
-      font-weight: 600;
-      padding: 14px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      display: inline-flex;
-      gap: 8px;
+    .overlay-mini {
+      position: absolute;
+      inset: 0;
+      background: rgba(248, 250, 252, 0.92);
+      backdrop-filter: blur(2px);
+      display: none;
       align-items: center;
       justify-content: center;
+      z-index: 20;
     }
-    .btn-primary:disabled {
-      opacity: .5;
-      cursor: not-allowed;
-    }
-
-    .status-banner {
-      border-radius: 20px;
-      padding: 14px 16px;
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      margin-top: 14px;
-    }
-    .status-icon {
-      width: 32px; height: 32px;
-      border-radius: 999px;
-      display: flex; align-items: center; justify-content: center;
-      color: #fff; font-weight: 700;
-      flex: 0 0 32px;
-    }
-    .status-info { background: #edf5ff; border: 1px solid rgba(0,90,156,.18); }
-    .status-info .status-icon { background: #005a9c; }
-    .status-warn { background: #ffe8e4; border: 1px solid rgba(229,57,53,.35); }
-    .status-warn .status-icon { background: #e53935; }
-    .status-nfc { background: #fff5d6; border: 1px solid rgba(253,187,45,.25); }
-
-    .input-row { display: flex; gap: 12px; margin-top: 10px; }
-    .input-control {
-      flex: 1;
-      border-radius: 16px;
-      border: 2px solid #d0d7e2;
-      padding: 10px 12px;
-      font-size: 16px;
-      outline: none;
-    }
-    .input-control:focus { border-color: var(--hc-blue); }
-    .btn-send {
-      border: none; background: var(--hc-blue); color: #fff;
-      border-radius: 16px; padding: 10px 16px;
-      font-weight: 600; cursor: pointer;
-    }
-
-    .help-card {
+    .dropdown-menu {
+      position: absolute;
+      right: 1rem;
+      top: 3.5rem;
       background: #fff;
-      border-radius: 24px;
-      padding: 18px 20px 24px;
-      margin-top: 22px;
-      box-shadow: 0 6px 22px rgba(15,23,42,.05);
-      border-left: 6px solid var(--hc-blue);
+      border-radius: .75rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,.12);
+      width: 190px;
+      display: none;
+      z-index: 40;
     }
-    .help-btn {
-      background: var(--hc-blue);
-      border: none;
-      border-radius: 18px;
-      color: #fff;
-      padding: 8px 14px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .55rem 1rem;
+      font-size: .85rem;
+      color: #0f172a;
     }
-
+    .dropdown-item:hover {
+      background: #eef4fb;
+      color: var(--hc-blue);
+    }
     footer {
-      background: #0a2540;
-      color: #e2ecf5;
-      text-align: center;
-      padding: 16px 10px 28px;
-      font-size: 13px;
-      margin-top: 28px;
+      background: #06243d;
+      color: #fff;
     }
-
-    @media (max-width: 640px){
-      .input-row { flex-direction: column; }
-      .page { padding: 16px 12px 120px; }
-      .scanner-card { border-radius: 0 0 24px 24px; }
+    .raw-error {
+      font-size: .65rem;
+      background: rgba(255,255,255,.35);
+      border-radius: .5rem;
+      padding: .35rem .55rem;
+      margin-top: .35rem;
+      word-break: break-all;
     }
   </style>
 </head>
-<body>
-  <!-- toast -->
-  <div id="toast" class="toast toast--hidden toast-info">
-    <div class="toast-icon" id="toast-icon">⟳</div>
-    <div class="toast-body">
-      <div class="toast-title" id="toast-title">Memproses...</div>
-      <div class="toast-text" id="toast-text">Harap tunggu sebentar.</div>
-    </div>
-    <button id="toast-close" class="toast-close">×</button>
-  </div>
+<body class="font-sans text-gray-800">
 
   <!-- HEADER -->
-  <header class="topbar">
-    <div class="topbar-logo">HC</div>
-    <div class="topbar-title">
-      <h1>Presensi Kegiatan HC 32</h1>
-      <p>SMAN 32 Jakarta</p>
-    </div>
-    <div class="topbar-menu">
-      <button class="menu-btn" id="menu-btn">⋯</button>
-      <div class="menu-panel" id="menu-panel">
-        <a href="https://sites.google.com/view/history-club-32/" target="_blank">Beranda</a>
-        <a href="https://sites.google.com/view/history-club-32/profil" target="_blank">Profil</a>
-        <a href="https://sites.google.com/view/history-club-32/aktivitas" target="_blank">Aktivitas</a>
-        <a href="https://sites.google.com/view/history-club-32/keanggotaan" target="_blank">Keanggotaan</a>
+  <header class="bg-white shadow mb-6 sticky top-0 z-30">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-full bg-[var(--hc-blue)] flex items-center justify-center text-white font-bold text-lg shadow">
+          HC
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-semibold text-[var(--hc-dark)] leading-tight">
+            Presensi Kegiatan HC 32
+          </h1>
+          <p class="text-xs text-gray-500 leading-tight">SMAN 32 Jakarta</p>
+        </div>
+      </div>
+      <div class="relative">
+        <button id="menu-btn" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M6 10a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm5 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm3 1.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+          </svg>
+        </button>
+        <div id="menu-dropdown" class="dropdown-menu">
+          <a href="https://sites.google.com/view/history-club-32" class="dropdown-item">Beranda</a>
+          <a href="https://sites.google.com/view/history-club-32/profil" class="dropdown-item">Profil</a>
+          <a href="https://sites.google.com/view/history-club-32/aktivitas" class="dropdown-item">Aktivitas</a>
+          <a href="https://sites.google.com/view/history-club-32/keanggotaan" class="dropdown-item">Keanggotaan</a>
+        </div>
       </div>
     </div>
   </header>
 
-  <main class="page">
+  <!-- MAIN -->
+  <main class="max-w-5xl mx-auto px-4 pb-32">
+    <div class="grid lg:grid-cols-2 gap-6">
 
-    <!-- SCANNER -->
-    <div class="scanner-card" id="scanner-box">
-      <div id="reader"></div>
+      <!-- PANEL SCANNER -->
+      <section class="bg-white rounded-2xl shadow p-4 md:p-6 relative">
+        <!-- overlay scanner -->
+        <div id="scanner-overlay" class="overlay-mini">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-8 h-8 border-4 border-blue-200 border-t-[var(--hc-blue)] rounded-full animate-spin"></div>
+            <p class="text-xs text-gray-500">Memeriksa presensi...</p>
+          </div>
+        </div>
+
+        <h2 class="text-xl md:text-2xl font-bold text-[var(--hc-dark)] mb-1">Pindai Barcode / QR</h2>
+        <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
+          <span class="w-10 h-[3px] bg-[var(--hc-blue)] inline-block rounded-full"></span>
+          Klik tombol untuk memulai kamera.
+        </p>
+
+        <!-- area kamera -->
+        <div id="camera-wrapper" class="scanner-frame mb-4 h-64 flex items-center justify-center">
+          <div id="qr-reader" class="hidden w-full h-full"></div>
+          <div id="qr-placeholder" class="flex flex-col items-center">
+            <p class="text-white/80 text-sm mb-2">Kamera belum aktif.</p>
+            <p class="text-white/50 text-xs">Tekan "Mulai Pindai Barcode"</p>
+          </div>
+          <!-- animasi garis scan -->
+          <div id="scan-anim" class="absolute inset-6 rounded-xl border-2 border-white/70 pointer-events-none hidden">
+            <div class="absolute inset-x-4 top-6 h-1 bg-white/60 animate-pulse"></div>
+          </div>
+        </div>
+
+        <!-- tombol aktifkan kamera -->
+        <button id="btn-start-camera"
+          class="w-full bg-[var(--hc-blue)] text-white font-semibold py-2.5 rounded-xl hover:bg-opacity-90 transition flex items-center justify-center gap-2 mb-1">
+          <span id="btn-start-text">Mulai Pindai Barcode</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+               viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
+                  d="M15 10l4.553-4.553a.5.5 0 01.854.353V18.2a.8.8 0 01-.8.8H4.5" />
+          </svg>
+        </button>
+        <p class="text-[0.65rem] text-gray-400 mt-1">Jika kamera tidak muncul, izinkan akses kamera dahulu.</p>
+      </section>
+
+      <!-- PANEL KANAN -->
+      <section class="flex flex-col gap-4">
+
+        <!-- status -->
+        <div id="status-box" class="bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-4 flex gap-3 items-center">
+          <div id="status-icon" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
+            <div class="w-6 h-6 rounded-full bg-slate-300"></div>
+          </div>
+          <div class="flex-1">
+            <p id="status-title" class="font-semibold text-sm text-slate-800">Menunggu presensi...</p>
+            <p id="status-msg" class="text-xs text-slate-500">Silakan pindai barcode atau isi NIS/NISN/NIP.</p>
+            <pre id="status-raw" class="raw-error hidden"></pre>
+          </div>
+        </div>
+
+        <!-- NFC -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm">
+          <div class="w-9 h-9 rounded-full bg-yellow-400/70 flex items-center justify-center text-yellow-900 font-bold text-sm">N</div>
+          <div>
+            <p class="font-semibold text-yellow-900 text-sm">NFC Reader</p>
+            <p class="text-xs text-yellow-700 leading-tight">Coming soon – tempel kartu anggota untuk presensi.</p>
+          </div>
+        </div>
+
+        <!-- input manual -->
+        <div class="bg-white rounded-2xl shadow p-4 md:p-6 relative">
+          <!-- overlay manual -->
+          <div id="manual-overlay" class="overlay-mini">
+            <div class="flex flex-col items-center gap-2">
+              <div class="w-7 h-7 border-4 border-blue-200 border-t-[var(--hc-blue)] rounded-full animate-spin"></div>
+              <p class="text-xs text-gray-500">Memeriksa data...</p>
+            </div>
+          </div>
+
+          <h3 class="font-semibold text-[var(--hc-dark)] mb-1">Input manual</h3>
+          <p class="text-xs text-gray-500 mb-3">Gunakan jika barcode tidak terbaca.</p>
+          <div class="flex gap-3 items-center">
+            <input id="manual-nis" type="text" inputmode="numeric"
+                   placeholder="mis. 321005 / NISN / NIP"
+                   class="flex-1 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--hc-blue)]">
+            <button id="btn-send-manual"
+                    class="px-4 py-2 rounded-xl bg-[var(--hc-blue)] text-white text-sm font-semibold hover:bg-opacity-90 transition">
+              Kirim
+            </button>
+          </div>
+        </div>
+
+        <!-- hasil presensi -->
+        <div id="result-box" class="hidden bg-white rounded-2xl shadow p-4 flex items-center gap-4">
+          <div id="result-avatar" class="w-16 h-16 rounded-full bg-[#06243d] flex items-center justify-center text-white font-bold text-xl border-[3px] border-[var(--hc-blue)] overflow-hidden object-cover">
+            HC
+          </div>
+          <div class="flex-1">
+            <p id="result-name" class="font-bold text-[var(--hc-dark)]">Nama Anggota</p>
+            <p id="result-meta" class="text-sm text-gray-500">Pertemuan • Jam</p>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="card-white">
-      <button id="btn-start-scan" class="btn-primary">
-        <span>Mulai Pindai Barcode</span>
-      </button>
-      <p style="margin-top:10px;color:#7b8794;font-size:13px">
-        Jika kamera tidak muncul, izinkan akses kamera terlebih dahulu.
-      </p>
-
-      <!-- status kirim (scan) -->
-      <div id="scan-status" class="status-banner status-info" style="display:none;">
-        <div class="status-icon">⟳</div>
-        <div>
-          <div class="status-text-title" id="scan-status-title">Mengirim presensi...</div>
-          <div id="scan-status-text" style="font-size:13px;">Harap tunggu sebentar.</div>
-        </div>
-      </div>
-
-      <!-- error koneksi -->
-      <div id="scan-network" class="status-banner status-warn" style="display:none;">
-        <div class="status-icon">✕</div>
-        <div>
-          <div class="status-text-title">Gagal terhubung</div>
-          <div style="font-size:13px;">Periksa koneksi internet atau URL Apps Script.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- NFC -->
-    <div class="card-white status-banner status-nfc" style="margin-top:18px;">
-      <div class="status-icon" style="background:#f5c542;color:#1f2937;">N</div>
+    <!-- BAR BANTUAN -->
+    <div class="mt-8 mb-6 bg-white rounded-2xl shadow flex flex-col md:flex-row items-center justify-between gap-3 px-5 py-4 border-l-4 border-[var(--hc-blue)]">
       <div>
-        <div class="status-text-title" style="color:#1f2937;">NFC Reader</div>
-        <div style="font-size:13px;color:#374151;">Coming soon – tempel kartu anggota untuk presensi.</div>
+        <p class="font-semibold text-[var(--hc-dark)] text-sm md:text-base">Butuh Bantuan?</p>
+        <p class="text-xs text-gray-500">Silakan hubungi Ketua HC <span class="font-semibold text-[var(--hc-blue)]">@vitezegi</span> atau pengurus yang sedang bertugas.</p>
       </div>
+      <a href="https://www.instagram.com/historyclub32jkt/" target="_blank"
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--hc-blue)] text-white text-sm">
+        Instagram HC 32
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M17.25 6.75L6.75 17.25M9 6.75h8.25V15" />
+        </svg>
+      </a>
     </div>
-
-    <!-- INPUT MANUAL -->
-    <div class="card-white" style="margin-top:18px;">
-      <h3 style="margin:0 0 4px;">Input manual</h3>
-      <p style="margin:0 0 10px;font-size:13px;color:#7b8794">Gunakan jika barcode tidak terbaca.</p>
-      <div class="input-row">
-        <input id="manual-id" maxlength="18" class="input-control" placeholder="NIS / NISN / NIP">
-        <button id="btn-kirim-manual" class="btn-send">Kirim</button>
-      </div>
-
-      <div id="manual-status" class="status-banner status-info" style="display:none;margin-top:14px;">
-        <div class="status-icon">⟳</div>
-        <div>
-          <div class="status-text-title" id="manual-status-title">Mengirim presensi...</div>
-          <div id="manual-status-text" style="font-size:13px;">Harap tunggu sebentar.</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BANTUAN -->
-    <div class="help-card">
-      <h3>Butuh Bantuan?</h3>
-      <p>Silakan hubungi Ketua HC <strong>@vitezegi</strong> atau pengurus yang sedang bertugas.</p>
-      <button class="help-btn" onclick="window.open('https://www.instagram.com/historyclub32jkt/','_blank')">
-        Instagram HC 32 →
-      </button>
-    </div>
-
   </main>
 
-  <footer>
-    © 2025 History Club SMAN 32 Jakarta. All rights reserved.<br>
-    Dibuat dan dikembangkan oleh @vitezegi.
+  <!-- FOOTER -->
+  <footer class="mt-auto">
+    <div class="max-w-5xl mx-auto px-4 py-6 text-center text-sm">
+      <p>© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
+      <p class="text-xs text-slate-200 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold">@vitezegi</span>.</p>
+    </div>
   </footer>
 
   <!-- AUDIO -->
   <audio id="sound-success" preload="auto">
-    <source src="data:audio/wav;base64,UklGRrQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YUQAAACAgICAgICAgICA" type="audio/wav">
+    <!-- bunyi pendek -->
+    <source src="data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAQAAAAAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A" type="audio/wav">
   </audio>
-  <audio id="sound-fail" preload="auto">
-    <source src="data:audio/wav;base64,UklGRpQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YRAAAAAAgP8A//8A/wD/" type="audio/wav">
+  <audio id="sound-error" preload="auto">
+    <source src="data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAQAAAAAP8A/wD/AP8A/wD/AP8A/wD/AP8A/wA=" type="audio/wav">
   </audio>
 
   <script>
-    // GANTI URL INI DENGAN WEB APP KAMU
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
+    /* GANTI DENGAN URL APPS SCRIPT KAMU */
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
 
-    let html5QrCode = null;
-    let scannerRunning = false;
-    let audioUnlocked = false;
+    // elemen
+    const menuBtn       = document.getElementById('menu-btn');
+    const menuDropdown  = document.getElementById('menu-dropdown');
 
-    const btnStartScan = document.getElementById('btn-start-scan');
-    const scanStatus   = document.getElementById('scan-status');
-    const scanStatusTitle = document.getElementById('scan-status-title');
-    const scanStatusText  = document.getElementById('scan-status-text');
-    const scanNetwork  = document.getElementById('scan-network');
+    const statusBox   = document.getElementById('status-box');
+    const statusIcon  = document.getElementById('status-icon');
+    const statusTitle = document.getElementById('status-title');
+    const statusMsg   = document.getElementById('status-msg');
+    const statusRaw   = document.getElementById('status-raw');
 
-    const manualStatus = document.getElementById('manual-status');
-    const manualTitle  = document.getElementById('manual-status-title');
-    const manualText   = document.getElementById('manual-status-text');
+    const manualInput   = document.getElementById('manual-nis');
+    const manualBtn     = document.getElementById('btn-send-manual');
+    const manualOverlay = document.getElementById('manual-overlay');
 
-    const toast = document.getElementById('toast');
-    const toastIcon = document.getElementById('toast-icon');
-    const toastTitle = document.getElementById('toast-title');
-    const toastText = document.getElementById('toast-text');
-    const toastClose = document.getElementById('toast-close');
+    const scannerOverlay = document.getElementById('scanner-overlay');
+
+    const resultBox   = document.getElementById('result-box');
+    const resultName  = document.getElementById('result-name');
+    const resultMeta  = document.getElementById('result-meta');
+    const resultAvatar= document.getElementById('result-avatar');
+
+    const btnStartCamera = document.getElementById('btn-start-camera');
+    const qrReaderDiv    = document.getElementById('qr-reader');
+    const qrPlaceholder  = document.getElementById('qr-placeholder');
+    const scanAnim       = document.getElementById('scan-anim');
 
     const soundSuccess = document.getElementById('sound-success');
-    const soundFail    = document.getElementById('sound-fail');
+    const soundError   = document.getElementById('sound-error');
 
-    // header menu
-    const menuBtn = document.getElementById('menu-btn');
-    const menuPanel = document.getElementById('menu-panel');
+    let qrReader = null;
+    let cameraOn = false;
+    let lastScannedCode = "";
+    let lastScanTime    = 0;
+
+    /* ========== header dropdown ========== */
     menuBtn.addEventListener('click', () => {
-      menuPanel.style.display = menuPanel.style.display === 'block' ? 'none' : 'block';
+      menuDropdown.style.display = (menuDropdown.style.display === 'block') ? 'none' : 'block';
     });
-    document.body.addEventListener('click', e => {
-      if (!menuPanel.contains(e.target) && e.target !== menuBtn){
-        menuPanel.style.display = 'none';
+    document.addEventListener('click', (e) => {
+      if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
+        menuDropdown.style.display = 'none';
       }
-    }, true);
+    });
 
-    // toast helper
-    function showToast(type, title, text) {
-      toast.classList.remove('toast--hidden','toast-success','toast-error','toast-info');
-      if (type === 'success') {
-        toast.classList.add('toast-success');
-        toastIcon.textContent = '✓';
+    /* ========== helper status ========== */
+    function setStatus(type, title, msg, raw) {
+      statusBox.className = "bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-4 flex gap-3 items-center";
+      statusIcon.innerHTML = "";
+      statusRaw.classList.add('hidden');
+      statusRaw.textContent = '';
+
+      if (type === 'loading') {
+        statusBox.classList.add("bg-slate-50","border-slate-200");
+        statusIcon.innerHTML = '<div class="w-6 h-6 border-2 border-slate-200 border-t-[var(--hc-blue)] rounded-full animate-spin"></div>';
+      } else if (type === 'success') {
+        statusBox.classList.add("bg-green-50","border-green-200");
+        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293A1 1 0 003.293 10.707l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg></div>';
       } else if (type === 'error') {
-        toast.classList.add('toast-error');
-        toastIcon.textContent = '✕';
-      } else {
-        toast.classList.add('toast-info');
-        toastIcon.textContent = '⟳';
+        statusBox.classList.add("bg-red-50","border-red-200");
+        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.536-10.95a1 1 0 00-1.414-1.414L10 7.172 7.879 5.05A1 1 0 006.464 6.464L8.586 8.586l-2.122 2.12a1 1 0 101.414 1.415L10 10l2.121 2.121a1 1 0 001.415-1.414L11.414 8.586l2.122-2.12z" clip-rule="evenodd"/></svg></div>';
       }
-      toastTitle.textContent = title;
-      toastText.textContent = text || '';
-      setTimeout(() => {
-        // auto hide
-        if (!toast.classList.contains('toast--hidden')) {
-          toast.classList.add('toast--hidden');
-        }
-      }, 2500);
-    }
-    toastClose.addEventListener('click', () => toast.classList.add('toast--hidden'));
 
-    // audio unlock
-    function unlockAudio(){
-      if (audioUnlocked) return;
-      soundSuccess.play().then(()=> {
-        soundSuccess.pause();
-        soundSuccess.currentTime = 0;
-        audioUnlocked = true;
-      }).catch(()=>{});
-    }
-    function playSuccess(){
-      if (!audioUnlocked) return;
-      soundSuccess.currentTime = 0;
-      soundSuccess.play().catch(()=>{});
-    }
-    function playFail(){
-      if (!audioUnlocked) return;
-      soundFail.currentTime = 0;
-      soundFail.play().catch(()=>{});
+      statusTitle.textContent = title || '';
+      statusMsg.textContent   = msg   || '';
+      if (raw) {
+        statusRaw.textContent = raw;
+        statusRaw.classList.remove('hidden');
+      }
     }
 
-    // start scan
-    btnStartScan.addEventListener('click', async () => {
-      unlockAudio();
-      if (scannerRunning) {
-        await stopScanner();
+    function showResult(data) {
+      resultBox.classList.remove('hidden');
+      resultName.textContent = data.nama || 'Anggota';
+      resultMeta.textContent = (data.pertemuan || '-') + ' • ' + (data.jam || '');
+      if (data.foto) {
+        resultAvatar.style.backgroundImage    = `url('${data.foto}')`;
+        resultAvatar.style.backgroundSize     = 'cover';
+        resultAvatar.style.backgroundPosition = 'center';
+        resultAvatar.textContent = '';
+      } else {
+        resultAvatar.style.backgroundImage = 'none';
+        resultAvatar.textContent = 'HC';
+      }
+    }
+
+    /* ========== kirim presensi (POST + fallback GET) ========== */
+    async function sendPresensi(id, source) {
+      const cleanId = (id || '').replace(/[^0-9]/g, '');
+      if (!cleanId) {
+        setStatus('error', 'Input kosong', 'Masukkan NIS / NISN / NIP yang valid.');
+        soundError && soundError.play().catch(()=>{});
         return;
       }
-      startScanner();
-    });
 
-    async function startScanner() {
-      scanNetwork.style.display = 'none';
-      btnStartScan.disabled = true;
+      // tampilkan overlay sesuai sumber
+      if (source === 'scanner') scannerOverlay.style.display = 'flex';
+      if (source === 'manual')  manualOverlay.style.display  = 'flex';
+      setStatus('loading', 'Mengirim presensi...', 'Harap tunggu sebentar.');
+
+      /* ===== 1. COBA POST (FormData) ===== */
       try {
-        html5QrCode = new Html5Qrcode("reader");
-        const cams = await Html5Qrcode.getCameras();
-        const camId = cams && cams.length ? cams[0].id : null;
-        if (!camId) throw new Error('Kamera tidak tersedia');
-        await html5QrCode.start(
-          { deviceId: { exact: camId } },
-          { fps: 10, qrbox: { width: 220, height: 220 } },
-          onScanSuccess,
-          onScanFailure
+        const fd = new FormData();
+        fd.append('action', 'presensi');
+        fd.append('nis', cleanId);
+
+        const res  = await fetch(WEB_APP_URL, { method: 'POST', body: fd });
+        const text = await res.text();
+        const json = JSON.parse(text);
+
+        handlePresensiResponse(json);
+        return;
+      } catch (err1) {
+        console.warn('POST gagal, coba GET...', err1);
+      }
+
+      /* ===== 2. FALLBACK GET ===== */
+      try {
+        const url  = WEB_APP_URL + '?action=presensi&nis=' + encodeURIComponent(cleanId);
+        const res  = await fetch(url, { method: 'GET' });
+        const text = await res.text();
+        const json = JSON.parse(text);
+        handlePresensiResponse(json);
+      } catch (err2) {
+        scannerOverlay.style.display = 'none';
+        manualOverlay.style.display  = 'none';
+        scanAnim.classList.add('hidden');
+
+        setStatus(
+          'error',
+          'Gagal terhubung',
+          'Periksa lagi URL Apps Script atau pengaturan akses deploy.',
+          err2 && err2.message ? err2.message : ''
         );
-        scannerRunning = true;
-        btnStartScan.textContent = 'Hentikan Scan';
-        btnStartScan.disabled = false;
-        showToast('info','Scanner aktif','Arahkan ke barcode kartu anggota.');
-      } catch(err){
-        console.log(err);
-        scanNetwork.style.display = 'block';
-        btnStartScan.disabled = false;
-        showToast('error','Tidak bisa mengakses kamera','Cek izin kamera.');
+        soundError && soundError.play().catch(()=>{});
       }
     }
-    async function stopScanner() {
-      if (html5QrCode) {
-        await html5QrCode.stop();
-        await html5QrCode.clear();
-        html5QrCode = null;
+
+    function handlePresensiResponse(json) {
+      scannerOverlay.style.display = 'none';
+      manualOverlay.style.display  = 'none';
+      scanAnim.classList.add('hidden');
+
+      if (!json || !json.status) {
+        setStatus('error', 'Respon tidak dikenal', 'Script tidak mengembalikan status.');
+        soundError && soundError.play().catch(()=>{});
+        return;
       }
-      scannerRunning = false;
-      btnStartScan.textContent = 'Mulai Pindai Barcode';
-    }
 
-    function onScanFailure(error){ /* diam */ }
-
-    function onScanSuccess(decodedText) {
-      console.log('scan', decodedText);
-      kirimPresensi(decodedText, 'scan');
-    }
-
-    // kirim ke Apps Script
-    async function kirimPresensi(id, mode){
-      if (!id) return;
-      if (mode === 'scan') {
-        scanStatus.style.display = 'flex';
-        scanStatusTitle.textContent = 'Mengirim presensi...';
-        scanStatusText.textContent = 'Harap tunggu sebentar.';
+      if (json.status === 'ok') {
+        setStatus('success', 'Presensi berhasil', `${json.nama} • ${json.pertemuan || '-'}`);
+        showResult(json);
+        soundSuccess && soundSuccess.play().catch(()=>{});
+        manualInput.value = '';
+      } else if (json.status === 'duplicate') {
+        setStatus('error', 'Presensi ditolak', 'Anggota ini sudah presensi hari ini.');
+        soundError && soundError.play().catch(()=>{});
+      } else if (json.status === 'not-registered') {
+        setStatus('error', 'ID tidak ditemukan', 'Periksa NIS / NISN / NIP atau daftarkan dulu.');
+        soundError && soundError.play().catch(()=>{});
       } else {
-        manualStatus.style.display = 'flex';
-        manualTitle.textContent = 'Mengirim presensi...';
-        manualText.textContent = 'Harap tunggu sebentar.';
-      }
-
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: 'presensi', nis: id }),
-        });
-
-        // kalau Apps Script nggak balikin JSON valid, jangan error
-        let json = null;
-        try { json = await res.json(); } catch(e){ json = null; }
-
-        if (!json) {
-          throw new Error('Response kosong / bukan JSON');
-        }
-
-        if (json.status === 'ok') {
-          if (mode === 'scan') {
-            scanStatusTitle.textContent = 'Presensi terkirim';
-            scanStatusText.textContent = json.nama ? ('Atas nama ' + json.nama) : 'Berhasil.';
-          } else {
-            manualTitle.textContent = 'Presensi terkirim';
-            manualText.textContent = json.nama ? ('Atas nama ' + json.nama) : 'Berhasil.';
-          }
-          showToast('success','Presensi berhasil', json.nama ? json.nama : 'Data masuk.');
-          playSuccess();
-        } else if (json.status === 'duplicate') {
-          if (mode === 'scan') {
-            scanStatusTitle.textContent = 'Sudah presensi hari ini';
-            scanStatusText.textContent = 'Cek jadwal atau tanya pengurus.';
-          } else {
-            manualTitle.textContent = 'Sudah presensi hari ini';
-            manualText.textContent = 'Cek jadwal atau tanya pengurus.';
-          }
-          showToast('error','Sudah presensi', 'Hari ini kamu sudah presensi.');
-          playFail();
-        } else if (json.status === 'not-registered') {
-          if (mode === 'scan') {
-            scanStatusTitle.textContent = 'ID tidak terdaftar';
-            scanStatusText.textContent = 'Pastikan NIS/NISN/NIP benar.';
-          } else {
-            manualTitle.textContent = 'ID tidak terdaftar';
-            manualText.textContent = 'Pastikan NIS/NISN/NIP benar.';
-          }
-          showToast('error','ID tidak terdaftar','Daftarkan anggota terlebih dahulu.');
-          playFail();
-        } else {
-          if (mode === 'scan') {
-            scanStatusTitle.textContent = 'Gagal mengirim';
-            scanStatusText.textContent = json.message || 'Coba lagi.';
-          } else {
-            manualTitle.textContent = 'Gagal mengirim';
-            manualText.textContent = json.message || 'Coba lagi.';
-          }
-          showToast('error','Gagal presensi', json.message || 'Coba lagi.');
-          playFail();
-        }
-
-      } catch(err){
-        console.log(err);
-        if (mode === 'scan') {
-          scanStatusTitle.textContent = 'Gagal terhubung';
-          scanStatusText.textContent = 'Periksa internet atau redeploy Apps Script.';
-          scanNetwork.style.display = 'block';
-        } else {
-          manualTitle.textContent = 'Gagal terhubung';
-          manualText.textContent = 'Periksa internet atau redeploy Apps Script.';
-        }
-        showToast('error','Tidak bisa terhubung','Periksa URL / internet.');
-        playFail();
+        setStatus('error', 'Gagal mengirim', json.message || 'Terjadi kesalahan.');
+        soundError && soundError.play().catch(()=>{});
       }
     }
 
-    // input manual
-    document.getElementById('btn-kirim-manual').addEventListener('click', () => {
-      const v = document.getElementById('manual-id').value.trim();
-      if (!v) return;
-      unlockAudio();
-      kirimPresensi(v, 'manual');
+    /* ========== input manual ========== */
+    manualBtn.addEventListener('click', () => {
+      sendPresensi(manualInput.value, 'manual');
     });
-  </script>
+    manualInput.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') {
+        sendPresensi(manualInput.value, 'manual');
+      }
+    });
 
-</body>
-</html>
+    /* ========== start kamera ========== */
+    btnStartCamera.addEventListener('click', async () => {
+      if (cameraOn) return;
+      try {
+        qrPlaceholder.classList.add('hidden');
+        qrReaderDiv.classList.remove('hidden');
+        setStatus('loading', 'Mengaktifkan kamera...', 'Jika muncul permintaan izin, pilih IZINKAN.');
+
+        qrReader = new Html5Qrcode("qr-reader");
+        const cameraConfig = { fps: 10, qrbox: { width: 250, height: 250 } };
+        await qrReader.start(
+          { facingMode: "environment" },
+          cameraConfig,
+          (decodedText) => {
+            const now = Date.now();
+            // anti dobel 1.5 detik
+            if (decodedText === lastScannedCode && (now - lastScanTime) < 1500) {
+              return;
+            }
+            lastScannedCode = decodedText;
+            lastScanTime    = now;
+            scanAnim.classList.remove('hidden');
+            sendPresensi(decodedText, 'scanner');
+          }
+        );
+        cameraOn = true;
+        setStatus('info', 'Kamera aktif', 'Arahkan barcode ke dalam kotak.');
+        scanAnim.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        setStatus('error', 'Kamera tidak tersedia', 'Gunakan input manual.');
+        qrPlaceholder.classList.remove('hidden');
+        qrReaderDiv.classList.add('hidden');
+      }
+    }
