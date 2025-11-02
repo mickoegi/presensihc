@@ -8,6 +8,11 @@
     :root {
       --hc-blue: #005A9C;
       --bg: #f1f5f9;
+      --role-ketua: #0F766E;
+      --role-wakil: #0EA5E9;
+      --role-pembina: #0F172A;
+      --role-pelatih: #F97316;
+      --role-default: #E11D48;
     }
     * { box-sizing: border-box; }
     body {
@@ -17,7 +22,6 @@
       min-height: 100vh;
       display: flex;
     }
-    /* SIDEBAR */
     .sidebar {
       width: 220px;
       background: #0f172a;
@@ -31,10 +35,7 @@
       z-index: 50;
       transition: transform .25s ease-in-out;
     }
-    .sidebar-header {
-      padding: 16px 16px 10px 16px;
-      font-weight: 700;
-    }
+    .sidebar-header { padding: 16px 16px 10px 16px; font-weight: 700; }
     .sidebar small { font-size: 11px; opacity: .6; }
     .nav-link {
       padding: 9px 16px;
@@ -49,17 +50,10 @@
       background: rgba(255,255,255,.07);
       border-left-color: #38bdf8;
     }
-    /* offcanvas di hp */
     @media(max-width: 900px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      .sidebar.open {
-        transform: translateX(0);
-      }
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
     }
-
-    /* MAIN */
     .main {
       flex: 1;
       display: flex;
@@ -68,10 +62,7 @@
       width: calc(100% - 220px);
     }
     @media(max-width: 900px) {
-      .main {
-        margin-left: 0;
-        width: 100%;
-      }
+      .main { margin-left: 0; width: 100%; }
     }
     header {
       background: white;
@@ -93,15 +84,9 @@
       font-size: 16px;
       cursor: pointer;
     }
-    @media(max-width: 900px) {
-      #sidebar-toggle { display: inline-block; }
-    }
+    @media(max-width: 900px) { #sidebar-toggle { display: inline-block; } }
 
-    .content {
-      padding: 20px;
-      flex: 1;
-      overflow-y: auto;
-    }
+    .content { padding: 20px; flex: 1; overflow-y: auto; }
     .card {
       background: white;
       border-radius: 14px;
@@ -145,14 +130,21 @@
     .badge-guru  { background: rgba(14,165,233,.15); color: #0369a1; }
     .badge-non32 { background: rgba(148,163,184,.15); color: #475569; }
     .col-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media(max-width: 700px) {
-      .col-2 { grid-template-columns: 1fr; }
-      table { display: block; overflow-x: auto; }
+    @media(max-width: 700px) { .col-2 { grid-template-columns: 1fr; } }
+    .avatar-sm {
+      width: 38px;
+      height: 38px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+      background: #e2e8f0;
     }
+    .avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
   </style>
 </head>
 <body>
-  <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       HC 32
@@ -168,7 +160,6 @@
     <div class="nav-link" id="btn-logout">🚪 Keluar</div>
   </aside>
 
-  <!-- MAIN -->
   <div class="main">
     <header>
       <div style="display:flex;gap:8px;align-items:center;">
@@ -186,7 +177,7 @@
       <div id="view-dashboard">
         <div class="card">
           <h2 style="margin-bottom:10px;">Presensi Terbaru</h2>
-          <p style="font-size:12px;color:#64748b;">150 baris terakhir. Untuk lihat per pertemuan, pergi ke tab Presensi.</p>
+          <p style="font-size:12px;color:#64748b;">150 baris terakhir.</p>
           <div id="dash-presensi">Memuat...</div>
         </div>
       </div>
@@ -201,11 +192,11 @@
             <button class="btn-secondary" id="btn-export-csv">Export CSV</button>
           </div>
           <div style="overflow-x:auto;">
-            <table id="tbl-presensi">
+            <table>
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Nama</th>
+                  <th>Anggota</th>
                   <th>NIS</th>
                   <th>Kelas</th>
                   <th>Pertemuan</th>
@@ -225,7 +216,7 @@
       <div id="view-agenda" style="display:none;">
         <div class="card">
           <h2>Agenda</h2>
-          <form id="form-agenda" style="margin-bottom:12px;" class="col-2">
+          <form id="form-agenda" class="col-2" style="margin-bottom:12px;">
             <div>
               <label>Judul *</label>
               <input class="input" id="ag-judul" required>
@@ -265,8 +256,7 @@
               <span id="ag-msg" style="font-size:12px;margin-left:8px;"></span>
             </div>
           </form>
-
-          <table id="tbl-agenda">
+          <table>
             <thead>
               <tr>
                 <th>Tanggal</th>
@@ -324,7 +314,6 @@
               <span id="po-msg" style="font-size:12px;margin-left:8px;"></span>
             </div>
           </form>
-
           <table>
             <thead>
               <tr>
@@ -346,7 +335,7 @@
       <div id="view-anggota" style="display:none;">
         <div class="card">
           <h2>Anggota</h2>
-          <p style="font-size:12px;color:#64748b;">Hanya sheet <b>Pendaftaran</b> yang bisa diubah dari sini. Sheet <b>AkunPengurus</b> tidak bisa diubah.</p>
+          <p style="font-size:12px;color:#64748b;">Foto, jabatan eksternal, tahun lulus & tanggal lahir ikut disimpan.</p>
           <div style="overflow-x:auto;">
             <table>
               <thead>
@@ -357,12 +346,13 @@
                   <th>Angkatan</th>
                   <th>No HP</th>
                   <th>Email</th>
-                  <th>Tipe</th>
+                  <th>Foto</th>
+                  <th>Jabatan/Tahun</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody id="body-anggota">
-                <tr><td colspan="8">Memuat...</td></tr>
+                <tr><td colspan="9">Memuat...</td></tr>
               </tbody>
             </table>
           </div>
@@ -374,7 +364,7 @@
         <div class="card">
           <h2>Struktur Kepengurusan</h2>
           <p style="font-size:12px;color:#64748b;margin-bottom:10px;">
-            Edit langsung di sini lalu klik <b>Simpan baris</b>. Ini akan menulis ke sheet <code>StrukturKepengurusan</code>.
+            Isi <b>NIS</b> saja → nama & foto otomatis diisi dari keanggotaan.
           </p>
           <div style="overflow-x:auto;">
             <table>
@@ -382,15 +372,16 @@
                 <tr>
                   <th>#</th>
                   <th>Jabatan</th>
-                  <th>Nama</th>
                   <th>NIS</th>
+                  <th>Nama</th>
+                  <th>Foto</th>
                   <th>Periode</th>
                   <th>Keterangan</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody id="body-struktur">
-                <tr><td colspan="7">Memuat...</td></tr>
+                <tr><td colspan="8">Memuat...</td></tr>
               </tbody>
             </table>
           </div>
@@ -399,7 +390,7 @@
         <div class="card">
           <h2>Arsip Kepengurusan</h2>
           <p style="font-size:12px;color:#64748b;margin-bottom:10px;">
-            Untuk menambah periode baru, tambah baris di sheet lalu refresh dashboard.
+            Isi NIS Ketua / Wakil / Sekretaris lalu simpan → nama & foto otomatis.
           </p>
           <div style="overflow-x:auto;">
             <table>
@@ -407,9 +398,9 @@
                 <tr>
                   <th>#</th>
                   <th>Periode</th>
-                  <th>Ketua</th>
-                  <th>Wakil</th>
-                  <th>Sekretaris</th>
+                  <th>Ketua (NIS)</th>
+                  <th>Wakil (NIS)</th>
+                  <th>Sekretaris (NIS)</th>
                   <th>Keterangan</th>
                   <th></th>
                 </tr>
@@ -426,18 +417,17 @@
   </div>
 
   <script>
-    // URL Apps Script kamu
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
     const LOGIN_URL   = "https://sites.google.com/view/history-club-32";
+    const PLACEHOLDER = "https://placehold.co/80x80/0F172A/fff?text=HC";
 
-    // ambil token dari query / localStorage
+    // ambil query / localstorage
     const url = new URL(window.location.href);
     const qToken = url.searchParams.get("token");
     const qNama  = url.searchParams.get("n");
     const qUser  = url.searchParams.get("u");
     const qRole  = url.searchParams.get("r");
     const qTipe  = url.searchParams.get("t");
-
     if (qToken) {
       localStorage.setItem("hc32_admin_token", qToken);
       if (qNama) localStorage.setItem("hc32_admin_nama", qNama);
@@ -445,7 +435,6 @@
       if (qRole) localStorage.setItem("hc32_admin_role", qRole);
       if (qTipe) localStorage.setItem("hc32_admin_tipe", qTipe);
     }
-
     const token = qToken || localStorage.getItem("hc32_admin_token");
     const nama  = qNama  || localStorage.getItem("hc32_admin_nama") || "Pengurus";
     const role  = qRole  || localStorage.getItem("hc32_admin_role") || "pengurus";
@@ -458,7 +447,6 @@
     if (!token) {
       window.location.href = LOGIN_URL;
     } else {
-      // load semua
       loadPresensiDashboard();
       loadPertemuanList();
       loadAgenda();
@@ -468,7 +456,7 @@
       loadArsip();
     }
 
-    // sidebar toggle hp
+    // sidebar hp
     const sidebar = document.getElementById("sidebar");
     document.getElementById("sidebar-toggle").addEventListener("click", () => {
       sidebar.classList.toggle("open");
@@ -486,12 +474,22 @@
         link.classList.add("active");
         document.querySelectorAll("[id^='view-']").forEach(v => v.style.display = "none");
         document.getElementById("view-" + view).style.display = "block";
-        document.getElementById("page-title").textContent = view.charAt(0).toUpperCase() + view.slice(1);
+        document.getElementById("page-title").textContent = view.charAt(0).toUpperCase()+view.slice(1);
         sidebar.classList.remove("open");
       });
     });
 
-    // ========== 1. DASHBOARD (150 terakhir) ==========
+    // ================== DASHBOARD PRESENSI ==================
+    function roleColor(roleTag){
+      if (!roleTag) return "#E11D48";
+      const r = roleTag.toLowerCase();
+      if (r.includes("pembina")) return "#0F172A";
+      if (r.includes("pelatih")) return "#F97316";
+      if (r.includes("ketua"))   return "#0F766E";
+      if (r.includes("wakil"))   return "#0EA5E9";
+      return "#E11D48";
+    }
+
     async function loadPresensiDashboard() {
       const res = await fetch(WEB_APP_URL, {
         method: "POST",
@@ -500,20 +498,28 @@
       const out = await res.json();
       const wrap = document.getElementById("dash-presensi");
       if (out.status !== "ok") {
-        wrap.innerHTML = "<p>Gagal memuat: " + (out.message || "") + "</p>";
+        wrap.innerHTML = "<p>Gagal memuat</p>";
         return;
       }
       const list = out.data || [];
       let html = `<div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;">
-        <thead><tr><th>Nama</th><th>NIS</th><th>Kelas</th><th>Pertemuan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>`;
+        <thead><tr><th>Anggota</th><th>NIS</th><th>Kelas</th><th>Pertemuan</th><th>Waktu</th><th>Tipe</th></tr></thead><tbody>`;
       list.forEach(item => {
         const tipe = (item.tipe || '').toLowerCase();
         const badge = tipe==='alumni' ? '<span class="badge badge-alumni">Alumni</span>'
                     : tipe==='guru' ? '<span class="badge badge-guru">Guru</span>'
                     : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Non 32</span>'
                     : '<span class="badge badge-siswa">Siswa aktif</span>';
+        const foto = item.foto || PLACEHOLDER;
+        const rColor = roleColor(item.roleTag);
+        const namaHtml = item.roleTag
+          ? `<div>${item.nama || '(tanpa nama)'}</div><div style="font-size:11px;color:${rColor};">${item.roleTag}</div>`
+          : `<div>${item.nama || '(tanpa nama)'}</div>`;
         html += `<tr>
-          <td style="padding:5px 8px;">${item.nama || '(tanpa nama)'}</td>
+          <td>
+            <div class="avatar-sm" style="border:3px solid ${rColor};"><img src="${foto}"></div>
+            ${namaHtml}
+          </td>
           <td>${item.nis || '-'}</td>
           <td>${item.kelas || '-'}</td>
           <td>${item.pertemuan || '-'}</td>
@@ -525,7 +531,7 @@
       wrap.innerHTML = html;
     }
 
-    // ========== 2. PRESENSI per PERTEMUAN ==========
+    // ================== PRESENSI PER PERTEMUAN ==================
     async function loadPertemuanList() {
       const res = await fetch(WEB_APP_URL, {
         method: "POST",
@@ -535,7 +541,7 @@
       const sel = document.getElementById("presensi-pertemuan");
       sel.innerHTML = "";
       if (out.status !== "ok") {
-        sel.innerHTML = "<option value=''>Gagal</option>";
+        sel.innerHTML = "<option>Gagal</option>";
         return;
       }
       (out.data || []).forEach(ptm => {
@@ -566,10 +572,18 @@
                     : tipe==='guru' ? '<span class="badge badge-guru">Guru</span>'
                     : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Non 32</span>'
                     : '<span class="badge badge-siswa">Siswa aktif</span>';
+        const foto = item.foto || PLACEHOLDER;
+        const rColor = roleColor(item.roleTag);
+        const namaHtml = item.roleTag
+          ? `<div>${item.nama || '(tanpa nama)'}</div><div style="font-size:11px;color:${rColor};">${item.roleTag}</div>`
+          : `<div>${item.nama || '(tanpa nama)'}</div>`;
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${idx+1}</td>
-          <td>${item.nama || '(tanpa nama)'}</td>
+          <td>
+            <div class="avatar-sm" style="border:3px solid ${rColor};"><img src="${foto}"></div>
+            ${namaHtml}
+          </td>
           <td>${item.nis || '-'}</td>
           <td>${item.kelas || '-'}</td>
           <td>${item.pertemuan || '-'}</td>
@@ -580,7 +594,7 @@
       });
     });
 
-    // EXPORT CSV
+    // export csv sama persis
     document.getElementById("btn-export-csv").addEventListener("click", async () => {
       const ptm = document.getElementById("presensi-pertemuan").value;
       if (!ptm) { alert("Pilih pertemuan dulu"); return; }
@@ -591,35 +605,27 @@
       const out = await res.json();
       if (out.status !== "ok") { alert("Gagal ambil data"); return; }
       const rows = out.data || [];
-      let csv = "Nama,NIS,Kelas,Pertemuan,Waktu,Tipe\n";
+      let csv = "Nama,NIS,Kelas,Pertemuan,Waktu,Tipe,Jabatan\n";
       rows.forEach(r => {
-        csv += `"${r.nama || ''}","${r.nis || ''}","${r.kelas || ''}","${r.pertemuan || ''}","${r.timestamp || r.jam || ''}","${r.tipe || ''}"\n`;
+        csv += `"${r.nama || ''}","${r.nis || ''}","${r.kelas || ''}","${r.pertemuan || ''}","${r.timestamp || r.jam || ''}","${r.tipe || ''}","${r.roleTag || ''}"\n`;
       });
       const blob = new Blob([csv], { type: "text/csv" });
       const urlDl = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = urlDl;
       a.download = "presensi_" + ptm.replace(/\s+/g,'_') + ".csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       URL.revokeObjectURL(urlDl);
     });
 
-    // ========== 3. AGENDA ==========
-    async function loadAgenda() {
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "listKegiatanAdmin", token })
-      });
+    // ================== AGENDA ==================
+    async function loadAgenda(){ /* sama persis dengan versi sebelumnya */ 
+      const res = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listKegiatanAdmin",token})});
       const out = await res.json();
       const tbody = document.getElementById("body-agenda");
       tbody.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length) {
-        tbody.innerHTML = "<tr><td colspan='5'>Belum ada agenda.</td></tr>";
-        return;
-      }
-      out.data.forEach(item => {
+      if (out.status !== "ok" || !out.data.length){ tbody.innerHTML = "<tr><td colspan='5'>Belum ada agenda.</td></tr>"; return; }
+      out.data.forEach(item=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${item.tanggal || '-'}</td>
@@ -629,303 +635,227 @@
           <td>
             <button class="btn-secondary" data-ptm="${item.judul}">Jadikan Pertemuan</button>
             <button class="btn-secondary" data-del="${item.id}">Hapus</button>
-          </td>
-        `;
+          </td>`;
         tbody.appendChild(tr);
       });
-
-      tbody.querySelectorAll("button[data-ptm]").forEach(btn => {
-        btn.addEventListener("click", async () => {
+      tbody.querySelectorAll("button[data-ptm]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
           const judul = btn.getAttribute("data-ptm");
-          const res2 = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "setCurrentMeetingFromAgenda", token, judul })
-          });
+          const res2 = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"setCurrentMeetingFromAgenda",token,judul})});
           const out2 = await res2.json();
-          alert(out2.message || "Pertemuan diubah ke: " + judul);
+          alert(out2.message || "Pertemuan diubah ke: "+judul);
           loadPertemuanList();
         });
       });
-
-      tbody.querySelectorAll("button[data-del]").forEach(btn => {
-        btn.addEventListener("click", async () => {
+      tbody.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
           const id = btn.getAttribute("data-del");
           if (!confirm("Hapus agenda ini?")) return;
-          const res3 = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "deleteKegiatan", token, id })
-          });
+          const res3 = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"deleteKegiatan",token,id})});
           const out3 = await res3.json();
-          if (out3.status === "ok") loadAgenda();
-          else alert(out3.message || "Gagal hapus");
+          if (out3.status==="ok") loadAgenda(); else alert(out3.message||"Gagal");
         });
       });
     }
-
-    document.getElementById("form-agenda").addEventListener("submit", async (e) => {
+    document.getElementById("form-agenda").addEventListener("submit", async (e)=>{
       e.preventDefault();
       const msg = document.getElementById("ag-msg");
       msg.textContent = "Menyimpan...";
       const body = {
-        action: "addKegiatan",
-        token,
-        judul: document.getElementById("ag-judul").value.trim(),
-        tanggal: document.getElementById("ag-tanggal").value.trim(),
-        waktu: document.getElementById("ag-waktu").value.trim(),
-        tempat: document.getElementById("ag-tempat").value.trim(),
-        deskripsi: document.getElementById("ag-deskripsi").value.trim(),
-        kategori: document.getElementById("ag-kategori").value,
-        status: document.getElementById("ag-status").value
+        action:"addKegiatan",token,
+        judul:document.getElementById("ag-judul").value.trim(),
+        tanggal:document.getElementById("ag-tanggal").value.trim(),
+        waktu:document.getElementById("ag-waktu").value.trim(),
+        tempat:document.getElementById("ag-tempat").value.trim(),
+        deskripsi:document.getElementById("ag-deskripsi").value.trim(),
+        kategori:document.getElementById("ag-kategori").value,
+        status:document.getElementById("ag-status").value
       };
-      const res = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(body) });
+      const res = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify(body)});
       const out = await res.json();
-      if (out.status === "ok") {
-        msg.textContent = "Tersimpan.";
-        e.target.reset();
-        loadAgenda();
-      } else {
-        msg.textContent = out.message || "Gagal";
-      }
+      if (out.status==="ok"){ msg.textContent="Tersimpan."; e.target.reset(); loadAgenda(); }
+      else msg.textContent=out.message||"Gagal";
     });
 
-    // ========== 4. POSTING ==========
-    async function loadPosting() {
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "listPostingAdmin", token })
-      });
+    // ================== POSTING ==================
+    async function loadPosting(){ /* sama juga */ 
+      const res = await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listPostingAdmin",token})});
       const out = await res.json();
       const tbody = document.getElementById("body-posting");
       tbody.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length) {
-        tbody.innerHTML = "<tr><td colspan='5'>Belum ada posting.</td></tr>";
-        return;
-      }
-      out.data.forEach(item => {
+      if (out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='5'>Belum ada posting.</td></tr>"; return; }
+      out.data.forEach(item=>{
         const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>${item.tanggal || '-'}</td>
-          <td><b>${item.judul || '-'}</b><br><small>${(item.isi || '').substring(0,60)}</small></td>
+          <td><b>${item.judul || '-'}</b><br><small>${(item.isi||'').substring(0,60)}</small></td>
           <td>${item.kategori || '-'}</td>
           <td>${item.status || '-'}</td>
-          <td><button class="btn-secondary" data-del="${item.id}">Hapus</button></td>
-        `;
+          <td><button class="btn-secondary" data-del="${item.id}">Hapus</button></td>`;
         tbody.appendChild(tr);
       });
-      tbody.querySelectorAll("button[data-del]").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const id = btn.getAttribute("data-del");
-          if (!confirm("Hapus posting ini?")) return;
-          const res2 = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "deletePosting", token, id })
-          });
-          const out2 = await res2.json();
-          if (out2.status === "ok") loadPosting();
-          else alert(out2.message || "Gagal hapus");
+      tbody.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const id=btn.getAttribute("data-del");
+          if(!confirm("Hapus posting ini?")) return;
+          const res2=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"deletePosting",token,id})});
+          const out2=await res2.json();
+          if(out2.status==="ok") loadPosting(); else alert(out2.message||"Gagal");
         });
       });
     }
-
-    document.getElementById("form-posting").addEventListener("submit", async (e) => {
+    document.getElementById("form-posting").addEventListener("submit", async(e)=>{
       e.preventDefault();
-      const msg = document.getElementById("po-msg");
-      msg.textContent = "Menyimpan...";
-      const body = {
-        action: "addPosting",
-        token,
-        judul: document.getElementById("po-judul").value.trim(),
-        tanggal: document.getElementById("po-tanggal").value.trim(),
-        kategori: document.getElementById("po-kategori").value,
-        isi: document.getElementById("po-isi").value.trim(),
-        gambar: document.getElementById("po-gambar").value.trim(),
-        status: document.getElementById("po-status").value
+      const msg=document.getElementById("po-msg");
+      msg.textContent="Menyimpan...";
+      const body={
+        action:"addPosting",token,
+        judul:document.getElementById("po-judul").value.trim(),
+        tanggal:document.getElementById("po-tanggal").value.trim(),
+        kategori:document.getElementById("po-kategori").value,
+        isi:document.getElementById("po-isi").value.trim(),
+        gambar:document.getElementById("po-gambar").value.trim(),
+        status:document.getElementById("po-status").value
       };
-      const res = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(body) });
-      const out = await res.json();
-      if (out.status === "ok") {
-        msg.textContent = "Posting tersimpan";
-        e.target.reset();
-        loadPosting();
-      } else {
-        msg.textContent = out.message || "Gagal";
-      }
+      const res=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify(body)});
+      const out=await res.json();
+      if(out.status==="ok"){ msg.textContent="Posting tersimpan"; e.target.reset(); loadPosting(); }
+      else msg.textContent=out.message||"Gagal";
     });
 
-    // ========== 5. ANGGOTA ==========
-    async function loadAnggota() {
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "listAnggotaAdmin", token })
-      });
-      const out = await res.json();
-      const tbody = document.getElementById("body-anggota");
-      tbody.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length) {
-        tbody.innerHTML = "<tr><td colspan='8'>Belum ada anggota.</td></tr>";
-        return;
-      }
-      out.data.forEach(item => {
-        const tipe = (item.tipe || '').toLowerCase();
-        const badge = tipe==='alumni' ? '<span class="badge badge-alumni">Alumni</span>'
-                    : tipe==='guru' ? '<span class="badge badge-guru">Guru</span>'
-                    : (tipe==='non-32' || tipe==='non32') ? '<span class="badge badge-non32">Non 32</span>'
-                    : '<span class="badge badge-siswa">Siswa aktif</span>';
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+    // ================== ANGGOTA ==================
+    async function loadAnggota(){
+      const res=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listAnggotaAdmin",token})});
+      const out=await res.json();
+      const tbody=document.getElementById("body-anggota");
+      tbody.innerHTML="";
+      if(out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='9'>Belum ada anggota.</td></tr>"; return; }
+      out.data.forEach(item=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
           <td>${item.nis}</td>
-          <td><input class="input" value="${item.nama || ''}" data-nis="${item.nis}" data-field="nama"></td>
-          <td><input class="input" value="${item.kelas || ''}" data-nis="${item.nis}" data-field="kelas"></td>
-          <td><input class="input" value="${item.angkatan || ''}" data-nis="${item.nis}" data-field="angkatan"></td>
-          <td><input class="input" value="${item.nohp || ''}" data-nis="${item.nis}" data-field="nohp"></td>
-          <td><input class="input" value="${item.email || ''}" data-nis="${item.nis}" data-field="email"></td>
-          <td>${badge}</td>
+          <td><input class="input" value="${item.nama||''}" data-nis="${item.nis}" data-field="nama"></td>
+          <td><input class="input" value="${item.kelas||''}" data-nis="${item.nis}" data-field="kelas"></td>
+          <td><input class="input" value="${item.angkatan||''}" data-nis="${item.nis}" data-field="angkatan"></td>
+          <td><input class="input" value="${item.nohp||''}" data-nis="${item.nis}" data-field="nohp"></td>
+          <td><input class="input" value="${item.email||''}" data-nis="${item.nis}" data-field="email"></td>
+          <td><input class="input" value="${item.foto||''}" data-nis="${item.nis}" data-field="foto" placeholder="URL foto"></td>
+          <td><input class="input" value="${item.jabatan||item.tahunLulus||''}" data-nis="${item.nis}" data-field="jabatan" placeholder="jabatan/tahun"></td>
           <td>
             <select class="input" data-nis="${item.nis}" data-field="tipe">
               <option value="">(tetap)</option>
-              <option value="siswa-aktif">Siswa aktif</option>
-              <option value="alumni">Alumni</option>
-              <option value="guru">Guru</option>
-              <option value="non-32">Non 32</option>
+              <option value="siswa-aktif"${item.tipe==='siswa-aktif'?' selected':''}>Siswa aktif</option>
+              <option value="guru"${item.tipe==='guru'?' selected':''}>Guru</option>
+              <option value="alumni"${item.tipe==='alumni'?' selected':''}>Alumni</option>
+              <option value="non-32"${item.tipe==='non-32'?' selected':''}>Non 32</option>
             </select>
             <button class="btn-secondary btn-simpan" data-nis="${item.nis}">Simpan</button>
           </td>
         `;
         tbody.appendChild(tr);
       });
-
-      tbody.querySelectorAll(".btn-simpan").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const nis = btn.getAttribute("data-nis");
-          const inputs = tbody.querySelectorAll(`[data-nis='${nis}']`);
-          const payload = { nis };
-          inputs.forEach(inp => {
-            payload[inp.getAttribute("data-field")] = inp.value;
-          });
-          // simpan data dasar
-          const res1 = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify({
-              action: "updateAnggotaAdmin",
-              token,
-              nis,
-              nama: payload.nama,
-              kelas: payload.kelas,
-              angkatan: payload.angkatan,
-              nohp: payload.nohp,
-              email: payload.email
-            })
-          });
-          const out1 = await res1.json();
-          if (out1.status !== "ok") {
-            alert(out1.message || "Gagal simpan data anggota");
-            return;
+      tbody.querySelectorAll(".btn-simpan").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const nis=btn.getAttribute("data-nis");
+          const inputs=tbody.querySelectorAll(`[data-nis='${nis}']`);
+          const payload={ nis };
+          inputs.forEach(inp=>{ payload[inp.getAttribute("data-field")]=inp.value; });
+          // simpan data utama
+          const res1=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({
+            action:"updateAnggotaAdmin",token,
+            nis,
+            nama:payload.nama,
+            kelas:payload.kelas,
+            angkatan:payload.angkatan,
+            nohp:payload.nohp,
+            email:payload.email,
+            foto:payload.foto,
+            jabatan:payload.jabatan
+          })});
+          const out1=await res1.json();
+          if(out1.status!=="ok"){ alert(out1.message||"Gagal simpan"); return; }
+          if(payload.tipe){
+            const res2=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"updateAnggotaTipe",token,nis,tipe:payload.tipe})});
+            const out2=await res2.json();
+            if(out2.status!=="ok"){ alert(out2.message||"Gagal ubah tipe"); return; }
           }
-          // simpan tipe kalau dipilih
-          if (payload.tipe) {
-            const res2 = await fetch(WEB_APP_URL, {
-              method: "POST",
-              body: JSON.stringify({ action: "updateAnggotaTipe", token, nis, tipe: payload.tipe })
-            });
-            const out2 = await res2.json();
-            if (out2.status !== "ok") {
-              alert(out2.message || "Gagal ubah tipe");
-              return;
-            }
-          }
-          alert("Data anggota disimpan");
+          alert("Tersimpan");
           loadAnggota();
         });
       });
     }
 
-    // ========== 6. KEPENGURUSAN ==========
-    async function loadStruktur() {
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "listStrukturKepengurusan", token })
-      });
-      const out = await res.json();
-      const tbody = document.getElementById("body-struktur");
-      tbody.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length) {
-        tbody.innerHTML = "<tr><td colspan='7'>Belum ada data.</td></tr>";
-        return;
-      }
-      out.data.forEach((row, i) => {
-        const rowNumber = i + 2; // baris di sheet
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+    // ================== KEPENGURUSAN ==================
+    async function loadStruktur(){
+      const res=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listStrukturKepengurusan",token})});
+      const out=await res.json();
+      const tbody=document.getElementById("body-struktur");
+      tbody.innerHTML="";
+      if(out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='8'>Belum ada data.</td></tr>"; return; }
+      out.data.forEach((row,i)=>{
+        const sheetRow = i+2;
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
           <td>${i+1}</td>
-          <td><input class="input" value="${row.jabatan || ''}" data-row="${rowNumber}" data-field="jabatan"></td>
-          <td><input class="input" value="${row.nama || ''}" data-row="${rowNumber}" data-field="nama"></td>
-          <td><input class="input" value="${row.nis || ''}" data-row="${rowNumber}" data-field="nis"></td>
-          <td><input class="input" value="${row.periode || ''}" data-row="${rowNumber}" data-field="periode"></td>
-          <td><input class="input" value="${row.keterangan || ''}" data-row="${rowNumber}" data-field="keterangan"></td>
-          <td><button class="btn-secondary btn-save-struktur" data-row="${rowNumber}">Simpan baris</button></td>
+          <td><input class="input" value="${row.jabatan||''}" data-row="${sheetRow}" data-field="jabatan"></td>
+          <td><input class="input" value="${row.nis||''}" data-row="${sheetRow}" data-field="nis"></td>
+          <td><input class="input" value="${row.nama||''}" disabled></td>
+          <td><input class="input" value="${row.foto||''}" disabled></td>
+          <td><input class="input" value="${row.periode||''}" data-row="${sheetRow}" data-field="periode"></td>
+          <td><input class="input" value="${row.keterangan||''}" data-row="${sheetRow}" data-field="keterangan"></td>
+          <td><button class="btn-secondary btn-save-struktur" data-row="${sheetRow}">Simpan</button></td>
         `;
         tbody.appendChild(tr);
       });
-
-      tbody.querySelectorAll(".btn-save-struktur").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const row = btn.getAttribute("data-row");
-          const inputs = tbody.querySelectorAll(`[data-row='${row}']`);
-          const payload = { action: "saveStrukturKepengurusan", token, row };
-          inputs.forEach(inp => {
-            payload[inp.getAttribute("data-field")] = inp.value;
-          });
-          const res2 = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(payload) });
-          const out2 = await res2.json();
-          alert(out2.status === "ok" ? "Tersimpan." : (out2.message || "Gagal"));
+      tbody.querySelectorAll(".btn-save-struktur").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const row=btn.getAttribute("data-row");
+          const inputs=tbody.querySelectorAll(`[data-row='${row}']`);
+          const payload={ action:"saveStrukturKepengurusan", token, row };
+          inputs.forEach(inp=>{ payload[inp.getAttribute("data-field")]=inp.value; });
+          const res2=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify(payload)});
+          const out2=await res2.json();
+          alert(out2.status==="ok"?"Tersimpan.":"Gagal: "+(out2.message||""));
+          loadStruktur();
         });
       });
     }
 
-    async function loadArsip() {
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({ action: "listArsipKepengurusan", token })
-      });
-      const out = await res.json();
-      const tbody = document.getElementById("body-arsip");
-      tbody.innerHTML = "";
-      if (out.status !== "ok" || !out.data.length) {
-        tbody.innerHTML = "<tr><td colspan='7'>Belum ada arsip.</td></tr>";
-        return;
-      }
-      out.data.forEach((row, i) => {
-        const rowNumber = i + 2;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
+    async function loadArsip(){
+      const res=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify({action:"listArsipKepengurusan",token})});
+      const out=await res.json();
+      const tbody=document.getElementById("body-arsip");
+      tbody.innerHTML="";
+      if(out.status!=="ok" || !out.data.length){ tbody.innerHTML="<tr><td colspan='7'>Belum ada arsip.</td></tr>"; return; }
+      out.data.forEach((row,i)=>{
+        const sheetRow=i+2;
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
           <td>${i+1}</td>
-          <td><input class="input" value="${row.periode || ''}" data-rowa="${rowNumber}" data-field="periode"></td>
-          <td><input class="input" value="${row.ketua || ''}" data-rowa="${rowNumber}" data-field="ketua"></td>
-          <td><input class="input" value="${row.wakil || ''}" data-rowa="${rowNumber}" data-field="wakil"></td>
-          <td><input class="input" value="${row.sekretaris || ''}" data-rowa="${rowNumber}" data-field="sekretaris"></td>
-          <td><input class="input" value="${row.keterangan || ''}" data-rowa="${rowNumber}" data-field="keterangan"></td>
-          <td><button class="btn-secondary btn-save-arsip" data-rowa="${rowNumber}">Simpan baris</button></td>
+          <td><input class="input" value="${row.periode||''}" data-rowa="${sheetRow}" data-field="periode"></td>
+          <td><input class="input" value="${row.ketuaNIS||''}" data-rowa="${sheetRow}" data-field="ketuaNIS"></td>
+          <td><input class="input" value="${row.wakilNIS||''}" data-rowa="${sheetRow}" data-field="wakilNIS"></td>
+          <td><input class="input" value="${row.sekNIS||''}" data-rowa="${sheetRow}" data-field="sekNIS"></td>
+          <td><input class="input" value="${row.keterangan||''}" data-rowa="${sheetRow}" data-field="keterangan"></td>
+          <td><button class="btn-secondary btn-save-arsip" data-rowa="${sheetRow}">Simpan</button></td>
         `;
         tbody.appendChild(tr);
       });
-
-      tbody.querySelectorAll(".btn-save-arsip").forEach(btn => {
-        btn.addEventListener("click", async () => {
-          const row = btn.getAttribute("data-rowa");
-          const inputs = tbody.querySelectorAll(`[data-rowa='${row}']`);
-          const payload = { action: "saveArsipKepengurusan", token, row };
-          inputs.forEach(inp => {
-            payload[inp.getAttribute("data-field")] = inp.value;
-          });
-          const res2 = await fetch(WEB_APP_URL, { method: "POST", body: JSON.stringify(payload) });
-          const out2 = await res2.json();
-          alert(out2.status === "ok" ? "Tersimpan." : (out2.message || "Gagal"));
+      tbody.querySelectorAll(".btn-save-arsip").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const row=btn.getAttribute("data-rowa");
+          const inputs=tbody.querySelectorAll(`[data-rowa='${row}']`);
+          const payload={ action:"saveArsipKepengurusan", token, row };
+          inputs.forEach(inp=>{ payload[inp.getAttribute("data-field")]=inp.value; });
+          const res2=await fetch(WEB_APP_URL,{method:"POST",body:JSON.stringify(payload)});
+          const out2=await res2.json();
+          alert(out2.status==="ok"?"Tersimpan.":"Gagal: "+(out2.message||""));
+          loadArsip();
         });
       });
     }
 
-    // ========== LOGOUT ==========
-    function doLogout() {
+    function doLogout(){
       localStorage.removeItem("hc32_admin_token");
       localStorage.removeItem("hc32_admin_nama");
       localStorage.removeItem("hc32_admin_username");
@@ -933,8 +863,8 @@
       localStorage.removeItem("hc32_admin_tipe");
       window.location.href = LOGIN_URL;
     }
-    document.getElementById("btn-open-sites").addEventListener("click", () => {
-      window.open(LOGIN_URL, "_blank");
+    document.getElementById("btn-open-sites").addEventListener("click",()=>{
+      window.open(LOGIN_URL,"_blank");
     });
   </script>
 </body>
