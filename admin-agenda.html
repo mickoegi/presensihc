@@ -1,197 +1,227 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <title>Kelola Agenda • HC 32</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta charset="utf-8" />
+  <title>Agenda • Pengurus HC 32</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="config.js"></script>
   <style>
-    :root{--hc-blue:#005A9C;--bg:#f1f5f9;}
-    body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);margin:0;}
-    header{background:var(--hc-blue);color:white;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;}
-    .brand{font-weight:700;}
-    .topbar-user{font-size:12px;}
-    .container{max-width:1100px;margin:20px auto;padding:0 16px 40px 16px;}
-    h2{margin-bottom:12px;color:#0f172a;}
-    form{background:white;padding:14px 14px 10px 14px;border-radius:12px;box-shadow:0 10px 25px rgba(15,23,42,.06);margin-bottom:16px;}
-    label{font-size:12px;font-weight:600;display:block;margin-bottom:4px;}
-    input,textarea,select{width:100%;padding:7px 8px;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:10px;font-size:13px;}
-    button{background:var(--hc-blue);color:white;border:0;border-radius:8px;padding:6px 14px;font-weight:600;cursor:pointer;}
-    table{width:100%;border-collapse:collapse;background:white;border-radius:12px;overflow:hidden;box-shadow:0 10px 25px rgba(15,23,42,.06);}
-    th,td{padding:8px 10px;font-size:13px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top;}
-    th{background:#e2e8f0;font-weight:600;}
-    .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11px;}
-    .badge-aktif{background:rgba(34,197,94,.15);color:#166534;}
-    .badge-selesai{background:rgba(148,163,184,.15);color:#475569;}
-    .btn-del{background:#ef4444;border:none;color:white;border-radius:6px;padding:4px 10px;font-size:12px;cursor:pointer;}
-    #msg{font-size:13px;margin-bottom:10px;}
-    @media(max-width:768px){
-      table,thead,tbody,th,td,tr{display:block;}
-      th{display:none;}
-      td{border-bottom:1px solid #e2e8f0;margin-bottom:8px;}
-    }
+    /* sama gaya sidebar & header seperti dashboard biar seragam */
+    :root { --hc-blue:#005A9C; --hc-dark:#0f172a; --bg:#f1f5f9; }
+    *{box-sizing:border-box;}
+    body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);min-height:100vh;display:flex;}
+    .sidebar{width:230px;background:#0f172a;color:white;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:50;transition:transform .25s;}
+    .sidebar-header{padding:14px 16px 10px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:10px;align-items:center;}
+    .avatar{width:38px;height:38px;border-radius:999px;background:rgba(255,255,255,.09);display:flex;align-items:center;justify-content:center;font-weight:700;}
+    .nav-item{padding:9px 16px;display:flex;gap:8px;align-items:center;cursor:pointer;font-size:.82rem;border-left:3px solid transparent;}
+    .nav-item.active{background:rgba(255,255,255,.06);border-left-color:#38bdf8;}
+    .nav-item:hover{background:rgba(255,255,255,.03);}
+    @media(max-width:900px){.sidebar{transform:translateX(-100%);} .sidebar.open{transform:translateX(0);}}
+    .main{flex:1;margin-left:230px;display:flex;flex-direction:column;min-height:100vh;}
+    @media(max-width:900px){.main{margin-left:0;}}
+    header{background:white;padding:8px 16px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:20;}
+    #btn-open-sidebar{display:none;background:white;border:1px solid #cbd5e1;border-radius:6px;width:30px;height:30px;align-items:center;justify-content:center;cursor:pointer;}
+    @media(max-width:900px){#btn-open-sidebar{display:inline-flex;}}
+    .content{padding:16px 18px 70px 18px;flex:1;}
+    .card{background:white;border-radius:14px;padding:14px;box-shadow:0 8px 24px rgba(15,23,42,.03);margin-bottom:14px;}
+    .input{width:100%;padding:5px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:.8rem;}
+    .btn{background:var(--hc-blue);color:white;border:none;border-radius:6px;padding:6px 11px;cursor:pointer;font-size:.75rem;}
+    .btn-secondary{background:white;border:1px solid #cbd5e1;border-radius:6px;padding:5px 11px;font-size:.7rem;cursor:pointer;}
+    table{width:100%;border-collapse:collapse;}
+    th,td{padding:6px 6px;border-bottom:1px solid #e2e8f0;font-size:.75rem;}
+    th{background:#e2e8f0;text-align:left;}
+    footer{background:#06243d;color:white;text-align:center;padding:10px 12px 30px 12px;font-size:.7rem;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    @media(max-width:700px){.grid2{grid-template-columns:1fr;}}
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand">HC 32 • Kelola Agenda</div>
-    <div class="topbar-user" id="top-user">Pengurus</div>
-  </header>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="avatar">HC</div>
+      <div>
+        <div id="sb-name">Pengurus</div>
+        <div id="sb-role" style="font-size:.65rem;opacity:.6;">-</div>
+      </div>
+    </div>
+    <div class="nav-item" data-link="admin-dashboard.html">📊 Dashboard & Presensi</div>
+    <div class="nav-item active" data-link="admin-agenda.html">🗓 Agenda</div>
+    <div class="nav-item" data-link="admin-posting.html">📰 Posting</div>
+    <div class="nav-item" data-link="admin-anggota.html">👥 Anggota</div>
+    <div class="nav-item" data-link="admin-kepengurusan.html">🏛 Kepengurusan</div>
+    <div class="nav-item" id="btn-logout">🚪 Keluar</div>
+  </aside>
 
-  <div class="container">
-    <h2>Tambah Agenda</h2>
-    <form id="form-agenda">
-      <div id="msg"></div>
-      <label for="judul">Judul kegiatan *</label>
-      <input id="judul" required placeholder="Kunjungan Museum Satria Mandala">
+  <div class="main">
+    <header>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button id="btn-open-sidebar">☰</button>
+        <div style="font-weight:600;">Agenda Kegiatan</div>
+        <div style="font-size:.65rem;color:#94a3b8;">Pengurus HC 32</div>
+      </div>
+      <div id="top-info" style="font-size:.7rem;color:#64748b;"></div>
+    </header>
 
-      <label for="tanggal">Tanggal (YYYY-MM-DD) *</label>
-      <input id="tanggal" type="date" required>
+    <div class="content">
+      <div class="card">
+        <h2 style="margin-top:0;">Tambah / Edit Agenda</h2>
+        <form id="form-agenda" class="grid2">
+          <div>
+            <label>Judul *</label>
+            <input class="input" id="ag-judul" required>
+          </div>
+          <div>
+            <label>Tanggal *</label>
+            <input class="input" id="ag-tanggal" type="date" required>
+          </div>
+          <div>
+            <label>Waktu</label>
+            <input class="input" id="ag-waktu" placeholder="08.00-10.00">
+          </div>
+          <div>
+            <label>Tempat</label>
+            <input class="input" id="ag-tempat" placeholder="Ruang ...">
+          </div>
+          <div>
+            <label>Kategori</label>
+            <select class="input" id="ag-kategori">
+              <option value="umum">Umum</option>
+              <option value="internal">Internal</option>
+            </select>
+          </div>
+          <div>
+            <label>Status</label>
+            <select class="input" id="ag-status">
+              <option value="aktif">Aktif</option>
+              <option value="selesai">Selesai</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+          <div style="grid-column:1 / span 2;">
+            <label>Deskripsi</label>
+            <textarea class="input" id="ag-deskripsi" rows="2"></textarea>
+          </div>
+          <div style="grid-column:1 / span 2;">
+            <button class="btn" type="submit">Simpan Agenda</button>
+            <span id="ag-msg" style="font-size:.7rem;margin-left:8px;"></span>
+          </div>
+        </form>
+      </div>
 
-      <label for="waktu">Waktu (opsi)</label>
-      <input id="waktu" placeholder="08.00–11.00">
+      <div class="card">
+        <h2 style="margin-top:0;">Daftar Agenda</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Judul</th>
+              <th>Tempat</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="body-agenda">
+            <tr><td colspan="5">Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-      <label for="tempat">Tempat (opsi)</label>
-      <input id="tempat" placeholder="R. Multimedia / Museum ...">
-
-      <label for="deskripsi">Deskripsi (opsi)</label>
-      <textarea id="deskripsi" rows="3" placeholder="Ringkasan kegiatan"></textarea>
-
-      <label for="kategori">Kategori</label>
-      <select id="kategori">
-        <option value="umum">Umum</option>
-        <option value="internal">Internal</option>
-      </select>
-
-      <label for="status">Status</label>
-      <select id="status">
-        <option value="aktif">Aktif</option>
-        <option value="selesai">Selesai</option>
-      </select>
-
-      <button type="submit">Simpan Agenda</button>
-    </form>
-
-    <h2>Daftar Agenda</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Tanggal</th>
-          <th>Judul</th>
-          <th>Tempat</th>
-          <th>Kategori</th>
-          <th>Status</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody id="agenda-body">
-        <tr><td colspan="6">Memuat...</td></tr>
-      </tbody>
-    </table>
+    <footer>
+      © 2025 History Club SMAN 32 Jakarta. Dibuat dan dikembangkan oleh @vitezegi.
+    </footer>
   </div>
 
   <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
+    const token = hc32_getToken();
+    if (!token) window.location.href = "admin.html";
 
-    // ambil token dari query/localStorage
-    const url = new URL(window.location.href);
-    const qToken = url.searchParams.get("token");
-    if (qToken) localStorage.setItem("hc32_admin_token", qToken);
-    const token = qToken || localStorage.getItem("hc32_admin_token");
-    const nama = localStorage.getItem("hc32_admin_nama") || "";
-    document.getElementById("top-user").textContent = nama ? ("Halo, " + nama) : "Pengurus";
+    // set nama
+    const nm = localStorage.getItem("hc32_admin_nama") || "Pengurus";
+    const rl = localStorage.getItem("hc32_admin_role") || "pengurus";
+    const tp = localStorage.getItem("hc32_admin_tipe") || "-";
+    document.getElementById("sb-name").textContent = nm;
+    document.getElementById("sb-role").textContent = tp + " • " + rl;
+    document.getElementById("top-info").textContent = nm + " • " + rl;
 
-    if (!token) {
-      alert("Token tidak ada. Buka halaman ini dari tombol Login Pengurus.");
-    } else {
-      loadAgenda();
-    }
+    // sidebar hp
+    const sb = document.getElementById("sidebar");
+    document.getElementById("btn-open-sidebar").addEventListener("click", ()=> sb.classList.toggle("open"));
 
+    // nav
+    document.querySelectorAll(".nav-item[data-link]").forEach(i=>{
+      i.addEventListener("click", ()=> window.location.href = i.getAttribute("data-link"));
+    });
+    document.getElementById("btn-logout").addEventListener("click", ()=> hc32_logout());
+
+    // load agenda
     async function loadAgenda() {
-      const body = {
-        action: "listKegiatanAdmin",
-        token: token
-      };
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify(body)
-      });
-      const out = await res.json();
-      const tbody = document.getElementById("agenda-body");
+      const out = await hc32_post("listKegiatanAdmin", { token });
+      const tbody = document.getElementById("body-agenda");
       tbody.innerHTML = "";
       if (out.status !== "ok" || !out.data.length) {
-        tbody.innerHTML = "<tr><td colspan='6'>Belum ada agenda.</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='5'>Belum ada agenda.</td></tr>";
         return;
       }
       out.data.forEach(item => {
         const tr = document.createElement("tr");
         tr.innerHTML = `
-          <td>${item.tanggal || "-"}</td>
-          <td><strong>${item.judul}</strong><br><small>${item.deskripsi || ""}</small></td>
-          <td>${item.tempat || "-"}</td>
-          <td>${item.kategori || "-"}</td>
+          <td>${item.tanggal || '-'}</td>
+          <td>${item.judul || '-'}</td>
+          <td>${item.tempat || '-'}</td>
+          <td>${item.status || '-'}</td>
           <td>
-            ${item.status === "aktif"
-              ? "<span class='badge badge-aktif'>Aktif</span>"
-              : "<span class='badge badge-selesai'>Selesai</span>"
-            }
+            <button class="btn-secondary" data-ptm="${item.judul}">Jadikan Pertemuan</button>
+            <button class="btn-secondary" data-del="${item.id}">Hapus</button>
           </td>
-          <td><button class="btn-del" data-id="${item.id}">Hapus</button></td>
         `;
         tbody.appendChild(tr);
       });
 
-      // pasang listener hapus
-      document.querySelectorAll(".btn-del").forEach(btn => {
-        btn.addEventListener("click", async () => {
+      tbody.querySelectorAll("button[data-ptm]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const judul = btn.getAttribute("data-ptm");
+          const out2 = await hc32_post("setCurrentMeetingFromAgenda", { token, judul });
+          alert(out2.message || "Pertemuan diubah ke: " + judul);
+        });
+      });
+      tbody.querySelectorAll("button[data-del]").forEach(btn=>{
+        btn.addEventListener("click", async()=>{
+          const id = btn.getAttribute("data-del");
           if (!confirm("Hapus agenda ini?")) return;
-          const id = btn.getAttribute("data-id");
-          const res = await fetch(WEB_APP_URL, {
-            method: "POST",
-            body: JSON.stringify({ action: "deleteKegiatan", token: token, id: id })
-          });
-          const out = await res.json();
-          if (out.status === "ok") {
-            loadAgenda();
-          } else {
-            alert(out.message || "Gagal hapus");
-          }
+          const out2 = await hc32_post("deleteKegiatan", { token, id });
+          if (out2.status === "ok") loadAgenda();
+          else alert(out2.message || "Gagal hapus.");
         });
       });
     }
 
-    document.getElementById("form-agenda").addEventListener("submit", async (e) => {
+    document.getElementById("form-agenda").addEventListener("submit", async e=>{
       e.preventDefault();
-      const msg = document.getElementById("msg");
-      const judul = document.getElementById("judul").value.trim();
-      const tanggal = document.getElementById("tanggal").value.trim();
-      const waktu = document.getElementById("waktu").value.trim();
-      const tempat = document.getElementById("tempat").value.trim();
-      const deskripsi = document.getElementById("deskripsi").value.trim();
-      const kategori = document.getElementById("kategori").value;
-      const status = document.getElementById("status").value;
-
+      const msg = document.getElementById("ag-msg");
       msg.textContent = "Menyimpan...";
-      msg.style.color = "#0f172a";
-
-      const res = await fetch(WEB_APP_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "addKegiatan",
-          token: token,
-          judul, tanggal, waktu, tempat, deskripsi, kategori, status
-        })
-      });
-      const out = await res.json();
+      const body = {
+        action: "addKegiatan",
+        token,
+        judul: document.getElementById("ag-judul").value.trim(),
+        tanggal: document.getElementById("ag-tanggal").value.trim(),
+        waktu: document.getElementById("ag-waktu").value.trim(),
+        tempat: document.getElementById("ag-tempat").value.trim(),
+        kategori: document.getElementById("ag-kategori").value,
+        status: document.getElementById("ag-status").value,
+        deskripsi: document.getElementById("ag-deskripsi").value.trim()
+      };
+      const out = await hc32_post("addKegiatan", body);
       if (out.status === "ok") {
         msg.textContent = "Tersimpan.";
-        msg.style.color = "green";
         e.target.reset();
         loadAgenda();
       } else {
-        msg.textContent = "Gagal: " + (out.message || "error");
-        msg.style.color = "red";
+        msg.textContent = out.message || "Gagal.";
       }
     });
+
+    loadAgenda();
   </script>
 </body>
 </html>
