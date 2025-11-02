@@ -1,65 +1,72 @@
-<!-- config.js -->
-<script>
-  // GANTI ini dengan web app yg kamu deploy (punya /exec di ujung)
-  const HC32_WEBAPP = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
+// ========================
+// HC 32 • CONFIG GLOBAL
+// ========================
 
-  // kalau mau balik ke web utama kalau token hilang
-  const HC32_LOGIN_PAGE = "admin.html";   // boleh diganti ke sites kamu
+// GANTI ke URL Web App kamu (yang /exec)
+const HC32_WEBAPP = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
 
-  // helper: ambil token dari query atau localStorage
-  function hc32_getToken() {
-    const url = new URL(window.location.href);
-    const t = url.searchParams.get("token");
-    if (t) {
-      // simpan ke localStorage biar halaman lain tinggal pakai
-      localStorage.setItem("hc32_admin_token", t);
-      const n = url.searchParams.get("n");
-      const u = url.searchParams.get("u");
-      const r = url.searchParams.get("r");
-      const tp= url.searchParams.get("t");
-      if (n)  localStorage.setItem("hc32_admin_nama", n);
-      if (u)  localStorage.setItem("hc32_admin_username", u);
-      if (r)  localStorage.setItem("hc32_admin_role", r);
-      if (tp) localStorage.setItem("hc32_admin_tipe", tp);
-      return t;
-    }
-    return localStorage.getItem("hc32_admin_token");
+// Halaman login (kalau token habis / tidak ada)
+const HC32_LOGIN_PAGE = "admin.html";
+
+// ambil token dari localStorage
+function hc32_getToken() {
+  return localStorage.getItem("hc32_admin_token") || "";
+}
+
+// simpan data login ke localStorage
+function hc32_saveSession({ token, username, nama, role, tipe }) {
+  if (token) localStorage.setItem("hc32_admin_token", token);
+  if (username) localStorage.setItem("hc32_admin_username", username);
+  if (nama) localStorage.setItem("hc32_admin_nama", nama);
+  if (role) localStorage.setItem("hc32_admin_role", role);
+  if (tipe) localStorage.setItem("hc32_admin_tipe", tipe);
+}
+
+// hapus session
+function hc32_logout() {
+  localStorage.removeItem("hc32_admin_token");
+  localStorage.removeItem("hc32_admin_username");
+  localStorage.removeItem("hc32_admin_nama");
+  localStorage.removeItem("hc32_admin_role");
+  localStorage.removeItem("hc32_admin_tipe");
+  window.location.href = HC32_LOGIN_PAGE;
+}
+
+// helper POST JSON ke Apps Script
+async function hc32_post(action, payload = {}) {
+  const body = { action, ...payload };
+  const res = await fetch(HC32_WEBAPP, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+  // kalau Apps Script kadang balikin HTML error, cegah JSON error
+  const text = await res.text();
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    return { status: "error", message: "Respon bukan JSON", raw: text };
   }
+}
 
-  function hc32_getProfile() {
-    return {
-      token: hc32_getToken(),
-      nama:  localStorage.getItem("hc32_admin_nama") || "Pengurus",
-      user:  localStorage.getItem("hc32_admin_username") || "",
-      role:  localStorage.getItem("hc32_admin_role") || "pengurus",
-      tipe:  localStorage.getItem("hc32_admin_tipe") || "siswa-aktif",
-    };
-  }
+// format tanggal 2025-11-01 jadi 1 November 2025
+function hc32_formatTanggal(t) {
+  if (!t) return "-";
+  const d = new Date(t);
+  if (isNaN(d)) return t;
+  return d.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric"
+  });
+}
 
-  // helper fetch POST JSON ke Apps Script
-  async function hc32_post(action, payload={}) {
-    const body = { action, ...payload };
-    const res  = await fetch(HC32_WEBAPP, {
-      method: "POST",
-      body: JSON.stringify(body),
-    });
-    return res.json();
-  }
-
-  function hc32_requireLogin() {
-    const { token } = hc32_getProfile();
-    if (!token) {
-      window.location.href = HC32_LOGIN_PAGE;
-    }
-    return token;
-  }
-
-  function hc32_logout() {
-    localStorage.removeItem("hc32_admin_token");
-    localStorage.removeItem("hc32_admin_nama");
-    localStorage.removeItem("hc32_admin_username");
-    localStorage.removeItem("hc32_admin_role");
-    localStorage.removeItem("hc32_admin_tipe");
-    window.location.href = HC32_LOGIN_PAGE;
-  }
-</script>
+// warna role di dashboard
+function hc32_roleColor(roleTag) {
+  if (!roleTag) return "#E11D48";
+  const r = roleTag.toLowerCase();
+  if (r.includes("pembina")) return "#0F172A";
+  if (r.includes("pelatih") || r.includes("pembimbing")) return "#F97316";
+  if (r.includes("ketua")) return "#0F766E";
+  if (r.includes("wakil")) return "#0EA5E9";
+  return "#E11D48";
+}
