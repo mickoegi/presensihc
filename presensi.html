@@ -6,310 +6,243 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <script src="https://cdn.tailwindcss.com"></script>
-  
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      /* Warna dari PDF Pedoman Identitas Visual */
-      --hc-blue: #1a4787;  /* Biru Utama (HEADER, FOOTER, BUTTON) */
-      --hc-toska: #0f8a94; /* Toska (Aksen) */
-      --hc-text-dark: #2e2e2e; /* Teks Gelap */
-      --hc-yellow-light: #fffbeb; /* Latar NFC (dari screenshot) */
-      --hc-yellow-dark: #b45309;  /* Teks NFC (dari screenshot) */
-      --hc-bg-light: #f0f4f9;    /* Latar Body (dari screenshot) */
+      /* Warna dari Brand Guide PDF [cite: 33, 38, 57, 61, 69] */
+      --hc-blue: #1a4787;
+      --hc-toska: #0f8a94;
+      --hc-dark: #2e2e2e;
+      --hc-green: #15a256; /* RGB(21, 162, 86) [cite: 61] */
+      --hc-red: #d30e14;
+      --hc-bg: #e7e9ea;   /* RGB(231, 233, 234) [cite: 62] */
+      --hc-yellow: #ecec17;
     }
-    
-    /* Terapkan font Poppins dari PDF */
+    /* Font Poppins (Sesuai Brand Guide)  */
     body {
-      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--hc-bg-light);
-      color: var(--hc-text-dark);
-    }
-    
-    /* Kustomisasi Tailwind */
-    .bg-hc-blue { background-color: var(--hc-blue); }
-    .text-hc-blue { color: var(--hc-blue); }
-    .border-hc-blue { border-color: var(--hc-blue); }
-    .bg-hc-toska { background-color: var(--hc-toska); }
-    .bg-hc-bg-light { background-color: var(--hc-bg-light); }
-    .bg-hc-footer { background-color: #06243d; } /* Warna footer dari screenshot */
-    .bg-hc-yellow-light { background-color: var(--hc-yellow-light); }
-    .text-hc-yellow-dark { color: var(--hc-yellow-dark); }
-    
-    /* Tombol Kustom */
-    .btn-primary {
-      background-color: var(--hc-blue);
-      color: white;
-      font-weight: 600;
-      border-radius: 0.75rem; /* 12px */
-      padding: 0.75rem 1rem;
-      transition: background-color 0.2s;
+      background: var(--hc-bg);
+      min-height: 100vh;
+      font-family: 'Poppins', sans-serif;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
+      flex-direction: column;
     }
-    .btn-primary:hover {
-      background-color: #153a6f; /* Versi lebih gelap dari --hc-blue */
+    main {
+      flex-grow: 1;
     }
-    .btn-primary.disabled {
-      background-color: #94a3b8;
-      cursor: not-allowed;
-    }
-    
-    /* Tombol Stop (Merah) */
-    .btn-danger {
-      background-color: #dc2626; /* Merah */
-    }
-    .btn-danger:hover {
-      background-color: #b91c1c;
-    }
-
-    /* Kartu (Card) Kustom sesuai Screenshot */
-    .card {
-      background-color: white;
-      border-radius: 1rem; /* 16px */
-      padding: 1.25rem; /* 20px */
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    /* Scanner Frame */
     .scanner-frame {
-      border: 3px dashed #d1d5db; /* Abu-abu */
-      border-radius: 1rem; /* 16px */
+      border: 2px solid #e5e7eb; /* Disesuaikan dengan desain */
+      border-radius: 1.25rem;
       overflow: hidden;
-      background: #222;
+      background: #000;
       position: relative;
     }
+    footer {
+      background: var(--hc-dark); /* Disesuaikan dengan desain */
+      color: #fff;
+    }
+    .raw-error {
+      font-size: .65rem;
+      background: rgba(0,0,0,.05);
+      border-radius: .5rem;
+      padding: .35rem .55rem;
+      margin-top: .35rem;
+      word-break: break-all;
+    }
     
-    /* Placeholder Input */
-    input[type="text"]::placeholder {
-      color: #9ca3af;
+    /* Style untuk Menu Sidebar Baru */
+    .menu-item, .menu-group-title, .menu-sub-item {
+      display: block;
+      padding: 0.6rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #334155;
+    }
+    .menu-item:hover, .menu-sub-item:hover {
+      background: #f1f5f9;
+      color: var(--hc-blue);
+    }
+    .menu-group-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--hc-blue);
+      margin-top: 0.75rem;
+      padding-bottom: 0.25rem;
+    }
+    .menu-sub-item {
+      padding-left: 2rem;
       font-weight: 400;
-      font-size: 0.95rem;
-    }
-
-    /* Sidebar Menu (sesuai Screenshot) */
-    #sidebar-menu {
-      transition: transform 0.3s ease-in-out;
-      transform: translateX(-100%);
-    }
-    #sidebar-menu.open {
-      transform: translateX(0);
-    }
-    .sidebar-overlay {
-      transition: opacity 0.3s ease-in-out;
-    }
-    
-    /* Tombol dropdown menu di sidebar */
-    .sidebar-dropdown-toggle {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-    }
-    .sidebar-dropdown-toggle svg {
-      transition: transform 0.2s;
-    }
-    .sidebar-dropdown-toggle.open svg {
-      transform: rotate(90deg);
-    }
-    .sidebar-submenu {
-      display: none;
-      padding-left: 1.25rem; /* Indentasi submenu */
-      border-left: 2px solid #e5e7eb; /* Garis indentasi */
-      margin-left: 0.5rem;
-    }
-    
-    /* Animasi Loading Kustom (Permintaan 2 & 3) */
-    .scoped-overlay {
-      position: absolute;
-      inset: 0;
-      background: rgba(248, 250, 252, 0.85); /* Latar semi-transparan */
-      backdrop-filter: blur(4px);
-      z-index: 40;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 1rem; /* Sesuaikan dengan wrapper */
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s;
-    }
-    .scoped-overlay.show {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    
-    .loading-spinner {
-      width: 72px; /* 18 */
-      height: 72px; /* 18 */
-      border-radius: 50%;
-      border: 6px solid #dbeafe; /* Biru sangat muda */
-      border-top-color: var(--hc-blue);
-      animation: spin 1s linear infinite;
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .loading-logo {
-      /* Logo HC di tengah spinner */
-      position: absolute;
-      width: 48px; /* 12 */
-      height: 48px; /* 12 */
-      object-fit: contain;
-    }
-    
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
     }
   </style>
 </head>
-<body>
+<body class="text-gray-800">
 
-  <header class="bg-white shadow sticky top-0 z-30">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      
+  <header class="bg-white shadow-sm mb-4 sticky top-0 z-30">
+    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <img 
-          id="header-logo"
-          src = LOGO_HC_URL 
-          alt="Logo HC 32" 
-          class="w-10 h-10 object-contain"
-          onerror="this.src='https://placehold.co/40x40/1a4787/FFFFFF?text=HC'"
-        >
+        <img src="https://lh3.googleusercontent.com/d/1lAev2D5Pxp5Rt36iy4y0YMibEnYu5BgI" alt="Logo HC" class="w-10 h-10">
         <div>
-          <h1 class="text-lg md:text-xl font-semibold text-hc-blue leading-tight">
+          <h1 class="text-lg font-semibold text-[var(--hc-dark)] leading-tight">
             Presensi Kegiatan
           </h1>
           </div>
       </div>
-      
-      <button id="menu-btn" class="p-2 rounded-lg hover:bg-gray-100 z-50">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      <div class="relative">
+        <button id="menu-btn" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100 text-slate-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-6 md:py-8 pb-32">
-    
-    <div id="main-content-wrapper" class="relative grid lg:grid-cols-2 gap-5 md:gap-6">
+  <div id="menu-overlay" class="fixed inset-0 bg-black/50 z-40 hidden" aria-hidden="true"></div>
+  <div id="menu-sidebar" class="fixed top-0 left-0 w-72 h-full bg-white shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+    <div class="flex items-center justify-between p-4 border-b">
+      <h2 class="font-semibold text-[var(--hc-dark)]">Menu Navigasi</h2>
+      <button id="menu-close-btn" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-100 text-slate-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+    <nav class="p-4 overflow-y-auto h-[calc(100vh-65px)]">
+      <a href="https://sites.google.com/view/history-club-32" class="menu-item">Beranda</a>
       
-      <div id="scoped-loader" class="scoped-overlay">
-        <div class="flex flex-col items-center gap-3">
-          <div class="loading-spinner">
-            <img 
-              src = LOGO_HC_URL 
-              alt="Loading..." 
-              class="loading-logo"
-              onerror="this.src='https://placehold.co/48x48/1a4787/FFFFFF?text=HC'"
-            >
+      <div class="menu-group">
+        <p class="menu-group-title">Profil</p>
+        <a href="https://sites.google.com/view/history-club-32/profil/tentang-kami" class="menu-sub-item">Tentang Kami</a>
+        <a href="https://sites.google.com/view/history-club-32/profil/sejarah" class="menu-sub-item">Sejarah</a>
+        <a href="https://sites.google.com/view/history-club-32/profil/kepengurusan" class="menu-sub-item">Kepengurusan</a>
+      </div>
+      
+      <div class="menu-group">
+        <p class="menu-group-title">Aktivitas</p>
+        <a href="https://sites.google.com/view/history-club-32/aktivitas/agenda" class="menu-sub-item">Agenda</a>
+        <a href="https://sites.google.com/view/history-club-32/aktivitas/kegiatan" class="menu-sub-item">Kegiatan</a>
+      </div>
+
+      <div class="menu-group">
+        <p class="menu-group-title">Keanggotaan</p>
+        <a href="https://sites.google.com/view/history-club-32/keanggotaan/anggota" class="menu-sub-item">Anggota</a>
+        <a href="#" class="menu-sub-item bg-blue-50 text-[var(--hc-blue)] font-medium">Presensi</a>
+        <a href="https://sites.google.com/view/history-club-32/keanggotaan/pendaftaran" class="menu-sub-item">Pendaftaran</a>
+        <a href="https://sites.google.com/view/history-club-32/keanggotaan/login-pengurus" class="menu-sub-item">Login Pengurus</a>
+      </div>
+    </nav>
+  </div>
+
+
+  <main class="max-w-md mx-auto px-4 pb-20 w-full">
+    <div class="relative">
+
+      <div id="global-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-20 hidden rounded-2xl">
+        <div class="flex flex-col items-center gap-4 p-6 rounded-lg text-center">
+          <div class="relative w-16 h-16">
+            <div class="absolute inset-0 rounded-full border-4 border-[var(--hc-blue)] border-t-[var(--hc-toska)] animate-spin"></div>
+            <img src="https://lh3.googleusercontent.com/d/1lAev2D5Pxp5Rt36iy4y0YMibEnYu5BgI" alt="Logo" class="absolute inset-0 m-auto w-10 h-10">
           </div>
-          <p id="loading-text" class="text-hc-blue font-medium">Memeriksa data...</p>
+          <p id="global-overlay-text" class="text-[var(--hc-dark)] font-semibold text-sm">Memeriksa presensi...</p>
         </div>
       </div>
 
-      <section class="flex flex-col gap-5 md:gap-6">
-        <div class="card">
-          <h2 class="text-xl md:text-2xl font-bold text-hc-text-dark mb-1">Pindai Barcode / QR</h2>
+      <div class="flex flex-col gap-4">
+
+        <section class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+          <h2 class="text-xl font-bold text-[var(--hc-dark)] mb-1">Pindai Barcode / QR</h2>
           <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
-            <span class="w-10 h-[3px] bg-hc-blue inline-block rounded-full"></span>
+            <span class="w-10 h-[3px] bg-[var(--hc-blue)] inline-block rounded-full"></span>
             Klik tombol untuk memulai kamera.
           </p>
 
-          <div class="scanner-frame mb-4 h-64 flex items-center justify-center">
-            <div id="qr-reader" class="hidden w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover"></div>
-            <div id="qr-placeholder" class="flex flex-col items-center px-4">
-              <p class="text-white/80 text-sm mb-2 text-center">Kamera belum aktif.</p>
-              <p class="text-white/50 text-xs text-center">Tekan "Mulai Pindai Barcode"</p>
+          <div id="camera-wrapper" class="scanner-frame mb-4 h-60 flex items-center justify-center">
+            <div id="qr-reader" class="hidden w-full h-full [&_video]:w-full [&_video]:h-full [&_video]:object-cover"></div>
+            <div id="qr-placeholder" class="flex flex-col items-center px-4 text-center">
+              <p class="text-white/80 text-sm mb-2">Kamera belum aktif.</p>
+              <p class="text-white/50 text-xs">Tekan "Mulai Pindai Barcode"</p>
+            </div>
+            <div id="scan-anim" class="absolute inset-6 rounded-xl border-2 border-white/70 pointer-events-none hidden">
+              <div class="absolute inset-x-4 top-6 h-1 bg-white/60 shadow-[0_0_15px_2px_rgba(255,255,255,0.7)] animate-pulse"></div>
             </div>
           </div>
 
-          <button id="btn-camera-toggle" class="btn-primary w-full">
-            <svg id="icon-camera-start" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-4.553a.5.5 0 01.854.353V18.2a.5.5 0 01-.854.353L15 14M4 18V6a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2z" />
+          <button id="btn-toggle-camera"
+            class="w-full bg-[var(--hc-blue)] text-white font-semibold py-2.5 rounded-xl hover:bg-opacity-90 transition flex items-center justify-center gap-2 mb-1">
+            
+            <svg id="icon-cam-start" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
-            <svg id="icon-camera-stop" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg id="icon-cam-stop" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 10a.5.5 0 011 0v4a.5.5 0 01-1 0v-4zM14 10a.5.5 0 011 0v4a.5.5 0 01-1 0v-4z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
             </svg>
-            <span id="btn-camera-text">Mulai Pindai Barcode</span>
+            <span id="btn-toggle-text">Mulai Pindai Barcode</span>
           </button>
-          <p class="text-xs text-gray-400 mt-2 text-center">Jika kamera tidak muncul, izinkan akses kamera dahulu.</p>
-        </div>
-      </section>
+          <p class="text-[0.7rem] text-gray-400 mt-1 text-center">Jika kamera tidak muncul, izinkan akses kamera dahulu.</p>
+        </section>
 
-      <section class="flex flex-col gap-5 md:gap-6">
-        <div id="status-box" class="card flex gap-3 items-center border-l-4 border-gray-300">
-          <div id="status-icon" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p id="status-title" class="font-semibold text-sm text-gray-800 truncate">Menunggu presensi...</p>
-            <p id="status-msg" class="text-xs text-gray-500">Silakan pindai barcode atau isi ID Anggota.</p>
-          </div>
-        </div>
+        <section class="flex flex-col gap-4">
 
-        <div class="card flex items-center gap-3 bg-hc-yellow-light border-l-4 border-yellow-400">
-          <img 
-            src = LOGO_NFC_URL 
-            alt="NFC Logo" 
-            class="w-9 h-9"
-            onerror="this.src='https://placehold.co/36x36/000000/FFFFFF?text=NFC'"
-          >
-          <div>
-            <p class="font-semibold text-hc-yellow-dark text-sm">NFC Reader</p>
-            <p class="text-xs text-hc-yellow-dark opacity-80 leading-tight">Coming soon – tempel kartu anggota untuk presensi.</p>
+          <div id="status-box" class="bg-white border border-gray-200 rounded-2xl p-4 flex gap-3 items-center shadow-sm">
+            <div id="status-icon" class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-600 shrink-0">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p id="status-title" class="font-semibold text-sm text-slate-800 truncate">Menunggu presensi...</p>
+              <p id="status-msg" class="text-xs text-slate-500">Silakan pindai barcode atau isi nomor identitas.</p>
+              <pre id="status-raw" class="raw-error hidden"></pre>
+            </div>
           </div>
-        </div>
 
-        <div class="card">
-          <h3 class="font-semibold text-hc-text-dark mb-1">Input manual</h3>
-          <p class="text-xs text-gray-500 mb-3">Gunakan jika barcode tidak terbaca.</p>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input id="manual-input" type="text" inputmode="numeric"
-                   placeholder="masukkan nomor identitas"
-                   class="flex-1 w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-hc-blue focus:border-hc-blue transition">
-            <button id="btn-send-manual"
-                    class="btn-primary px-5 py-2.5 text-sm w-full sm:w-auto shrink-0">
-              Kirim
-            </button>
+          <div class="bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm">
+            <img src="https://lh3.googleusercontent.com/d/1F42BAD5bDPLJBEYrjfGdv-7f7KtAVWIg" alt="NFC Logo" class="w-9 h-9">
+            <div>
+              <p class="font-semibold text-yellow-900 text-sm">NFC Reader</p>
+              <p class="text-xs text-yellow-800 leading-tight">Coming soon – tempel kartu anggota untuk presensi.</p>
+            </div>
           </div>
-        </div>
 
-        <div id="result-box" class="card hidden flex-col sm:flex-row items-center gap-4 bg-hc-blue text-white">
-          <img id="result-avatar" 
-             class="w-16 h-16 rounded-full bg-white object-cover border-4 border-hc-toska" 
-             src="https://placehold.co/64x64/FFFFFF/1a4787?text=HC" 
-             alt="Foto Anggota">
-          <div class="flex-1 text-center sm:text-left">
-            <p id="result-name" class="font-bold text-lg">Nama Anggota</p>
-            <p id="result-meta" class="text-sm opacity-80">Pertemuan • Jam</p>
+          <div class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
+            <h3 class="font-semibold text-[var(--hc-dark)] mb-1">Input manual</h3>
+            <p class="text-xs text-gray-500 mb-3">Gunakan jika barcode tidak terbaca.</p>
+            <div class="flex gap-3 items-center">
+              <input id="manual-nis" type="text" inputmode="numeric"
+                     placeholder="masukkan nomor identitas"
+                     class="flex-1 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--hc-blue)] focus:border-[var(--hc-blue)]">
+              <button id="btn-send-manual"
+                       class="px-4 py-2 rounded-xl bg-[var(--hc-blue)] text-white text-sm font-semibold hover:bg-opacity-90 transition">
+                Kirim
+              </button>
+            </div>
           </div>
-        </div>
-        
-      </section>
-    </div> <div class="mt-8 card flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-hc-blue">
+
+          <div id="result-box" class="hidden bg-white rounded-2xl shadow-sm p-4 flex items-center gap-4 border border-gray-200">
+            <div id="result-avatar" class="w-16 h-16 rounded-full bg-[var(--hc-dark)] flex items-center justify-center text-white font-bold text-xl border-4 border-[var(--hc-blue)] overflow-hidden bg-cover bg-center shrink-0">
+              </div>
+            <div class="flex-1 min-w-0">
+              <p id="result-name" class="font-bold text-[var(--hc-dark)] truncate">Nama Anggota</p>
+              <p id="result-meta" class="text-sm text-gray-500">Pertemuan • Jam</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="mt-8 mb-6 bg-white rounded-2xl shadow-sm flex flex-col md:flex-row items-center justify-between gap-3 px-5 py-4 border-l-4 border-[var(--hc-blue)]">
       <div>
-        <p class="font-semibold text-hc-text-dark text-sm md:text-base">Butuh Bantuan?</p>
-        <p class="text-xs text-gray-500">Silakan hubungi Ketua HC <span class="font-semibold text-hc-blue">@vitezegi</span> atau pengurus yang sedang bertugas.</p>
+        <p class="font-semibold text-[var(--hc-dark)] text-sm">Butuh Bantuan?</p>
+        <p class="text-xs text-gray-500">Silakan hubungi Ketua HC <span class="font-semibold text-[var(--hc-blue)]">@vitezegi</span> atau pengurus.</p>
       </div>
       <a href="https://www.instagram.com/historyclub32jkt/" target="_blank"
-         class="btn-primary text-sm px-4 py-2 w-full md:w-auto shrink-0">
+         class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--hc-blue)] text-white text-sm hover:bg-opacity-90 transition-colors shrink-0">
         Instagram HC 32
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -318,433 +251,321 @@
     </div>
   </main>
 
-  <footer class="bg-hc-footer mt-auto text-white p-6">
-    <div class="max-w-5xl mx-auto flex items-start gap-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-      </svg>
-      <div>
-        <p class="text-sm font-medium">© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
-        <p class="text-xs text-gray-300 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold">@vitezegi</span>.</p>
-      </div>
+  <footer class="mt-auto">
+    <div class="max-w-md mx-auto px-4 py-6 text-center text-sm">
+      <p>© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
+      <p class="text-xs text-slate-300/80 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold text-white">@vitezegi</span>.</p>
     </div>
   </footer>
 
-  <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none"></div>
-  <div id="sidebar-menu" class="fixed top-0 left-0 w-72 h-full bg-white shadow-lg z-50 p-4 overflow-y-auto">
-    <div class="flex items-center justify-between pb-3 border-b mb-3">
-      <div class="flex items-center gap-2">
-        <img 
-          src="GANTI_DENGAN_URL_LOGO_HC.png" 
-          alt="Logo HC 32" 
-          class="w-9 h-9 object-contain"
-          onerror="this.src='https://placehold.co/36x36/1a4787/FFFFFF?text=HC'"
-        >
-        <span class="font-semibold text-hc-blue">History Club 32</span>
-      </div>
-      <button id="menu-close-btn" class="p-1 rounded-full hover:bg-gray-100">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-    </div>
-    
-    <nav class="flex flex-col gap-1 text-sm font-medium text-gray-700">
-      <a href="https://sites.google.com/view/history-club-32/beranda" class="px-3 py-2 rounded-lg hover:bg-gray-100">Beranda</a>
-      
-      <div class="sidebar-dropdown">
-        <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100">
-          <span>Profil</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-        </button>
-        <div class="sidebar-submenu mt-1 flex flex-col gap-1">
-          <a href="https://sites.google.com/view/history-club-32/profil/tentang-kami" class="px-3 py-2 rounded-lg hover:bg-gray-100">Tentang Kami</a>
-          <a href="https://sites.google.com/view/history-club-32/profil/sejarah" class="px-3 py-2 rounded-lg hover:bg-gray-100">Sejarah</a>
-          <a href="https://sites.google.com/view/history-club-32/profil/kepengurusan" class="px-3 py-2 rounded-lg hover:bg-gray-100">Kepengurusan</a>
-        </div>
-      </div>
-      
-      <div class="sidebar-dropdown">
-        <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100">
-          <span>Aktivitas</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-        </button>
-        <div class="sidebar-submenu mt-1 flex flex-col gap-1">
-          <a href="https://sites.google.com/view/history-club-32/aktivitas/agenda" class="px-3 py-2 rounded-lg hover:bg-gray-100">Agenda</a>
-          <a href="https://sites.google.com/view/history-club-32/aktivitas/kegiatan" class="px-3 py-2 rounded-lg hover:bg-gray-100">Kegiatan</a>
-        </div>
-      </div>
-      
-      <div class="sidebar-dropdown">
-        <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100">
-          <span>Keanggotaan</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
-        </button>
-        <div class="sidebar-submenu mt-1 flex flex-col gap-1">
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan/anggota" class="px-3 py-2 rounded-lg hover:bg-gray-100">Anggota</a>
-          <a href="#" class="px-3 py-2 rounded-lg bg-blue-50 text-hc-blue font-semibold">Presensi</a>
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan/pendaftaran" class="px-3 py-2 rounded-lg hover:bg-gray-100">Pendaftaran</a>
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan/login-pengurus" class="px-3 py-2 rounded-lg hover:bg-gray-100">Login Pengurus</a>
-        </div>
-      </div>
-
-    </nav>
-  </div>
+  <audio id="sound-success" preload="auto">
+    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YSAgAAAAAMC/gLsC/AL/Av8C/wL/Av8C/wL/AvwB/AH8AfwB/AH8AfwB/AEAAQAEAAEACgAGAAwACgANAAwADgAMAA4ACwAOAAoADgAJAA4ACQAOAAgADQAIAAwACAAKAAgACQAGAAcABgAFAAYABAAFAAQAAgADAAIAAQACAAEAAP//AAAAAAAAAAAA////AgACAAIAAgACAAIAAgACAAIAAgACAAMAAwADAAQABAAFAAYABgAHAAcACAAJAAoACwALAAwADQANAA4ADgAPAA8AEAARABEAEgASABMAFAAUABUAFgAWABcAFwAYABgAGQAZABoAGgAbABwAHAAdAB4AHgAfAB8AIAAgACEAIgAiACMAIwAkACUAJQAmACYAKQApACoAKgArACwALAAtAC4ALgAvAC8AMAAwADIAYwBkAAsAgAAA" type="audio/wav">
+  </audio>
+  <audio id="sound-error" preload="auto">
+    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YSAgAAAAv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7Empty" type="audio/wav">
+  </audio>
 
 
   <script>
-    /* ============================================= */
-    /* KONFIGURASI WEB APP (SESUAIKAN)
-    /* ============================================= */
+    /* GANTI DENGAN URL APPS SCRIPT KAMU (Sudah diperbarui) */
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRJr31SeGSAG1uJcVTboTTfH-RNswG5P7z0zsPljNUvW-vTVClGJgKjxYgvAv1Jy8lTw/exec";
-    
-    // URL Logo (Sesuaikan di sini atau di HTML)
-    // URL Logo (Sesuaikan di sini atau di HTML)
-    const LOGO_HC_URL = "https://drive.google.com/uc?id=1lAev2D5Pxp5Rt36iy4y0YMibEnYu5BgI";
-    const LOGO_NFC_URL = "https://drive.google.com/uc?id=1F42BAD5bDPLJBEYrjfGdv-7f7KtAVWIg";
-    
-    // Atur placeholder jika URL tidak diganti
-    document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('header-logo').src = LOGO_HC_URL;
-        document.querySelector('.loading-logo').src = LOGO_HC_URL;
-        document.querySelector('#sidebar-menu img').src = LOGO_HC_URL;
-        document.querySelector('.card img[alt="NFC Logo"]').src = LOGO_NFC_URL;
-    });
 
-    /* ============================================= */
-    /* ELEMEN-ELEMEN PENTING
-    /* ============================================= */
+    // elemen
     const menuBtn       = document.getElementById('menu-btn');
     const menuCloseBtn  = document.getElementById('menu-close-btn');
-    const sidebarMenu   = document.getElementById('sidebar-menu');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
-    
+    const menuOverlay   = document.getElementById('menu-overlay');
+    const menuSidebar   = document.getElementById('menu-sidebar');
+
     const statusBox     = document.getElementById('status-box');
     const statusIcon    = document.getElementById('status-icon');
     const statusTitle   = document.getElementById('status-title');
     const statusMsg     = document.getElementById('status-msg');
+    const statusRaw     = document.getElementById('status-raw');
 
-    const manualInput   = document.getElementById('manual-input');
+    const manualInput   = document.getElementById('manual-nis');
     const manualBtn     = document.getElementById('btn-send-manual');
-    const scopedLoader  = document.getElementById('scoped-loader');
-    const loadingText   = document.getElementById('loading-text');
     
+    // Overlay Baru
+    const globalOverlay     = document.getElementById('global-overlay');
+    const globalOverlayText = document.getElementById('global-overlay-text');
+
     const resultBox     = document.getElementById('result-box');
     const resultName    = document.getElementById('result-name');
     const resultMeta    = document.getElementById('result-meta');
     const resultAvatar  = document.getElementById('result-avatar');
 
-    const btnCameraToggle = document.getElementById('btn-camera-toggle');
-    const btnCameraText   = document.getElementById('btn-camera-text');
-    const iconCameraStart = document.getElementById('icon-camera-start');
-    const iconCameraStop  = document.getElementById('icon-camera-stop');
-    const qrReaderDiv     = document.getElementById('qr-reader');
-    const qrPlaceholder   = document.getElementById('qr-placeholder');
+    // Tombol & Ikon Kamera
+    const btnToggleCamera = document.getElementById('btn-toggle-camera');
+    const btnToggleText   = document.getElementById('btn-toggle-text');
+    const iconCamStart    = document.getElementById('icon-cam-start');
+    const iconCamStop     = document.getElementById('icon-cam-stop');
+    
+    const qrReaderDiv   = document.getElementById('qr-reader');
+    const qrPlaceholder = document.getElementById('qr-placeholder');
+    const scanAnim      = document.getElementById('scan-anim');
+
+    const soundSuccess  = document.getElementById('sound-success');
+    const soundError    = document.getElementById('sound-error');
 
     let qrReader = null;
     let cameraOn = false;
     let lastScannedCode = "";
     let lastScanTime    = 0;
-    let isProcessing    = false; // Mencegah double-submit
-    
-    // Notifikasi Audio (Permintaan Fitur 4)
-    let synthSuccess, synthError;
-    // Inisialisasi audio setelah interaksi pengguna (di-trigger oleh start camera / send manual)
-    function initAudio() {
-        if (!synthSuccess) {
-            Tone.start();
-            synthSuccess = new Tone.Synth({
-                oscillator: { type: 'sine' },
-                envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.2 }
-            }).toDestination();
-            
-            synthError = new Tone.Synth({
-                oscillator: { type: 'square' },
-                envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
-            }).toDestination();
-        }
-    }
-    
-    function playSuccessSound() {
-        initAudio();
-        // Nada 'bip' tinggi
-        synthSuccess.triggerAttackRelease("G5", "8n", Tone.now());
-    }
-    
-    function playErrorSound() {
-        initAudio();
-        // Nada 'buzz' rendah
-        synthError.triggerAttackRelease("C3", "8n", Tone.now());
-    }
 
-    /* ============================================= */
-    /* FUNGSI SIDEBAR MENU (SESUAI DESAIN BARU)
-    /* ============================================= */
+    /* ===== MENU SIDEBAR BARU ===== */
     function openMenu() {
-        sidebarMenu.classList.add('open');
-        sidebarOverlay.classList.remove('opacity-0', 'pointer-events-none');
-        sidebarOverlay.classList.add('opacity-100');
+      menuOverlay.classList.remove('hidden');
+      menuSidebar.style.transform = 'translateX(0)';
     }
     function closeMenu() {
-        sidebarMenu.classList.remove('open');
-        sidebarOverlay.classList.remove('opacity-100');
-        sidebarOverlay.classList.add('opacity-0', 'pointer-events-none');
+      menuOverlay.classList.add('hidden');
+      menuSidebar.style.transform = 'translateX(-100%)';
     }
-    
     menuBtn.addEventListener('click', openMenu);
     menuCloseBtn.addEventListener('click', closeMenu);
-    sidebarOverlay.addEventListener('click', closeMenu);
-    
-    // Logic dropdown submenu
-    document.querySelectorAll('.sidebar-dropdown-toggle').forEach(button => {
-        button.addEventListener('click', () => {
-            const submenu = button.nextElementSibling;
-            button.classList.toggle('open');
-            if (submenu.style.display === 'flex') {
-                submenu.style.display = 'none';
-            } else {
-                submenu.style.display = 'flex';
-                submenu.style.flexDirection = 'column';
-            }
-        });
-    });
+    menuOverlay.addEventListener('click', closeMenu);
 
-    /* ============================================= */
-    /* FUNGSI STATUS HELPER
-    /* ============================================= */
-    function setStatus(type, title, msg) {
+    /* ===== STATUS HELPER (Diperbarui ikonnya) ===== */
+    function setStatus(type, title, msg, raw) {
       // Reset classes
-      statusBox.className = "card flex gap-3 items-center border-l-4";
+      statusBox.className = "bg-white border border-gray-200 rounded-2xl p-4 flex gap-3 items-center shadow-sm";
       statusIcon.innerHTML = "";
+      statusIcon.className = "w-10 h-10 rounded-full flex items-center justify-center text-white shrink-0";
+      statusRaw.classList.add('hidden');
+      statusRaw.textContent = '';
 
       if (type === 'loading') {
-        statusBox.classList.add("border-blue-300");
-        statusIcon.innerHTML = '<div class="w-6 h-6 border-2 border-gray-200 border-t-hc-blue rounded-full animate-spin"></div>';
+        statusBox.classList.add("bg-slate-50","border-slate-200");
+        statusIcon.classList.add("bg-slate-400");
+        statusIcon.innerHTML = '<div class="w-5 h-5 border-2 border-white/50 border-t-white rounded-full animate-spin"></div>';
       } else if (type === 'success') {
-        statusBox.classList.add("border-green-400");
-        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293A1 1 0 003.293 10.707l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg></div>';
+        statusBox.classList.add("bg-green-50","border-green-200");
+        statusIcon.classList.add("bg-[var(--hc-green)]");
+        statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293A1 1 0 003.293 10.707l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg>';
       } else if (type === 'error') {
-        statusBox.classList.add("border-red-400");
-        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg></div>';
-      } else { // 'info' or default
-        statusBox.classList.add("border-gray-300");
-        statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>';
+        statusBox.classList.add("bg-red-50","border-red-200");
+        statusIcon.classList.add("bg-[var(--hc-red)]");
+        statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>';
+      } else { // info atau default
+        statusBox.classList.add("bg-white", "border-gray-200");
+        statusIcon.classList.add("bg-slate-400");
+        statusIcon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>';
       }
 
       statusTitle.textContent = title || '';
       statusMsg.textContent   = msg   || '';
+      if (raw) {
+        statusRaw.textContent = raw;
+        statusRaw.classList.remove('hidden');
+      }
     }
 
     function showResult(data) {
-        resultBox.classList.remove('hidden');
-        resultBox.classList.add('flex');
-        resultName.textContent = data.nama || 'Anggota';
-        resultMeta.textContent = (data.pertemuan || '-') + ' • ' + (data.jam || '');
-        if (data.foto) {
-            resultAvatar.src = data.foto;
-        } else {
-            resultAvatar.src = `https://placehold.co/64x64/FFFFFF/1a4787?text=${getInitials(data.nama)}`;
-        }
-    }
-    
-    function getInitials(name) {
-        if (!name) return "HC";
-        const words = name.split(' ');
-        if (words.length > 1) {
-            return (words[0][0] + words[1][0]).toUpperCase();
-        }
-        return (name[0] + (name[1] || '')).toUpperCase();
-    }
-    
-    function showLoader(text) {
-        loadingText.textContent = text || "Memeriksa...";
-        scopedLoader.classList.add('show');
-        isProcessing = true;
-        // Disable buttons
-        manualBtn.classList.add('disabled');
-        btnCameraToggle.classList.add('disabled');
-    }
-    
-    function hideLoader() {
-        scopedLoader.classList.remove('show');
-        isProcessing = false;
-        // Enable buttons
-        manualBtn.classList.remove('disabled');
-        btnCameraToggle.classList.remove('disabled');
+      resultBox.classList.remove('hidden');
+      resultName.textContent = data.nama || 'Anggota';
+      resultMeta.textContent = (data.pertemuan || '-') + ' • ' + (data.jam || '');
+      
+      // Hapus avatar lama sebelum set baru
+      resultAvatar.style.backgroundImage = 'none';
+      resultAvatar.textContent = '';
+
+      if (data.foto) {
+        resultAvatar.style.backgroundImage = `url('${data.foto}')`;
+      } else {
+        // Fallback inisial
+        const inisial = (data.nama || 'HC').split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        resultAvatar.textContent = inisial;
+      }
     }
 
-    /* ============================================= */
-    /* FUNGSI KIRIM PRESENSI (LOGIKA UTAMA)
-    /* ============================================= */
+    /* ===== KIRIM PRESENSI (Diperbarui pakai Global Overlay) ===== */
     async function sendPresensi(id, source) {
-        if (isProcessing) return; // Mencegah double-submit
-        
-        // ID Kustom 9-digit bisa mengandung huruf, jadi jangan di-clean
-        const cleanId = (id || '').trim(); 
-        
-        if (!cleanId) {
-            setStatus('error', 'Input kosong', 'Masukkan ID Anggota / NIS / NISN / NIP.');
-            playErrorSound();
-            return;
-        }
-        
-        initAudio(); // Pastikan audio siap
-        showLoader(source === 'scanner' ? 'Memeriksa Pindaian...' : 'Memeriksa ID...');
-        resultBox.classList.add('hidden'); // Sembunyikan hasil lama
+      const cleanId = (id || '').replace(/[^0-9]/g, '');
+      if (!cleanId) {
+        setStatus('error', 'Input kosong', 'Masukkan nomor identitas yang valid.');
+        soundError && soundError.play().catch(()=>{});
+        return;
+      }
 
-        try {
-            // Selalu gunakan POST JSON
-            const res = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                // mode: 'no-cors', // Hapus 'no-cors' agar bisa baca response
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'presensi', nis: cleanId })
-            });
-            
-            // Cek jika response tidak ok (misal 404, 500)
-            if (!res.ok) {
-                 throw new Error(`Server merespon dengan status: ${res.status}`);
-            }
+      // Gunakan Global Overlay
+      globalOverlay.style.display = 'flex';
+      globalOverlayText.textContent = (source === 'scanner') ? 'Memeriksa presensi...' : 'Memeriksa data...';
+      setStatus('loading', 'Mengirim presensi...', `Nomor ID: ${cleanId}`);
 
-            const json = await res.json();
-            handlePresensiResponse(json);
-            
-        } catch (e) {
-            console.error(e);
-            hideLoader();
-            setStatus(
-                'error',
-                'Gagal terhubung',
-                'Pastikan URL Web App benar dan sudah di-deploy ulang.',
-                e && e.message ? e.message : 'Unknown error'
-            );
-            playErrorSound();
-        }
+      // 1) coba POST JSON
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'presensi', nis: cleanId })
+        });
+        const text = await res.text();
+        const json = JSON.parse(text);
+        handlePresensiResponse(json);
+        return;
+      } catch (e1) {
+        console.warn('POST JSON gagal, coba GET...', e1);
+      }
+
+      // 2) fallback GET
+      try {
+        const url  = WEB_APP_URL + '?action=presensi&nis=' + encodeURIComponent(cleanId);
+        const res  = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text);
+        handlePresensiResponse(json);
+      } catch (e2) {
+        globalOverlay.style.display = 'none';
+        scanAnim.classList.add('hidden'); // Sembunyikan animasi scan jika error
+        
+        setStatus(
+          'error',
+          'Gagal terhubung',
+          'Periksa lagi URL Apps Script atau koneksi internet.',
+          e2 && e2.message ? e2.message : 'Error'
+        );
+        soundError && soundError.play().catch(()=>{});
+      }
     }
 
     function handlePresensiResponse(json) {
-        hideLoader();
+      globalOverlay.style.display = 'none';
+      scanAnim.classList.add('hidden'); // Sembunyikan animasi scan setelah selesai
 
-        if (!json || !json.status) {
-            setStatus('error', 'Respon tidak dikenal', 'Script tidak mengembalikan status.');
-            playErrorSound();
-            return;
-        }
+      if (!json || !json.status) {
+        setStatus('error', 'Respon tidak dikenal', 'Script tidak mengembalikan status.');
+        soundError && soundError.play().catch(()=>{});
+        return;
+      }
 
-        if (json.status === 'ok') {
-            setStatus('success', 'Presensi berhasil', `${json.nama} • ${json.pertemuan || '-'}`);
-            showResult(json);
-            playSuccessSound();
-            manualInput.value = '';
-        } else if (json.status === 'duplicate') {
-            setStatus('error', 'Presensi ditolak', 'Anggota ini sudah presensi hari ini.');
-            playErrorSound();
-        } else if (json.status === 'not-registered') {
-            setStatus('error', 'ID tidak ditemukan', 'Periksa ID Anggota / NIS / NISN / NIP Anda.');
-            playErrorSound();
-        } else {
-            setStatus('error', 'Gagal mengirim', json.message || 'Terjadi kesalahan.');
-            playErrorSound();
-        }
+      if (json.status === 'ok') {
+        setStatus('success', 'Presensi berhasil!', `${json.nama} • ${json.pertemuan || '-'}`);
+        showResult(json);
+        soundSuccess && soundSuccess.play().catch(()=>{});
+        manualInput.value = '';
+      } else if (json.status === 'duplicate') {
+        setStatus('error', 'Presensi ditolak', 'Anggota ini sudah presensi hari ini.');
+        showResult(json); // Tampilkan data yg duplikat
+        soundError && soundError.play().catch(()=>{});
+      } else if (json.status === 'not-registered') {
+        setStatus('error', 'ID tidak ditemukan', `ID ${json.nis} tidak terdaftar.`);
+        resultBox.classList.add('hidden'); // Sembunyikan result box jika error
+        soundError && soundError.play().catch(()=>{});
+      } else {
+        setStatus('error', 'Gagal mengirim', json.message || 'Terjadi kesalahan.');
+        resultBox.classList.add('hidden');
+        soundError && soundError.play().catch(()=>{});
+      }
     }
 
-    /* ============================================= */
-    /* EVENT LISTENER (MANUAL & KAMERA)
-    /* ============================================= */
-    
-    // Input Manual
+    /* ===== INPUT MANUAL ===== */
     manualBtn.addEventListener('click', () => {
-        sendPresensi(manualInput.value, 'manual');
+      sendPresensi(manualInput.value, 'manual');
     });
     manualInput.addEventListener('keyup', (e) => {
-        if (e.key === 'Enter') {
-            sendPresensi(manualInput.value, 'manual');
-        }
+      if (e.key === 'Enter') {
+        sendPresensi(manualInput.value, 'manual');
+      }
     });
 
-    // Tombol Toggle Kamera (Permintaan Fitur 1)
-    btnCameraToggle.addEventListener('click', () => {
-        if (isProcessing) return; // Jangan lakukan apa-apa saat loading
-        
-        initAudio(); // Mulai konteks audio
-        
-        if (cameraOn) {
-            stopCamera();
-        } else {
-            startCamera();
-        }
-    });
-
-    async function startCamera() {
-        try {
-            qrPlaceholder.classList.add('hidden');
-            qrReaderDiv.classList.remove('hidden');
-            setStatus('loading', 'Mengaktifkan kamera...', 'Jika muncul permintaan izin, pilih "Allow".');
-            btnCameraToggle.classList.add('disabled'); // Disable tombol selama proses start
-
-            qrReader = new Html5Qrcode("qr-reader");
-            const cameraConfig = { 
-                fps: 10, 
-                qrbox: { width: 250, height: 150 }, // Persegi panjang lebih baik untuk Barcode
-                aspectRatio: 1.7777778 // 16:9
-            };
-            
-            await qrReader.start(
-                { facingMode: "environment" },
-                cameraConfig,
-                (decodedText) => {
-                    // --- Throttling (mencegah scan beruntun) ---
-                    const now = Date.now();
-                    if (isProcessing || (decodedText === lastScannedCode && (now - lastScanTime) < 3000)) {
-                        return; // Abaikan jika sedang proses atau scan yang sama < 3 detik
-                    }
-                    lastScannedCode = decodedText;
-                    lastScanTime    = now;
-                    sendPresensi(decodedText, 'scanner');
-                },
-                (errorMessage) => {
-                    // handle scan error (biasanya "QR code not found")
-                }
-            );
-            
-            // Sukses Start
-            cameraOn = true;
-            setStatus('info', 'Kamera aktif', 'Arahkan barcode atau QR code ke area pindai.');
-            btnCameraText.textContent = 'Matikan Kamera';
-            btnCameraToggle.classList.add('btn-danger'); // Ubah jadi tombol merah
-            iconCameraStart.classList.add('hidden');
-            iconCameraStop.classList.remove('hidden');
-            btnCameraToggle.classList.remove('disabled');
-
-        } catch (err) {
-            console.error(err);
-            setStatus('error', 'Kamera tidak tersedia', 'Gunakan input manual di bawah.');
-            qrPlaceholder.classList.remove('hidden');
-            qrReaderDiv.classList.add('hidden');
-            btnCameraToggle.classList.remove('disabled');
-        }
-    }
-
+    /* ===== START/STOP KAMERA (FITUR BARU 1) ===== */
     async function stopCamera() {
-        if (!qrReader) return;
-        
-        try {
-            await qrReader.stop();
-        } catch (e) {
-            console.error("Error saat stop kamera:", e);
-        }
-        
+      if (!qrReader || !cameraOn) return;
+      try {
+        await qrReader.stop();
+        console.log("Kamera berhasil dimatikan.");
+      } catch (err) {
+        console.warn("Gagal mematikan kamera:", err);
+      } finally {
         cameraOn = false;
-        qrReader = null;
         qrPlaceholder.classList.remove('hidden');
         qrReaderDiv.classList.add('hidden');
-        setStatus('info', 'Kamera nonaktif', 'Silakan pindai barcode atau isi ID Anggota.');
-        btnCameraText.textContent = 'Mulai Pindai Barcode';
-        btnCameraToggle.classList.remove('btn-danger');
-        iconCameraStart.classList.remove('hidden');
-        iconCameraStop.classList.add('hidden');
+        scanAnim.classList.add('hidden');
+        
+        // Update UI Tombol
+        btnToggleText.textContent = 'Mulai Pindai Barcode';
+        iconCamStart.classList.remove('hidden');
+        iconCamStop.classList.add('hidden');
+        
+        setStatus('info', 'Kamera dimatikan', 'Klik tombol untuk memulai lagi.');
+      }
     }
-    
+
+    async function startCamera() {
+      if (cameraOn) return;
+      try {
+        qrPlaceholder.classList.add('hidden');
+        qrReaderDiv.classList.remove('hidden');
+        setStatus('loading', 'Mengaktifkan kamera...', 'Jika muncul permintaan izin, pilih IZINKAN.');
+
+        // Inisialisasi reader jika belum ada
+        if (!qrReader) {
+          qrReader = new Html5Qrcode("qr-reader", { 
+            verbose: false,
+            formatsToSupport: [
+              Html5QrcodeSupportedFormats.QR_CODE,
+              Html5QrcodeSupportedFormats.CODE_128,
+              Html5QrcodeSupportedFormats.CODE_39,
+              Html5QrcodeSupportedFormats.EAN_13,
+            ]
+          });
+        }
+        
+        const cameraConfig = { 
+          fps: 10, 
+          qrbox: (w,h) => {
+             const size = Math.min(w,h) * 0.7;
+             return { width: size, height: size };
+          },
+          aspectRatio: 1.0
+        };
+        
+        await qrReader.start(
+          { facingMode: "environment" },
+          cameraConfig,
+          (decodedText) => { // onScanSuccess
+            const now = Date.now();
+            // Cooldown 3 detik untuk ID yang sama
+            if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) {
+              return;
+            }
+            lastScannedCode = decodedText;
+            lastScanTime    = now;
+            
+            scanAnim.classList.remove('hidden');
+            sendPresensi(decodedText, 'scanner');
+          },
+          (errorMessage) => { // onScanFailure
+            // Biarkan kosong agar tidak spam console
+          }
+        );
+        
+        cameraOn = true;
+        setStatus('info', 'Kamera aktif', 'Arahkan barcode ke dalam kotak.');
+        scanAnim.classList.remove('hidden');
+
+        // Update UI Tombol
+        btnToggleText.textContent = 'Matikan Kamera';
+        iconCamStart.classList.add('hidden');
+        iconCamStop.classList.remove('hidden');
+
+      } catch (err) {
+        console.error(err);
+        setStatus('error', 'Kamera tidak tersedia', 'Izin ditolak atau tidak ada kamera. Gunakan input manual.');
+        qrPlaceholder.classList.remove('hidden');
+        qrReaderDiv.classList.add('hidden');
+        cameraOn = false; // Pastikan status false
+      }
+    }
+
+    btnToggleCamera.addEventListener('click', () => {
+      if (cameraOn) {
+        stopCamera();
+      } else {
+        startCamera();
+      }
+    });
+
   </script>
 </body>
 </html>
