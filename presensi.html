@@ -11,13 +11,25 @@
   <!-- Opsional: QR/Barcode scanner (fallback ke input manual jika kamera ditolak) -->
   <script defer src="https://unpkg.com/html5-qrcode"></script>
 
-  <style>
-    .card { @apply bg-white rounded-2xl shadow-md border border-slate-200; }
-    .btn  { @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-semibold; }
-    .btn-primary { @apply bg-slate-900 text-white hover:bg-slate-800; }
-    .btn-ghost   { @apply bg-transparent hover:bg-slate-100; }
-    .tag         { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium; }
-  </style>
+ <style>
+  :root{--primary:#0f172a;--primaryHover:#111827;--border:#e2e8f0;}
+  .card{
+    background:#fff;border:1px solid var(--border);border-radius:1rem;
+    box-shadow:0 1px 2px rgba(0,0,0,.04)
+  }
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;
+    border-radius:.75rem;padding:.75rem 1rem;font-weight:600
+  }
+  .btn-primary{background:var(--primary);color:#fff}
+  .btn-primary:hover{background:var(--primaryHover)}
+  .btn-ghost{background:transparent}
+  .btn-ghost:hover{background:#f1f5f9}
+  .tag{
+    display:inline-flex;align-items:center;border-radius:9999px;
+    padding:.125rem .5rem;font-size:.75rem;line-height:1.25rem;font-weight:500
+  }
+</style>
 </head>
 <body class="bg-slate-50 text-slate-900">
   <!-- NAV -->
