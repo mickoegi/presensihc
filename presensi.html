@@ -313,35 +313,44 @@
     function hideLoader(){ scopedLoader.classList.remove('show'); isProcessing = false; manualBtn.classList.remove('disabled'); btnCameraToggle.classList.remove('disabled'); }
 
     // ======================== Presensi: Fetch tanpa preflight ========================
-    async function sendPresensi(id, source){
-      if(isProcessing) return;
-      const cleanId = (id || '').trim();
-      if(!cleanId){ setStatus('error','Input kosong','Masukkan ID Anggota / NIS / NISN / NIP.'); playErrorSound(); return; }
+    async function sendPresensi(id, source) {
+  if (isProcessing) return;
+  const cleanId = (id || '').trim();
+  if (!cleanId) { setStatus('error','Input kosong','Masukkan ID Anggota / NIS / NISN / NIP.'); playErrorSound(); return; }
 
-      initAudio(); showLoader(source==='scanner' ? 'Memeriksa Pindaian...' : 'Memeriksa ID...'); resultBox.classList.add('hidden');
+  initAudio();
+  showLoader(source === 'scanner' ? 'Memeriksa Pindaian...' : 'Memeriksa ID...');
+  resultBox.classList.add('hidden');
 
-      try{
-        const res = await fetch(WEB_APP_URL, { method:'POST', body: new URLSearchParams({ action:'presensi', nis: cleanId }) });
-        if(!res.ok) throw new Error('HTTP ' + res.status);
-        const ct = res.headers.get('content-type') || '';
-        let json;
-        if(ct.includes('application/json')) json = await res.json();
-        else { const text = await res.text(); try{ json = JSON.parse(text); }catch{ throw new Error('Unexpected response'); } }
-        handlePresensiResponse(json);
-      }catch(err){
-        console.error(err);
-        hideLoader(); setStatus('error','Gagal terhubung','Pastikan URL Web App benar, akses publik, dan deployment terbaru.'); playErrorSound();
-      }
+  try {
+    // SIMPLE POST (tidak memicu preflight)
+    const res = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      body: new URLSearchParams({ action: 'presensi', nis: cleanId })
+    });
+
+    // === Fallback kalau response 'opaque' atau bukan JSON ===
+    let json;
+    if (res.type === 'opaque') {
+      // kirim GET supaya dapat JSON yang bisa dibaca
+      const res2 = await fetch(`${WEB_APP_URL}?action=presensi&nis=${encodeURIComponent(cleanId)}`);
+      json = await res2.json();
+    } else {
+      const ct = res.headers.get('content-type') || '';
+      json = ct.includes('application/json')
+        ? await res.json()
+        : JSON.parse(await res.text());
     }
 
-    function handlePresensiResponse(json){
-      hideLoader();
-      if(!json || !json.status){ setStatus('error','Respon tidak dikenal','Script tidak mengembalikan status.'); playErrorSound(); return; }
-      if(json.status==='ok'){ setStatus('success','Presensi berhasil', `${json.nama} • ${json.pertemuan || '-'}`); showResult(json); playSuccessSound(); manualInput.value=''; }
-      else if(json.status==='duplicate'){ setStatus('error','Presensi ditolak','Anggota ini sudah presensi hari ini.'); playErrorSound(); }
-      else if(json.status==='not-registered'){ setStatus('error','ID tidak ditemukan','Periksa ID Anggota / NIS / NISN / NIP Anda.'); playErrorSound(); }
-      else { setStatus('error','Gagal mengirim', json.message || 'Terjadi kesalahan.'); playErrorSound(); }
-    }
+    handlePresensiResponse(json);
+
+  } catch (e) {
+    console.error(e);
+    hideLoader();
+    setStatus('error','Gagal terhubung','Request terkirim tapi respons tidak bisa dibaca (CORS/opaque). Perbaiki mode fetch & header.');
+    playErrorSound();
+  }
+}
 
     // ======================== Events ========================
     manualBtn.addEventListener('click', ()=> sendPresensi(manualInput.value,'manual'));
