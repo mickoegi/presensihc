@@ -577,50 +577,36 @@
     /* FUNGSI KIRIM PRESENSI (LOGIKA UTAMA)
     /* ============================================= */
     async function sendPresensi(id, source) {
-        if (isProcessing) return; // Mencegah double-submit
-        
-        // ID Kustom 9-digit bisa mengandung huruf, jadi jangan di-clean
-        const cleanId = (id || '').trim(); 
-        
-        if (!cleanId) {
-            setStatus('error', 'Input kosong', 'Masukkan ID Anggota / NIS / NISN / NIP.');
-            playErrorSound();
-            return;
-        }
-        
-        initAudio(); // Pastikan audio siap
-        showLoader(source === 'scanner' ? 'Memeriksa Pindaian...' : 'Memeriksa ID...');
-        resultBox.classList.add('hidden'); // Sembunyikan hasil lama
+  if (isProcessing) return;
+  const cleanId = (id || '').trim();
+  if (!cleanId) {
+    setStatus('error','Input kosong','Masukkan ID Anggota / NIS / NISN / NIP.');
+    playErrorSound(); return;
+  }
 
-        try {
-            // Selalu gunakan POST JSON
-            const res = await fetch(WEB_APP_URL, {
-                method: 'POST',
-                // mode: 'no-cors', // Hapus 'no-cors' agar bisa baca response
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'presensi', nis: cleanId })
-            });
-            
-            // Cek jika response tidak ok (misal 404, 500)
-            if (!res.ok) {
-                 throw new Error(`Server merespon dengan status: ${res.status}`);
-            }
+  initAudio();
+  showLoader(source === 'scanner' ? 'Memeriksa Pindaian...' : 'Memeriksa ID...');
+  resultBox.classList.add('hidden');
 
-            const json = await res.json();
-            handlePresensiResponse(json);
-            
-        } catch (e) {
-            console.error(e);
-            hideLoader();
-            setStatus(
-                'error',
-                'Gagal terhubung',
-                'Pastikan URL Web App benar dan sudah di-deploy ulang.',
-                e && e.message ? e.message : 'Unknown error'
-            );
-            playErrorSound();
-        }
-    }
+  try {
+    const res = await fetch(WEB_APP_URL, {
+      method: 'POST',
+      // JANGAN set Content-Type application/json supaya tidak preflight
+      body: new URLSearchParams({ action: 'presensi', nis: cleanId })
+    });
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    handlePresensiResponse(json);
+
+  } catch (e) {
+    console.error(e);
+    hideLoader();
+    setStatus('error','Gagal terhubung',
+      'Pastikan URL Web App benar, akses publik, dan deployment terbaru.');
+    playErrorSound();
+  }
+}
 
     function handlePresensiResponse(json) {
         hideLoader();
