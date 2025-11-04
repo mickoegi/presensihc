@@ -5,21 +5,16 @@
   <title>Presensi Kegiatan HC 32</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <!-- 1. Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- 2. QR / Barcode Scanner -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   
-  <!-- 3. Tone.js (untuk notifikasi audio) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
 
-  <!-- 4. Google Font (Poppins) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- 5. Konfigurasi & CSS Kustom -->
   <style>
     :root {
       /* Warna dari PDF Pedoman Identitas Visual */
@@ -182,28 +177,9 @@
 </head>
 <body>
 
-  <!-- ============================================= -->
-  <!-- CARA INPUT LOGO (SESUAI PERMINTAAN ANDA)    -->
-  <!-- ============================================= -->
-  <!--
-    PENTING! Ganti placeholder di bawah ini:
-    
-    1. 'GANTI_DENGAN_URL_LOGO_HC.png' (ada 3 tempat):
-       Ganti dengan URL/link ke file logo HC Anda.
-       - Di Header (Baris 204)
-       - Di Loading Spinner (Baris 384)
-       - Di Sidebar Menu (Baris 422)
-       
-    2. 'GANTI_DENGAN_URL_LOGO_NFC.png' (ada 1 tempat):
-       Ganti dengan URL/link ke file logo NFC.
-       - Di Kartu NFC (Baris 325)
-  -->
-
-  <!-- HEADER (Sesuai Desain Baru) -->
   <header class="bg-white shadow sticky top-0 z-30">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
       
-      <!-- Logo dan Judul -->
       <div class="flex items-center gap-3">
         <img 
           id="header-logo"
@@ -216,11 +192,9 @@
           <h1 class="text-lg md:text-xl font-semibold text-hc-blue leading-tight">
             Presensi Kegiatan
           </h1>
-          <!-- Subjudul SMAN 32 Jakarta DIHAPUS sesuai permintaan -->
-        </div>
+          </div>
       </div>
       
-      <!-- Tombol Menu Hamburger (sesuai permintaan) -->
       <button id="menu-btn" class="p-2 rounded-lg hover:bg-gray-100 z-50">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
           <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -229,16 +203,12 @@
     </div>
   </header>
 
-  <!-- MAIN (Sesuai Desain Baru) -->
   <main class="max-w-5xl mx-auto px-4 py-6 md:py-8 pb-32">
     
-    <!-- Wrapper untuk 3 bar (Permintaan Loading 2) -->
     <div id="main-content-wrapper" class="relative grid lg:grid-cols-2 gap-5 md:gap-6">
       
-      <!-- Loading Overlay (Hanya menutupi 3 bar) -->
       <div id="scoped-loader" class="scoped-overlay">
         <div class="flex flex-col items-center gap-3">
-          <!-- Spinner dengan Logo (Permintaan Loading 3) -->
           <div class="loading-spinner">
             <img 
               src = LOGO_HC_URL 
@@ -251,9 +221,7 @@
         </div>
       </div>
 
-      <!-- KOLOM KIRI (Scanner) -->
       <section class="flex flex-col gap-5 md:gap-6">
-        <!-- Panel Scanner -->
         <div class="card">
           <h2 class="text-xl md:text-2xl font-bold text-hc-text-dark mb-1">Pindai Barcode / QR</h2>
           <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
@@ -261,7 +229,6 @@
             Klik tombol untuk memulai kamera.
           </p>
 
-          <!-- Area Kamera -->
           <div class="scanner-frame mb-4 h-64 flex items-center justify-center">
             <div id="qr-reader" class="hidden w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover"></div>
             <div id="qr-placeholder" class="flex flex-col items-center px-4">
@@ -270,7 +237,6 @@
             </div>
           </div>
 
-          <!-- Tombol Start/Stop Kamera (Permintaan Fitur 1) -->
           <button id="btn-camera-toggle" class="btn-primary w-full">
             <svg id="icon-camera-start" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-4.553a.5.5 0 01.854.353V18.2a.5.5 0 01-.854.353L15 14M4 18V6a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2z" />
@@ -285,9 +251,7 @@
         </div>
       </section>
 
-      <!-- KOLOM KANAN (Status, NFC, Manual) -->
       <section class="flex flex-col gap-5 md:gap-6">
-        <!-- Status -->
         <div id="status-box" class="card flex gap-3 items-center border-l-4 border-gray-300">
           <div id="status-icon" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -300,7 +264,6 @@
           </div>
         </div>
 
-        <!-- NFC -->
         <div class="card flex items-center gap-3 bg-hc-yellow-light border-l-4 border-yellow-400">
           <img 
             src = LOGO_NFC_URL 
@@ -314,7 +277,6 @@
           </div>
         </div>
 
-        <!-- Input Manual -->
         <div class="card">
           <h3 class="font-semibold text-hc-text-dark mb-1">Input manual</h3>
           <p class="text-xs text-gray-500 mb-3">Gunakan jika barcode tidak terbaca.</p>
@@ -329,7 +291,6 @@
           </div>
         </div>
 
-        <!-- Hasil Presensi (Hidden by default) -->
         <div id="result-box" class="card hidden flex-col sm:flex-row items-center gap-4 bg-hc-blue text-white">
           <img id="result-avatar" 
              class="w-16 h-16 rounded-full bg-white object-cover border-4 border-hc-toska" 
@@ -342,10 +303,7 @@
         </div>
         
       </section>
-    </div> <!-- End Main Content Wrapper -->
-
-    <!-- Bar Bantuan (Sesuai Desain Baru) -->
-    <div class="mt-8 card flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-hc-blue">
+    </div> <div class="mt-8 card flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-hc-blue">
       <div>
         <p class="font-semibold text-hc-text-dark text-sm md:text-base">Butuh Bantuan?</p>
         <p class="text-xs text-gray-500">Silakan hubungi Ketua HC <span class="font-semibold text-hc-blue">@vitezegi</span> atau pengurus yang sedang bertugas.</p>
@@ -360,7 +318,6 @@
     </div>
   </main>
 
-  <!-- FOOTER (Sesuai Desain Baru) -->
   <footer class="bg-hc-footer mt-auto text-white p-6">
     <div class="max-w-5xl mx-auto flex items-start gap-3">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 shrink-0" viewBox="0 0 20 20" fill="currentColor">
@@ -373,10 +330,8 @@
     </div>
   </footer>
 
-  <!-- SIDEBAR MENU (Sesuai Screenshot) -->
   <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none"></div>
   <div id="sidebar-menu" class="fixed top-0 left-0 w-72 h-full bg-white shadow-lg z-50 p-4 overflow-y-auto">
-    <!-- Header Sidebar -->
     <div class="flex items-center justify-between pb-3 border-b mb-3">
       <div class="flex items-center gap-2">
         <img 
@@ -394,11 +349,9 @@
       </button>
     </div>
     
-    <!-- Menu Items -->
     <nav class="flex flex-col gap-1 text-sm font-medium text-gray-700">
       <a href="https://sites.google.com/view/history-club-32/beranda" class="px-3 py-2 rounded-lg hover:bg-gray-100">Beranda</a>
       
-      <!-- Profil (Dropdown) -->
       <div class="sidebar-dropdown">
         <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100">
           <span>Profil</span>
@@ -411,7 +364,6 @@
         </div>
       </div>
       
-      <!-- Aktivitas (Dropdown) -->
       <div class="sidebar-dropdown">
         <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100">
           <span>Aktivitas</span>
@@ -423,7 +375,6 @@
         </div>
       </div>
       
-      <!-- Keanggotaan (Dropdown) -->
       <div class="sidebar-dropdown">
         <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100">
           <span>Keanggotaan</span>
