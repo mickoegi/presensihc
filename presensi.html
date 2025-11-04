@@ -14,16 +14,16 @@
 
   <style>
     :root {
-      /* Warna dari Brand Guide PDF [cite: 33, 38, 57, 61, 69] */
+      /* Warna dari Brand Guide PDF */
       --hc-blue: #1a4787;
       --hc-toska: #0f8a94;
       --hc-dark: #2e2e2e;
-      --hc-green: #15a256; /* RGB(21, 162, 86) [cite: 61] */
+      --hc-green: #15a256; /* RGB(21, 162, 86) */
       --hc-red: #d30e14;
-      --hc-bg: #e7e9ea;   /* RGB(231, 233, 234) [cite: 62] */
+      --hc-bg: #e7e9ea;   /* RGB(231, 233, 234) */
       --hc-yellow: #ecec17;
     }
-    /* Font Poppins (Sesuai Brand Guide)  */
+    /* Font Poppins (Sesuai Brand Guide) */
     body {
       background: var(--hc-bg);
       min-height: 100vh;
@@ -83,7 +83,7 @@
 <body class="text-gray-800">
 
   <header class="bg-white shadow-sm mb-4 sticky top-0 z-30">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between gap-3">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
         <img src="https://lh3.googleusercontent.com/d/1lAev2D5Pxp5Rt36iy4y0YMibEnYu5BgI" alt="Logo HC" class="w-10 h-10">
         <div>
@@ -103,7 +103,7 @@
   </header>
 
   <div id="menu-overlay" class="fixed inset-0 bg-black/50 z-40 hidden" aria-hidden="true"></div>
-  <div id="menu-sidebar" class="fixed top-0 left-0 w-72 h-full bg-white shadow-xl z-50 transform -translate-x-full transition-transform duration-300 ease-in-out">
+  <div id="menu-sidebar" class="fixed top-0 right-0 w-72 h-full bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out">
     <div class="flex items-center justify-between p-4 border-b">
       <h2 class="font-semibold text-[var(--hc-dark)]">Menu Navigasi</h2>
       <button id="menu-close-btn" class="w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-100 text-slate-500">
@@ -139,7 +139,7 @@
   </div>
 
 
-  <main class="max-w-md mx-auto px-4 pb-20 w-full">
+  <main class="max-w-5xl mx-auto px-4 pb-20 w-full">
     <div class="relative">
 
       <div id="global-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-20 hidden rounded-2xl">
@@ -152,7 +152,7 @@
         </div>
       </div>
 
-      <div class="flex flex-col gap-4">
+      <div class="grid lg:grid-cols-2 gap-6">
 
         <section class="bg-white rounded-2xl shadow-sm p-4 border border-gray-200">
           <h2 class="text-xl font-bold text-[var(--hc-dark)] mb-1">Pindai Barcode / QR</h2>
@@ -216,9 +216,9 @@
             <div class="flex gap-3 items-center">
               <input id="manual-nis" type="text" inputmode="numeric"
                      placeholder="masukkan nomor identitas"
-                     class="flex-1 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--hc-blue)] focus:border-[var(--hc-blue)]">
+                     class="flex-1 min-w-0 border border-gray-300 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--hc-blue)] focus:border-[var(--hc-blue)]">
               <button id="btn-send-manual"
-                       class="px-4 py-2 rounded-xl bg-[var(--hc-blue)] text-white text-sm font-semibold hover:bg-opacity-90 transition">
+                       class="px-4 py-2 rounded-xl bg-[var(--hc-blue)] text-white text-sm font-semibold hover:bg-opacity-90 transition shrink-0">
                 Kirim
               </button>
             </div>
@@ -252,17 +252,17 @@
   </main>
 
   <footer class="mt-auto">
-    <div class="max-w-md mx-auto px-4 py-6 text-center text-sm">
+    <div class="max-w-5xl mx-auto px-4 py-6 text-center text-sm">
       <p>© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
       <p class="text-xs text-slate-300/80 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold text-white">@vitezegi</span>.</p>
     </div>
   </footer>
 
   <audio id="sound-success" preload="auto">
-    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YSAgAAAAAMC/gLsC/AL/Av8C/wL/Av8C/wL/AvwB/AH8AfwB/AH8AfwB/AEAAQAEAAEACgAGAAwACgANAAwADgAMAA4ACwAOAAoADgAJAA4ACQAOAAgADQAIAAwACAAKAAgACQAGAAcABgAFAAYABAAFAAQAAgADAAIAAQACAAEAAP//AAAAAAAAAAAA////AgACAAIAAgACAAIAAgACAAIAAgACAAMAAwADAAQABAAFAAYABgAHAAcACAAJAAoACwALAAwADQANAA4ADgAPAA8AEAARABEAEgASABMAFAAUABUAFgAWABcAFwAYABgAGQAZABoAGgAbABwAHAAdAB4AHgAfAB8AIAAgACEAIgAiACMAIwAkACUAJQAmACYAKQApACoAKgArACwALAAtAC4ALgAvAC8AMAAwADIAYwBkAAsAgAAA" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YSAgAAAAADC/t7q8u7y7ur28vLq9vby6vb26vb26vb26vby7vLu8u7y7vL2+vb2+vb2/vb6/vb6/vb+/v8HAwcDCwcLDwsPDw8TExMXExcXGxsbHx8fIyMjJycnKysrLysvLy8zMzM3Nzc7Ozs/Pz9DQ0NHR0dLS0tPT09TU1NXV1dbW1tfX19jY2NnZ2dra2tvb29zc3N3d3d7e3t/f3+Dg4OHh4eLi4uPj4+Tk5OXl5ebm5ufn5+jo6Onp6erq6uvr6+zs7O3t7e7u7u/v7/Dw8PHx8fLy8vPz8/T09PX19fb29vf39/j4+Pn5+fr6+vv7+/z8/P39/f7+/v///wA=" type="audio/wav">
   </audio>
   <audio id="sound-error" preload="auto">
-    <source src="data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YSAgAAAAv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7Empty" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YSAgAAAAAEBAv7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/v7+/vL29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb29vb2C" type="audio/wav">
   </audio>
 
 
@@ -312,14 +312,15 @@
     let lastScannedCode = "";
     let lastScanTime    = 0;
 
-    /* ===== MENU SIDEBAR BARU ===== */
+    /* ===== MENU SIDEBAR BARU (Diperbarui: dari KANAN) ===== */
     function openMenu() {
       menuOverlay.classList.remove('hidden');
       menuSidebar.style.transform = 'translateX(0)';
     }
     function closeMenu() {
       menuOverlay.classList.add('hidden');
-      menuSidebar.style.transform = 'translateX(-100%)';
+      // Diperbarui: '-100%' -> '100%'
+      menuSidebar.style.transform = 'translateX(100%)';
     }
     menuBtn.addEventListener('click', openMenu);
     menuCloseBtn.addEventListener('click', closeMenu);
