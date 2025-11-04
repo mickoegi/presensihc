@@ -2,25 +2,56 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>Presensi Kegiatan HC 32</title>
+  <title>Presensi Kegiatan</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- QR / Barcode -->
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <!-- Google Font: Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --hc-blue: #005A9C;
-      --hc-dark: #0A2540;
-      --hc-green: #0f766e;
-      --hc-red: #dc2626;
+      /* Warna Sesuai Pedoman Identitas Visual */
+      --hc-blue: #1a4787;
+      --hc-toska: #0f8a94;
+      --hc-dark: #2e2e2e;
+      --hc-light-gray: #e7e9ea;
+      --hc-yellow: #ecec17;
+      --hc-red: #d30e14;
+      
+      /* Warna Pendukung dari Screenshot */
+      --hc-bg: #dfe8f2; /* Background abu-biru muda */
+      --hc-light-blue: #eef4fb; /* Hover menu */
+      --hc-yellow-bg: #fefce8; /* BG Kuning NFC */
+      --hc-yellow-text: #ca8a04; /* Text Kuning NFC */
+      --hc-green-text: #0f766e;
+      --hc-green-bg: #f0fdfa;
+      --hc-red-text: #b91c1c;
+      --hc-red-bg: #fef2f2;
     }
+    
+    /* Terapkan Font Poppins */
     body {
-      background: #dfe8f2;
+      font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--hc-bg);
       min-height: 100vh;
+      color: var(--hc-dark);
     }
+    
+    .font-poppins {
+       font-family: 'Poppins', sans-serif;
+    }
+    .font-light { font-weight: 300; }
+    .font-regular { font-weight: 400; }
+    .font-semibold { font-weight: 600; }
+    .font-bold { font-weight: 700; }
+
+    /* Frame Scanner */
     .scanner-frame {
       border: 3px dashed var(--hc-blue);
       border-radius: 1.5rem;
@@ -28,46 +59,118 @@
       background: #000;
       position: relative;
     }
-    .overlay-mini {
-      position: absolute;
+
+    /* === FITUR BARU: Sidebar Menu === */
+    #sidebar-overlay {
+      position: fixed;
       inset: 0;
-      background: rgba(248, 250, 252, 0.92);
-      backdrop-filter: blur(2px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 20;
-    }
-    .dropdown-menu {
-      position: absolute;
-      right: 1rem;
-      top: 3.5rem;
-      background: #fff;
-      border-radius: .75rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,.12);
-      width: 190px;
-      display: none;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(3px);
       z-index: 40;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
     }
-    .dropdown-item {
+    #sidebar-menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      background: #ffffff;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
       display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding: .55rem 1rem;
-      font-size: .85rem;
-      color: #0f172a;
+      flex-direction: column;
     }
-    .dropdown-item:hover {
-      background: #eef4fb;
+    #sidebar-menu.open {
+      transform: translateX(0);
+    }
+    #sidebar-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sidebar-link {
+      display: block;
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+      color: #334155;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .sidebar-link:hover {
+      background: var(--hc-light-blue);
       color: var(--hc-blue);
     }
+    .sidebar-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 2px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .sidebar-link.nested {
+      padding-left: 2.5rem;
+      font-size: 0.9rem;
+      color: #475569;
+      border-bottom: none;
+    }
+    .sidebar-link.nested-header {
+      font-weight: 600;
+      color: var(--hc-dark);
+      font-size: 0.95rem;
+      padding-bottom: 0.25rem;
+      padding-top: 1rem;
+    }
+    .sidebar-link.nested-header:hover {
+      background: none;
+      color: var(--hc-dark);
+    }
+
+    /* === FITUR BARU: Full Page Loader === */
+    #full-page-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+      display: none; /* Diubah oleh JS */
+      align-items: center;
+      justify-content: center;
+    }
+    /* Logo HC di dalam Spinner */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .loader {
+      width: 72px; /* 64px + 2*4px border */
+      height: 72px;
+      border: 4px solid var(--hc-light-blue);
+      border-top-color: var(--hc-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .loader-logo {
+      width: 40px;
+      height: 40px;
+      color: var(--hc-blue);
+      opacity: 0.8;
+      position: absolute;
+    }
+    
+    /* Lain-lain */
     footer {
-      background: #06243d;
+      background: var(--hc-dark);
       color: #fff;
     }
     .raw-error {
       font-size: .65rem;
-      background: rgba(255,255,255,.35);
+      background: rgba(0,0,0,.05);
       border-radius: .5rem;
       padding: .35rem .55rem;
       margin-top: .35rem;
@@ -75,34 +178,85 @@
     }
   </style>
 </head>
-<body class="font-sans text-gray-800">
+<body class="font-poppins text-gray-800">
+
+  <!-- Logo HC (Agora) SVG Definition -->
+  <svg width="0" height="0" class="absolute">
+    <symbol id="hc-logo-agora" viewBox="0 0 100 90">
+      <path fill="currentColor" d="M85.1,0H14.9C11.5,0,8.8,2.7,8.8,6.1V12H3.1C1.4,12,0,13.4,0,15.1v9.8C0,26.6,1.4,28,3.1,28H8.8v6.1C8.8,37.3,11.5,40,14.9,40H21v38.9c0,3.4,2.7,6.1,6.1,6.1h9.8c3.4,0,6.1-2.7,6.1-6.1V58H57v20.9c0,3.4,2.7,6.1,6.1,6.1h9.8c3.4,0,6.1-2.7,6.1-6.1V40h6.1c3.4,0,6.1-2.7,6.1-6.1V28h5.7c1.7,0,3.1-1.4,3.1-3.1v-9.8C100,13.4,98.6,12,96.9,12H91.2V6.1C91.2,2.7,88.5,0,85.1,0z M37,78.9H33V58h4V78.9z M37,34H14.9V6.1H37V34z M31,28H17V12h14V28z M72,78.9H63V58h9V78.9z M85.1,34H63V6.1h22.1V34z M79,28H65V12h14V28z"/>
+    </symbol>
+  </svg>
+
+  <!-- === FITUR BARU: Full Page Loader (Hidden) === -->
+  <div id="full-page-overlay">
+    <div class="flex flex-col items-center gap-4">
+      <div class="loader">
+        <!-- Logo HC di dalam Spinner -->
+        <svg class="loader-logo" fill="currentColor" viewBox="0 0 100 90">
+          <path d="M85.1,0H14.9C11.5,0,8.8,2.7,8.8,6.1V12H3.1C1.4,12,0,13.4,0,15.1v9.8C0,26.6,1.4,28,3.1,28H8.8v6.1C8.8,37.3,11.5,40,14.9,40H21v38.9c0,3.4,2.7,6.1,6.1,6.1h9.8c3.4,0,6.1-2.7,6.1-6.1V58H57v20.9c0,3.4,2.7,6.1,6.1,6.1h9.8c3.4,0,6.1-2.7,6.1-6.1V40h6.1c3.4,0,6.1-2.7,6.1-6.1V28h5.7c1.7,0,3.1-1.4,3.1-3.1v-9.8C100,13.4,98.6,12,96.9,12H91.2V6.1C91.2,2.7,88.5,0,85.1,0z M37,78.9H33V58h4V78.9z M37,34H14.9V6.1H37V34z M31,28H17V12h14V28z M72,78.9H63V58h9V78.9z M85.1,34H63V6.1h22.1V34z M79,28H65V12h14V28z"/>
+        </svg>
+      </div>
+      <p id="loader-text" class="font-semibold text-base text-[var(--hc-blue)]">Memeriksa data...</p>
+    </div>
+  </div>
+  
+  <!-- === FITUR BARU: Sidebar Menu (Hidden) === -->
+  <div id="sidebar-overlay"></div>
+  <aside id="sidebar-menu">
+    <!-- Header Sidebar -->
+    <div class="sidebar-header">
+      <svg class="w-10 h-10 text-[var(--hc-blue)]" fill="currentColor">
+         <use xlink:href="#hc-logo-agora"></use>
+      </svg>
+      <div>
+        <h2 class="font-bold text-lg text-[var(--hc-dark)] leading-tight">History Club</h2>
+        <p class="text-xs text-gray-500 leading-tight">SMAN 32 Jakarta</p>
+      </div>
+    </div>
+    <!-- Menu Sesuai Screenshot -->
+    <nav class="flex-1 overflow-y-auto">
+      <a href="https://sites.google.com/view/history-club-32" class="sidebar-link">Beranda</a>
+      
+      <span class="sidebar-link nested-header">Profil</span>
+      <a href="https://sites.google.com/view/history-club-32/profil/tentang-kami" class="sidebar-link nested">Tentang Kami</a>
+      <a href="https://sites.google.com/view/history-club-32/profil/sejarah" class="sidebar-link nested">Sejarah</a>
+      <a href="https://sites.google.com/view/history-club-32/profil/kepengurusan" class="sidebar-link nested">Kepengurusan</a>
+      
+      <span class="sidebar-link nested-header">Aktivitas</span>
+      <a href="https://sites.google.com/view/history-club-32/aktivitas/agenda" class="sidebar-link nested">Agenda</a>
+      <a href="https://sites.google.com/view/history-club-32/aktivitas/kegiatan" class="sidebar-link nested">Kegiatan</a>
+      
+      <span class="sidebar-link nested-header">Keanggotaan</span>
+      <a href="https://sites.google.com/view/history-club-32/keanggotaan/anggota" class="sidebar-link nested">Anggota</a>
+      <a href="https://sites.google.com/view/history-club-32/keanggotaan/presensi" class="sidebar-link nested">Presensi</a>
+      <a href="https://sites.google.com/view/history-club-32/keanggotaan/pendaftaran" class="sidebar-link nested">Pendaftaran</a>
+      
+      <a href="https://sites.google.com/view/history-club-32/login-pengurus" class="sidebar-link mt-2">Login Pengurus</a>
+    </nav>
+  </aside>
 
   <!-- HEADER -->
   <header class="bg-white shadow mb-6 sticky top-0 z-30">
     <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-full bg-[var(--hc-blue)] flex items-center justify-center text-white font-bold text-lg shadow">
-          HC
-        </div>
+        <!-- Logo HC Baru -->
+        <svg class="w-11 h-11 text-[var(--hc-blue)]" fill="currentColor">
+           <use xlink:href="#hc-logo-agora"></use>
+        </svg>
         <div>
           <h1 class="text-lg md:text-xl font-semibold text-[var(--hc-dark)] leading-tight">
-            Presensi Kegiatan HC 32
+            Presensi Kegiatan
           </h1>
-          <p class="text-xs text-gray-500 leading-tight">SMAN 32 Jakarta</p>
+          <p class="text-xs text-gray-500 leading-tight">History Club SMAN 32 Jakarta</p>
         </div>
       </div>
       <div class="relative">
+        <!-- Tombol Menu Hamburger (Garis Tiga) -->
         <button id="menu-btn" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-slate-100">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M6 10a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm5 0a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zm3 1.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3z" />
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <div id="menu-dropdown" class="dropdown-menu">
-          <a href="https://sites.google.com/view/history-club-32" class="dropdown-item">Beranda</a>
-          <a href="https://sites.google.com/view/history-club-32/profil" class="dropdown-item">Profil</a>
-          <a href="https://sites.google.com/view/history-club-32/aktivitas" class="dropdown-item">Aktivitas</a>
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan" class="dropdown-item">Keanggotaan</a>
-        </div>
       </div>
     </div>
   </header>
@@ -113,14 +267,6 @@
 
       <!-- PANEL SCANNER -->
       <section class="bg-white rounded-2xl shadow p-4 md:p-6 relative">
-        <!-- overlay scanner -->
-        <div id="scanner-overlay" class="overlay-mini">
-          <div class="flex flex-col items-center gap-2">
-            <div class="w-8 h-8 border-4 border-blue-200 border-t-[var(--hc-blue)] rounded-full animate-spin"></div>
-            <p class="text-xs text-gray-500">Memeriksa presensi...</p>
-          </div>
-        </div>
-
         <h2 class="text-xl md:text-2xl font-bold text-[var(--hc-dark)] mb-1">Pindai Barcode / QR</h2>
         <p class="text-sm text-gray-500 mb-4 flex items-center gap-2">
           <span class="w-10 h-[3px] bg-[var(--hc-blue)] inline-block rounded-full"></span>
@@ -134,21 +280,20 @@
             <p class="text-white/80 text-sm mb-2">Kamera belum aktif.</p>
             <p class="text-white/50 text-xs">Tekan "Mulai Pindai Barcode"</p>
           </div>
-          <!-- animasi garis scan -->
-          <div id="scan-anim" class="absolute inset-6 rounded-xl border-2 border-white/70 pointer-events-none hidden">
-            <div class="absolute inset-x-4 top-6 h-1 bg-white/60 animate-pulse"></div>
-          </div>
         </div>
 
-        <!-- tombol aktifkan kamera -->
+        <!-- FITUR BARU: Tombol Toggle Kamera -->
         <button id="btn-start-camera"
           class="w-full bg-[var(--hc-blue)] text-white font-semibold py-2.5 rounded-xl hover:bg-opacity-90 transition flex items-center justify-center gap-2 mb-1">
-          <span id="btn-start-text">Mulai Pindai Barcode</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+          <svg id="icon-camera-on" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
                viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"
                   d="M15 10l4.553-4.553a.5.5 0 01.854.353V18.2a.8.8 0 01-.8.8H4.5" />
           </svg>
+          <svg id="icon-camera-off" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>
+          <span id="btn-camera-text">Mulai Pindai Barcode</span>
         </button>
         <p class="text-[0.65rem] text-gray-400 mt-1">Jika kamera tidak muncul, izinkan akses kamera dahulu.</p>
       </section>
@@ -163,35 +308,30 @@
           </div>
           <div class="flex-1">
             <p id="status-title" class="font-semibold text-sm text-slate-800">Menunggu presensi...</p>
-            <p id="status-msg" class="text-xs text-slate-500">Silakan pindai barcode atau isi NIS/NISN/NIP.</p>
+            <p id="status-msg" class="text-xs text-slate-500">Silakan pindai barcode atau isi ID Anggota.</p>
             <pre id="status-raw" class="raw-error hidden"></pre>
           </div>
         </div>
 
-        <!-- NFC -->
-        <div class="bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm">
-          <div class="w-9 h-9 rounded-full bg-yellow-400/70 flex items-center justify-center text-yellow-900 font-bold text-sm">N</div>
+        <!-- NFC (Warna Sesuai Pedoman) -->
+        <div class="bg-[var(--hc-yellow-bg)] border border-[var(--hc-yellow)] rounded-2xl px-4 py-3 flex items-center gap-3 shadow-sm">
+          <!-- Logo NFC dari Screenshot (SVG) -->
+          <svg class="w-9 h-9 text-black" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M51.3691 16.7119V10.8252H38.5684V3.13477H25.7676V10.8252H12.9668V16.7119H20.6572V47.5186H12.9668V53.3887H25.7676V61.1348H38.5684V53.3887H51.3691V47.5186H43.6787V16.7119H51.3691ZM33.4336 47.5186H30.9131V16.7119H33.4336V47.5186Z" fill="black"/>
+          </svg>
           <div>
-            <p class="font-semibold text-yellow-900 text-sm">NFC Reader</p>
-            <p class="text-xs text-yellow-700 leading-tight">Coming soon – tempel kartu anggota untuk presensi.</p>
+            <p class="font-semibold text-[var(--hc-yellow-text)] text-sm">NFC Reader</p>
+            <p class="text-xs text-[var(--hc-yellow-text)] opacity-80 leading-tight">Coming soon – tempel kartu anggota untuk presensi.</p>
           </div>
         </div>
 
         <!-- input manual -->
         <div class="bg-white rounded-2xl shadow p-4 md:p-6 relative">
-          <!-- overlay manual -->
-          <div id="manual-overlay" class="overlay-mini">
-            <div class="flex flex-col items-center gap-2">
-              <div class="w-7 h-7 border-4 border-blue-200 border-t-[var(--hc-blue)] rounded-full animate-spin"></div>
-              <p class="text-xs text-gray-500">Memeriksa data...</p>
-            </div>
-          </div>
-
           <h3 class="font-semibold text-[var(--hc-dark)] mb-1">Input manual</h3>
           <p class="text-xs text-gray-500 mb-3">Gunakan jika barcode tidak terbaca.</p>
           <div class="flex gap-3 items-center">
             <input id="manual-nis" type="text" inputmode="numeric"
-                   placeholder="mis. 321005 / NISN / NIP"
+                   placeholder="Masukkan Nomor Identitas"
                    class="flex-1 border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--hc-blue)]">
             <button id="btn-send-manual"
                     class="px-4 py-2 rounded-xl bg-[var(--hc-blue)] text-white text-sm font-semibold hover:bg-opacity-90 transition">
@@ -202,12 +342,15 @@
 
         <!-- hasil presensi -->
         <div id="result-box" class="hidden bg-white rounded-2xl shadow p-4 flex items-center gap-4">
-          <div id="result-avatar" class="w-16 h-16 rounded-full bg-[#06243d] flex items-center justify-center text-white font-bold text-xl border-[3px] border-[var(--hc-blue)] overflow-hidden object-cover">
-            HC
+          <div id="result-avatar" class="w-16 h-16 rounded-full bg-[var(--hc-dark)] flex-shrink-0 flex items-center justify-center text-white font-bold text-xl border-[3px] border-[var(--hc-blue)] overflow-hidden object-cover">
+            <!-- Logo SVG dipakai sbg fallback -->
+            <svg class="w-8 h-8" fill="currentColor">
+               <use xlink:href="#hc-logo-agora"></use>
+            </svg>
           </div>
-          <div class="flex-1">
-            <p id="result-name" class="font-bold text-[var(--hc-dark)]">Nama Anggota</p>
-            <p id="result-meta" class="text-sm text-gray-500">Pertemuan • Jam</p>
+          <div class="flex-1 min-w-0">
+            <p id="result-name" class="font-bold text-[var(--hc-dark)] truncate">Nama Anggota</p>
+            <p id="result-meta" class="text-sm text-gray-500 truncate">Pertemuan • Jam</p>
           </div>
         </div>
       </section>
@@ -231,20 +374,20 @@
     </div>
   </main>
 
-  <!-- FOOTER -->
+  <!-- FOOTER (Warna dan Font Sesuai Pedoman) -->
   <footer class="mt-auto">
     <div class="max-w-5xl mx-auto px-4 py-6 text-center text-sm">
-      <p>© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
-      <p class="text-xs text-slate-200 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold">@vitezegi</span>.</p>
+      <p class="font-regular">© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
+      <p class="font-light text-xs text-slate-200 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold">@vitezegi</span>.</p>
     </div>
   </footer>
 
-  <!-- AUDIO -->
+  <!-- FITUR BARU: Audio Notifikasi Baru -->
   <audio id="sound-success" preload="auto">
-    <source src="data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAQAAAAAP8AAP8AAP8AAP8AAP8AAP8AAP8AAP8A" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YUYSAAAA/v/+ADIAOgA/AEcASgBNAFEAUwBWAFgAWQBbAF0AXgBfAGAAZgBoAGoAbABuAHAAcgB0AHYAdwB5AHsAfQCPAH8AgQCCAIMAhACFALsAiwCMAI4AkwCVALcAwgCvAKgAoQCZAIwAfgBvAGQAWQBQAEQAPgAxAPX/+wD2AO8A5gDjAOIA3QDZANIQ1VBhTlxmVmxmaGprbW9xc3V3eXp7fH19fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1VTWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfc2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/4A==" type="audio/wav">
   </audio>
   <audio id="sound-error" preload="auto">
-    <source src="data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQAQAAAAAP8A/wD/AP8A/wD/AP8A/wD/AP8A/wA=" type="audio/wav">
+    <source src="data:audio/wav;base64,UklGRqIAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YZQBAAD//v/6/fn+6/3r/N/87Pza/Nr83Pzi/Pj8+v3s/sL+7P7M/tr+7v7o/sv+4v7G/sr+w/6v/rf+sP60/rX+sv6x/rT+sP6u/q/+rf6u/rL+sP6r/qr+p/6k/qf+qP6m/qf+of6i/qL+oP6h/qH+nP6c/p3+m/6c/p7+oP6i/qD+nv6e/pz+nP6a/pr+mv6a/pr+mv6a/pr+m/6a/pr+mv6Z/pn+mf6Z/pn+mv6b/pv+m/6a/pv+mv6b/pr+mv6b/pr+mv6a/pj+mP6Y/pj+mP6Y/pj+mf6Z/pl+mf6Z/pl+mf6Z/pl+mf6Z/pj+mP6Y/pf+lv6W/pb+lv6W/pb+lv6W/pb+lv6X/pf+l/6X/pf+l/6W/pb+lv6W/pT+lP6U/pT+lP6U/pT+lP6U/pT+lP6U/pT+lP6U/pT+lP6T/pP+k/6T/pP+k/6T/pP+k/6T/pP+k/6T/pP+k/6T/pP+k/w==" type="audio/wav">
   </audio>
 
   <script>
@@ -252,69 +395,95 @@
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvTzjW2iQ2qT0Y_Hz1E4I9njAo09FRhnOAnSjtC3zo2HwkgtXQftH_sCiKriqOVXuSOg/exec";
 
     // elemen
-    const menuBtn       = document.getElementById('menu-btn');
-    const menuDropdown  = document.getElementById('menu-dropdown');
+    const menuBtn = document.getElementById('menu-btn');
+    const sidebarMenu = document.getElementById('sidebar-menu');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    
+    const fullPageOverlay = document.getElementById('full-page-overlay');
+    const loaderText = document.getElementById('loader-text');
 
-    const statusBox   = document.getElementById('status-box');
-    const statusIcon  = document.getElementById('status-icon');
+    const statusBox = document.getElementById('status-box');
+    const statusIcon = document.getElementById('status-icon');
     const statusTitle = document.getElementById('status-title');
-    const statusMsg   = document.getElementById('status-msg');
-    const statusRaw   = document.getElementById('status-raw');
+    const statusMsg = document.getElementById('status-msg');
+    const statusRaw = document.getElementById('status-raw');
 
-    const manualInput   = document.getElementById('manual-nis');
-    const manualBtn     = document.getElementById('btn-send-manual');
-    const manualOverlay = document.getElementById('manual-overlay');
+    const manualInput = document.getElementById('manual-nis');
+    const manualBtn = document.getElementById('btn-send-manual');
 
-    const scannerOverlay = document.getElementById('scanner-overlay');
-
-    const resultBox   = document.getElementById('result-box');
-    const resultName  = document.getElementById('result-name');
-    const resultMeta  = document.getElementById('result-meta');
-    const resultAvatar= document.getElementById('result-avatar');
+    const resultBox = document.getElementById('result-box');
+    const resultName = document.getElementById('result-name');
+    const resultMeta = document.getElementById('result-meta');
+    const resultAvatar = document.getElementById('result-avatar');
 
     const btnStartCamera = document.getElementById('btn-start-camera');
-    const qrReaderDiv    = document.getElementById('qr-reader');
-    const qrPlaceholder  = document.getElementById('qr-placeholder');
-    const scanAnim       = document.getElementById('scan-anim');
+    const btnCameraText = document.getElementById('btn-camera-text');
+    const iconCameraOn = document.getElementById('icon-camera-on');
+    const iconCameraOff = document.getElementById('icon-camera-off');
+    
+    const qrReaderDiv = document.getElementById('qr-reader');
+    const qrPlaceholder = document.getElementById('qr-placeholder');
 
     const soundSuccess = document.getElementById('sound-success');
-    const soundError   = document.getElementById('sound-error');
+    const soundError = document.getElementById('sound-error');
 
     let qrReader = null;
     let cameraOn = false;
     let lastScannedCode = "";
-    let lastScanTime    = 0;
+    let lastScanTime = 0;
 
-    /* ===== HEADER DROPDOWN ===== */
-    menuBtn.addEventListener('click', () => {
-      menuDropdown.style.display = (menuDropdown.style.display === 'block') ? 'none' : 'block';
-    });
-    document.addEventListener('click', (e) => {
-      if (!menuBtn.contains(e.target) && !menuDropdown.contains(e.target)) {
-        menuDropdown.style.display = 'none';
+    /* ===== FITUR BARU: Sidebar Menu Logic ===== */
+    function toggleMenu(show) {
+      if (show) {
+        sidebarOverlay.classList.add('open');
+        sidebarMenu.classList.add('open');
+      } else {
+        sidebarOverlay.classList.remove('open');
+        sidebarMenu.classList.remove('open');
       }
-    });
+    }
+    menuBtn.addEventListener('click', () => toggleMenu(true));
+    sidebarOverlay.addEventListener('click', () => toggleMenu(false));
 
-    /* ===== STATUS HELPER ===== */
+    /* ===== FITUR BARU: Full Page Loader Logic ===== */
+    function showLoader(text) {
+      loaderText.textContent = text || 'Memeriksa data...';
+      fullPageOverlay.style.display = 'flex';
+    }
+    function hideLoader() {
+      fullPageOverlay.style.display = 'none';
+    }
+
+    /* ===== STATUS HELPER (Warna Baru) ===== */
     function setStatus(type, title, msg, raw) {
-      statusBox.className = "bg-slate-50 border border-dashed border-slate-200 rounded-2xl p-4 flex gap-3 items-center";
+      // Reset warna
+      statusBox.className = "rounded-2xl p-4 flex gap-3 items-center border border-dashed";
       statusIcon.innerHTML = "";
       statusRaw.classList.add('hidden');
       statusRaw.textContent = '';
+      
+      // Hapus hasil sebelumnya
+      resultBox.classList.add('hidden');
 
       if (type === 'loading') {
-        statusBox.classList.add("bg-slate-50","border-slate-200");
+        statusBox.classList.add("bg-slate-50", "border-slate-200");
         statusIcon.innerHTML = '<div class="w-6 h-6 border-2 border-slate-200 border-t-[var(--hc-blue)] rounded-full animate-spin"></div>';
       } else if (type === 'success') {
-        statusBox.classList.add("bg-green-50","border-green-200");
-        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293A1 1 0 003.293 10.707l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg></div>';
+        statusBox.classList.add("bg-[var(--hc-green-bg)]", "border-[var(--hc-green-text)]", "border-opacity-30");
+        statusTitle.classList.add("text-[var(--hc-green-text)]");
+        statusIcon.innerHTML = `<div class="w-8 h-8 rounded-full bg-[var(--hc-green-text)] flex items-center justify-center text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293A1 1 0 003.293 10.707l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg></div>`;
       } else if (type === 'error') {
-        statusBox.classList.add("bg-red-50","border-red-200");
-        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.536-10.95a1 1 0 00-1.414-1.414L10 7.172 7.879 5.05A1 1 0 006.464 6.464L8.586 8.586l-2.122 2.12a1 1 0 101.414 1.415L10 10l2.121 2.121a1 1 0 001.415-1.414L11.414 8.586l2.122-2.12z" clip-rule="evenodd"/></svg></div>';
+        statusBox.classList.add("bg-[var(--hc-red-bg)]", "border-[var(--hc-red-text)]", "border-opacity-30");
+        statusTitle.classList.add("text-[var(--hc-red-text)]");
+        statusIcon.innerHTML = `<div class="w-8 h-8 rounded-full bg-[var(--hc-red)] flex items-center justify-center text-white"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.536-10.95a1 1 0 00-1.414-1.414L10 7.172 7.879 5.05A1 1 0 006.464 6.464L8.586 8.586l-2.122 2.12a1 1 0 101.414 1.415L10 10l2.121 2.121a1 1 0 001.415-1.414L11.414 8.586l2.122-2.12z" clip-rule="evenodd"/></svg></div>`;
+      } else { // 'info' atau 'waiting'
+        statusBox.classList.add("bg-slate-50", "border-slate-200");
+        statusTitle.classList.remove("text-[var(--hc-green-text)]", "text-[var(--hc-red-text)]");
+        statusIcon.innerHTML = '<div class="w-8 h-8 rounded-full bg-slate-300"></div>';
       }
 
       statusTitle.textContent = title || '';
-      statusMsg.textContent   = msg   || '';
+      statusMsg.textContent = msg || '';
       if (raw) {
         statusRaw.textContent = raw;
         statusRaw.classList.remove('hidden');
@@ -324,29 +493,40 @@
     function showResult(data) {
       resultBox.classList.remove('hidden');
       resultName.textContent = data.nama || 'Anggota';
-      resultMeta.textContent = (data.pertemuan || '-') + ' • ' + (data.jam || '');
+      resultMeta.textContent = `${data.pertemuan || '-'} • ${data.jam || ''} • ID: ${data.id_hc || data.nis}`;
       if (data.foto) {
-        resultAvatar.style.backgroundImage    = `url('${data.foto}')`;
-        resultAvatar.style.backgroundSize     = 'cover';
+        resultAvatar.style.backgroundImage = `url('${data.foto}')`;
+        resultAvatar.style.backgroundSize = 'cover';
         resultAvatar.style.backgroundPosition = 'center';
-        resultAvatar.textContent = '';
+        resultAvatar.innerHTML = ''; // Hapus SVG fallback
       } else {
         resultAvatar.style.backgroundImage = 'none';
-        resultAvatar.textContent = 'HC';
+        // Tampilkan SVG fallback jika tidak ada foto
+        resultAvatar.innerHTML = '<svg class="w-8 h-8" fill="currentColor"><use xlink:href="#hc-logo-agora"></use></svg>';
       }
     }
 
     /* ===== KIRIM PRESENSI ===== */
     async function sendPresensi(id, source) {
-      const cleanId = (id || '').replace(/[^0-9]/g, '');
-      if (!cleanId) {
-        setStatus('error', 'Input kosong', 'Masukkan NIS / NISN / NIP yang valid.');
-        soundError && soundError.play().catch(()=>{});
-        return;
+      // Izinkan ID Kustom (HC-...) atau ID alfanumerik (Ewok...)
+      // HANYA bersihkan ID jika itu murni angka
+      let cleanId = (id || '').trim();
+      if (/^[0-9]+$/.test(cleanId)) {
+         // Ini adalah NIS/NISN/NIP, tidak masalah.
+      } else if (cleanId.length < 5) { // Asumsi ID kustom/NIS/dll lebih dari 5
+         setStatus('error', 'Input tidak valid', 'ID Anggota terlalu pendek.');
+         soundError && soundError.play().catch(() => {});
+         return;
       }
 
-      if (source === 'scanner') scannerOverlay.style.display = 'flex';
-      if (source === 'manual')  manualOverlay.style.display  = 'flex';
+      if (!cleanId) {
+        setStatus('error', 'Input kosong', 'Masukkan ID Anggota yang valid.');
+        soundError && soundError.play().catch(() => {});
+        return;
+      }
+      
+      // Tampilkan Full Page Loader
+      showLoader(source === 'scanner' ? 'Memeriksa hasil pindai...' : 'Mengirim data manual...');
       setStatus('loading', 'Mengirim presensi...', 'Harap tunggu sebentar.');
 
       // 1) coba POST JSON
@@ -354,7 +534,7 @@
         const res = await fetch(WEB_APP_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'presensi', nis: cleanId })
+          body: JSON.stringify({ action: 'presensi', nis: cleanId }) // 'nis' adalah key di backend
         });
         const text = await res.text();
         const json = JSON.parse(text);
@@ -366,51 +546,48 @@
 
       // 2) fallback GET
       try {
-        const url  = WEB_APP_URL + '?action=presensi&nis=' + encodeURIComponent(cleanId);
-        const res  = await fetch(url);
+        const url = WEB_APP_URL + '?action=presensi&nis=' + encodeURIComponent(cleanId);
+        const res = await fetch(url);
         const text = await res.text();
         const json = JSON.parse(text);
         handlePresensiResponse(json);
       } catch (e2) {
-        scannerOverlay.style.display = 'none';
-        manualOverlay.style.display  = 'none';
-        scanAnim.classList.add('hidden');
-
+        hideLoader();
+        if (cameraOn) stopCamera(); // Matikan kamera jika error
+        
         setStatus(
           'error',
           'Gagal terhubung',
           'Periksa lagi URL Apps Script atau pengaturan akses deploy.',
           e2 && e2.message ? e2.message : ''
         );
-        soundError && soundError.play().catch(()=>{});
+        soundError && soundError.play().catch(() => {});
       }
     }
 
     function handlePresensiResponse(json) {
-      scannerOverlay.style.display = 'none';
-      manualOverlay.style.display  = 'none';
-      scanAnim.classList.add('hidden');
+      hideLoader(); // Sembunyikan loader
 
       if (!json || !json.status) {
         setStatus('error', 'Respon tidak dikenal', 'Script tidak mengembalikan status.');
-        soundError && soundError.play().catch(()=>{});
+        soundError && soundError.play().catch(() => {});
         return;
       }
 
       if (json.status === 'ok') {
         setStatus('success', 'Presensi berhasil', `${json.nama} • ${json.pertemuan || '-'}`);
         showResult(json);
-        soundSuccess && soundSuccess.play().catch(()=>{});
+        soundSuccess && soundSuccess.play().catch(() => {});
         manualInput.value = '';
       } else if (json.status === 'duplicate') {
         setStatus('error', 'Presensi ditolak', 'Anggota ini sudah presensi hari ini.');
-        soundError && soundError.play().catch(()=>{});
+        soundError && soundError.play().catch(() => {});
       } else if (json.status === 'not-registered') {
-        setStatus('error', 'ID tidak ditemukan', 'Periksa NIS / NISN / NIP atau daftarkan dulu.');
-        soundError && soundError.play().catch(()=>{});
+        setStatus('error', 'ID tidak ditemukan', 'Periksa kembali ID Anggota atau daftarkan dulu.');
+        soundError && soundError.play().catch(() => {});
       } else {
         setStatus('error', 'Gagal mengirim', json.message || 'Terjadi kesalahan.');
-        soundError && soundError.play().catch(()=>{});
+        soundError && soundError.play().catch(() => {});
       }
     }
 
@@ -424,8 +601,9 @@
       }
     });
 
-    /* ===== START KAMERA ===== */
-    btnStartCamera.addEventListener('click', async () => {
+    /* ===== FITUR BARU: Camera Toggle Logic ===== */
+    
+    async function startCamera() {
       if (cameraOn) return;
       try {
         qrPlaceholder.classList.add('hidden');
@@ -437,27 +615,65 @@
         await qrReader.start(
           { facingMode: "environment" },
           cameraConfig,
-          (decodedText) => {
+          (decodedText) => { // onScanSuccess
             const now = Date.now();
-            if (decodedText === lastScannedCode && (now - lastScanTime) < 1500) {
-              return;
+            // Anti-spam: jangan scan hal yang sama berulang kali terlalu cepat
+            if (decodedText === lastScannedCode && (now - lastScanTime) < 3000) {
+              return; 
             }
             lastScannedCode = decodedText;
-            lastScanTime    = now;
-            scanAnim.classList.remove('hidden');
+            lastScanTime = now;
             sendPresensi(decodedText, 'scanner');
+          },
+          (errorMessage) => { // onScanFailure
+            // abaikan, ini dipanggil setiap frame yg tidak ada QR
           }
         );
+        
         cameraOn = true;
         setStatus('info', 'Kamera aktif', 'Arahkan barcode ke dalam kotak.');
-        scanAnim.classList.remove('hidden');
+        btnCameraText.textContent = 'Matikan Kamera';
+        btnStartCamera.classList.remove('bg-[var(--hc-blue)]');
+        btnStartCamera.classList.add('bg-[var(--hc-red)]');
+        iconCameraOn.classList.add('hidden');
+        iconCameraOff.classList.remove('hidden');
+        
       } catch (err) {
         console.error(err);
-        setStatus('error', 'Kamera tidak tersedia', 'Gunakan input manual.');
+        setStatus('error', 'Kamera tidak tersedia', 'Izin ditolak atau tidak ada kamera. Gunakan input manual.');
         qrPlaceholder.classList.remove('hidden');
         qrReaderDiv.classList.add('hidden');
       }
+    }
+    
+    async function stopCamera() {
+      if (!cameraOn || !qrReader) return;
+      try {
+        await qrReader.stop();
+        cameraOn = false;
+        qrPlaceholder.classList.remove('hidden');
+        qrReaderDiv.classList.add('hidden');
+        setStatus('info', 'Kamera dinonaktifkan', 'Silakan pindai barcode atau isi ID Anggota.');
+        btnCameraText.textContent = 'Mulai Pindai Barcode';
+        btnStartCamera.classList.add('bg-[var(--hc-blue)]');
+        btnStartCamera.classList.remove('bg-[var(--hc-red)]');
+        iconCameraOn.classList.remove('hidden');
+        iconCameraOff.classList.add('hidden');
+      } catch (err) {
+        console.error("Gagal mematikan kamera:", err);
+        setStatus('error', 'Gagal mematikan kamera', err.message);
+      }
+    }
+
+    btnStartCamera.addEventListener('click', () => {
+      if (cameraOn) {
+        stopCamera();
+      } else {
+        startCamera();
+      }
     });
+
   </script>
 </body>
 </html>
+
