@@ -1,378 +1,277 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Presensi Kegiatan HC 32</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Presensi Kegiatan • HC32</title>
 
-  <!-- Tailwind -->
+  <!-- Tailwind (CDN dev OK; untuk produksi sebaiknya build sendiri) -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- QR/Barcode -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-  <!-- Audio beep -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Opsional: QR/Barcode scanner (fallback ke input manual jika kamera ditolak) -->
+  <script defer src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
-    :root {
-      --hc-blue: #1a4787;         /* Biru Utama */
-      --hc-toska: #0f8a94;        /* Toska */
-      --hc-text-dark: #2e2e2e;    /* Teks Gelap */
-      --hc-yellow-light: #fffbeb; /* Latar NFC */
-      --hc-yellow-dark: #b45309;  /* Teks NFC */
-      --hc-bg-light: #f0f4f9;     /* Latar Body */
-    }
-
-    body { font-family: 'Poppins', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--hc-bg-light); color: var(--hc-text-dark); }
-
-    .bg-hc-blue{ background-color: var(--hc-blue); }
-    .text-hc-blue{ color: var(--hc-blue); }
-    .border-hc-blue{ border-color: var(--hc-blue); }
-    .bg-hc-toska{ background-color: var(--hc-toska); }
-    .bg-hc-footer{ background-color: #06243d; }
-    .bg-hc-yellow-light{ background-color: var(--hc-yellow-light); }
-    .text-hc-yellow-dark{ color: var(--hc-yellow-dark); }
-    .text-hc-text-dark{ color: var(--hc-text-dark); }
-
-    .btn-primary{ background: var(--hc-blue); color:#fff; font-weight:600; border-radius: .75rem; padding:.75rem 1rem; transition:.2s; display:flex; align-items:center; justify-content:center; gap:.5rem; }
-    .btn-primary:hover{ background:#153a6f; }
-    .btn-primary.disabled{ background:#94a3b8; cursor:not-allowed; }
-    .btn-danger{ background:#dc2626; }
-    .btn-danger:hover{ background:#b91c1c; }
-
-    .card{ background:#fff; border-radius:1rem; padding:1.25rem; box-shadow:0 4px 12px rgba(0,0,0,.05); }
-
-    .scanner-frame{ border:3px dashed #d1d5db; border-radius:1rem; overflow:hidden; background:#222; position:relative; }
-    input[type="text"]::placeholder{ color:#9ca3af; font-weight:400; font-size:.95rem; }
-
-    #sidebar-menu{ transition: transform .3s ease-in-out; transform: translateX(-100%); }
-    #sidebar-menu.open{ transform: translateX(0); }
-    .sidebar-overlay{ transition: opacity .3s ease-in-out; }
-    .sidebar-dropdown-toggle{ display:flex; justify-content:space-between; align-items:center; width:100%; }
-    .sidebar-dropdown-toggle svg{ transition: transform .2s; }
-    .sidebar-dropdown-toggle.open svg{ transform: rotate(90deg); }
-    .sidebar-submenu{ display:none; padding-left:1.25rem; border-left:2px solid #e5e7eb; margin-left:.5rem; }
-
-    .scoped-overlay{ position:absolute; inset:0; background: rgba(248,250,252,.85); backdrop-filter: blur(4px); z-index:40; display:flex; align-items:center; justify-content:center; border-radius:1rem; opacity:0; pointer-events:none; transition:opacity .2s; }
-    .scoped-overlay.show{ opacity:1; pointer-events:auto; }
-    .loading-spinner{ width:72px; height:72px; border-radius:50%; border:6px solid #dbeafe; border-top-color: var(--hc-blue); animation: spin 1s linear infinite; position:relative; display:flex; align-items:center; justify-content:center; }
-    .loading-logo{ position:absolute; width:48px; height:48px; object-fit:contain; }
-    @keyframes spin{ from{ transform: rotate(0) } to{ transform: rotate(360deg) } }
+    .card { @apply bg-white rounded-2xl shadow-md border border-slate-200; }
+    .btn  { @apply inline-flex items-center justify-center rounded-xl px-4 py-3 font-semibold; }
+    .btn-primary { @apply bg-slate-900 text-white hover:bg-slate-800; }
+    .btn-ghost   { @apply bg-transparent hover:bg-slate-100; }
+    .tag         { @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium; }
   </style>
 </head>
-<body>
-  <!-- Header -->
-  <header class="bg-white shadow sticky top-0 z-30">
-    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <img id="header-logo" src="" alt="Logo HC 32" class="w-10 h-10 object-contain" onerror="this.src='https://placehold.co/40x40/1a4787/FFFFFF?text=HC'" />
-        <div>
-          <h1 class="text-lg md:text-xl font-semibold text-hc-blue leading-tight">Presensi Kegiatan</h1>
-        </div>
+<body class="bg-slate-50 text-slate-900">
+  <!-- NAV -->
+  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur border-b border-slate-200">
+    <div class="mx-auto max-w-3xl px-4 py-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-slate-900 text-white grid place-content-center font-bold">HC</div>
+      <div class="text-lg font-semibold">Presensi Kegiatan</div>
+      <div class="ml-auto">
+        <button id="btnMenu" class="btn btn-ghost text-slate-600" aria-label="Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
       </div>
-      <button id="menu-btn" class="p-2 rounded-lg hover:bg-gray-100 z-50" aria-label="Buka menu">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
     </div>
   </header>
 
-  <!-- Main -->
-  <main class="max-w-5xl mx-auto px-4 py-6 md:py-8 pb-32">
-    <div id="main-content-wrapper" class="relative grid lg:grid-cols-2 gap-5 md:gap-6">
+  <main class="mx-auto max-w-3xl px-4 py-6 space-y-6">
+    <!-- Kamera / QR -->
+    <section class="card p-4">
+      <div class="p-3 border-2 border-dashed rounded-xl bg-slate-100/60" id="cameraBox">
+        <div id="cameraPlaceholder" class="h-40 grid place-content-center text-slate-500 text-sm">
+          Kamera belum aktif
+        </div>
+        <div id="reader" class="hidden"></div>
+      </div>
+      <div class="mt-4">
+        <button id="btnScan" class="btn btn-primary w-full gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M3 5a1 1 0 011-1h3a1 1 0 110 2H5v2a1 1 0 11-2 0V5zm13-1a1 1 0 000 2h2v2a1 1 0 102 0V5a1 1 0 00-1-1h-3zM4 15a1 1 0 112 0v2h2a1 1 0 110 2H5a1 1 0 01-1-1v-3zm16 0a1 1 0 10-2 0v2h-2a1 1 0 100 2h3a1 1 0 001-1v-3z"/></svg>
+          Mulai Pindai Barcode
+        </button>
+        <p class="text-center text-xs text-slate-500 mt-2">Jika kamera tidak muncul, izinkan akses kamera dahulu.</p>
+      </div>
+    </section>
 
-      <!-- Scoped loader -->
-      <div id="scoped-loader" class="scoped-overlay" aria-hidden="true">
-        <div class="flex flex-col items-center gap-3">
-          <div class="loading-spinner">
-            <img id="loading-logo" alt="Loading..." class="loading-logo" />
-          </div>
-          <p id="loading-text" class="text-hc-blue font-medium">Memeriksa data...</p>
+    <!-- Status koneksi / hasil -->
+    <section id="alertBox" class="hidden">
+      <div id="alertInner" class="card px-4 py-3 flex gap-3 items-start border-red-200">
+        <div class="shrink-0 w-10 h-10 grid place-content-center rounded-full bg-red-100 text-red-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 14v2h-2v-2h2zm0-8v6h-2V8h2z"/></svg>
+        </div>
+        <div class="min-w-0">
+          <div class="font-semibold">Gagal terhubung</div>
+          <div id="alertMsg" class="text-sm text-slate-600">—</div>
         </div>
       </div>
+    </section>
 
-      <!-- Left: Scanner -->
-      <section class="flex flex-col gap-5 md:gap-6">
-        <div class="card">
-          <h2 class="text-xl md:text-2xl font-bold text-hc-text-dark mb-1">Pindai Barcode / QR</h2>
-          <p class="text-sm text-gray-500 mb-4 flex items-center gap-2"><span class="w-10 h-[3px] bg-hc-blue inline-block rounded-full"></span>Klik tombol untuk memulai kamera.</p>
-
-          <div class="scanner-frame mb-4 h-64 flex items-center justify-center" aria-live="polite">
-            <div id="qr-reader" class="hidden w-full h-full [&>video]:w-full [&>video]:h-full [&>video]:object-cover" aria-label="Area kamera"></div>
-            <div id="qr-placeholder" class="flex flex-col items-center px-4">
-              <p class="text-white/80 text-sm mb-2 text-center">Kamera belum aktif.</p>
-              <p class="text-white/50 text-xs text-center">Tekan "Mulai Pindai Barcode"</p>
-            </div>
-          </div>
-
-          <button id="btn-camera-toggle" class="btn-primary w-full">
-            <svg id="icon-camera-start" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-4.553a.5.5 0 01.854.353V18.2a.5.5 0 01-.854.353L15 14M4 18V6a2 2 0 012-2h8a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2z"/></svg>
-            <svg id="icon-camera-stop" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 10a.5.5 0 011 0v4a.5.5 0 01-1 0v-4zM14 10a.5.5 0 011 0v4a.5.5 0 01-1 0v-4z"/></svg>
-            <span id="btn-camera-text">Mulai Pindai Barcode</span>
-          </button>
-          <p class="text-xs text-gray-400 mt-2 text-center">Jika kamera tidak muncul, izinkan akses kamera dahulu.</p>
-        </div>
-      </section>
-
-      <!-- Right: Status + manual input -->
-      <section class="flex flex-col gap-5 md:gap-6">
-        <div id="status-box" class="card flex gap-3 items-center border-l-4 border-gray-300">
-          <div id="status-icon" class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 shrink-0">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <div class="flex-1 min-w-0">
-            <p id="status-title" class="font-semibold text-sm text-gray-800 truncate">Menunggu presensi...</p>
-            <p id="status-msg" class="text-xs text-gray-500">Silakan pindai barcode atau isi ID Anggota.</p>
-          </div>
-        </div>
-
-        <div class="card flex items-center gap-3 bg-hc-yellow-light border-l-4 border-yellow-400">
-          <img id="nfc-logo" src="" alt="NFC Logo" class="w-9 h-9" onerror="this.src='https://placehold.co/36x36/000000/FFFFFF?text=NFC'" />
-          <div>
-            <p class="font-semibold text-hc-yellow-dark text-sm">NFC Reader</p>
-            <p class="text-xs text-hc-yellow-dark opacity-80 leading-tight">Coming soon – tempel kartu anggota untuk presensi.</p>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 class="font-semibold text-hc-text-dark mb-1">Input manual</h3>
-          <p class="text-xs text-gray-500 mb-3">Gunakan jika barcode tidak terbaca.</p>
-          <div class="flex flex-col sm:flex-row gap-3">
-            <input id="manual-input" type="text" inputmode="numeric" placeholder="masukkan nomor identitas" class="flex-1 w-full border border-gray-300 rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-hc-blue focus:border-hc-blue transition" />
-            <button id="btn-send-manual" class="btn-primary px-5 py-2.5 text-sm w-full sm:w-auto shrink-0">Kirim</button>
-          </div>
-        </div>
-
-        <div id="result-box" class="card hidden flex-col sm:flex-row items-center gap-4 bg-hc-blue text-white">
-          <img id="result-avatar" class="w-16 h-16 rounded-full bg-white object-cover border-4 border-hc-toska" src="https://placehold.co/64x64/FFFFFF/1a4787?text=HC" alt="Foto Anggota" />
-          <div class="flex-1 text-center sm:text-left">
-            <p id="result-name" class="font-bold text-lg">Nama Anggota</p>
-            <p id="result-meta" class="text-sm opacity-80">Pertemuan • Jam</p>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <div class="mt-8 card flex flex-col md:flex-row items-center justify-between gap-4 border-l-4 border-hc-blue">
-      <div>
-        <p class="font-semibold text-hc-text-dark text-sm md:text-base">Butuh Bantuan?</p>
-        <p class="text-xs text-gray-500">Silakan hubungi Ketua HC <span class="font-semibold text-hc-blue">@vitezegi</span> atau pengurus yang sedang bertugas.</p>
+    <!-- NFC (placeholder sama seperti sebelumnya) -->
+    <section class="card px-4 py-3 flex items-start gap-3">
+      <div class="w-10 h-10 grid place-content-center rounded-xl bg-black text-white font-mono">NFC</div>
+      <div class="min-w-0">
+        <div class="font-semibold">NFC Reader</div>
+        <div class="text-sm text-slate-600">Coming soon — tempel kartu anggota untuk presensi.</div>
       </div>
-      <a href="https://www.instagram.com/historyclub32jkt/" target="_blank" class="btn-primary text-sm px-4 py-2 w-full md:w-auto shrink-0">Instagram HC 32
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-      </a>
-    </div>
+    </section>
+
+    <!-- Input Manual -->
+    <section class="card p-4 space-y-3">
+      <div class="font-semibold">Input manual</div>
+      <div class="flex gap-2">
+        <input id="nisInput" class="w-full rounded-xl border border-slate-300 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-300" placeholder="Masukkan NIS / NISN / NIP / ID_HC" />
+        <button id="btnSubmit" class="btn btn-primary">Kirim</button>
+      </div>
+      <p class="text-xs text-slate-500">Gunakan pemindai barcode (keyboard-wedge) juga bisa: fokuskan ke kolom ini dan scan.</p>
+    </section>
+
+    <!-- Hasil presensi -->
+    <section id="resultBox" class="hidden">
+      <div class="card px-4 py-4">
+        <div class="flex items-center gap-2">
+          <span id="resultTag" class="tag bg-slate-900 text-white">OK</span>
+          <span class="font-semibold">Hasil Presensi</span>
+        </div>
+        <div id="resultBody" class="mt-2 text-sm text-slate-700 whitespace-pre-wrap"></div>
+      </div>
+    </section>
+
+    <!-- Footer mini -->
+    <p class="text-center text-xs text-slate-400 py-4">© History Club 32</p>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-hc-footer mt-auto text-white p-6">
-    <div class="max-w-5xl mx-auto flex items-start gap-3">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300 shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
-      <div>
-        <p class="text-sm font-medium">© 2025 History Club SMAN 32 Jakarta. All rights reserved.</p>
-        <p class="text-xs text-gray-300 mt-1">Dibuat dan dikembangkan oleh <span class="font-semibold">@vitezegi</span>.</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Sidebar / Drawer -->
-  <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none" aria-hidden="true"></div>
-  <div id="sidebar-menu" class="fixed top-0 left-0 w-72 h-full bg-white shadow-lg z-50 p-4 overflow-y-auto" aria-label="Menu samping">
-    <div class="flex items-center justify-between pb-3 border-b mb-3">
-      <div class="flex items-center gap-2">
-        <img id="sidebar-logo" src="" alt="Logo HC 32" class="w-9 h-9 object-contain" onerror="this.src='https://placehold.co/36x36/1a4787/FFFFFF?text=HC'" />
-        <span class="font-semibold text-hc-blue">History Club 32</span>
-      </div>
-      <button id="menu-close-btn" class="p-1 rounded-full hover:bg-gray-100" aria-label="Tutup menu">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <nav class="flex flex-col gap-1 text-sm font-medium text-gray-700">
-      <a href="https://sites.google.com/view/history-club-32/beranda" class="px-3 py-2 rounded-lg hover:bg-gray-100">Beranda</a>
-
-      <div class="sidebar-dropdown">
-        <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100"><span>Profil</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        </button>
-        <div class="sidebar-submenu mt-1 flex flex-col gap-1">
-          <a href="https://sites.google.com/view/history-club-32/profil/tentang-kami" class="px-3 py-2 rounded-lg hover:bg-gray-100">Tentang Kami</a>
-          <a href="https://sites.google.com/view/history-club-32/profil/sejarah" class="px-3 py-2 rounded-lg hover:bg-gray-100">Sejarah</a>
-          <a href="https://sites.google.com/view/history-club-32/profil/kepengurusan" class="px-3 py-2 rounded-lg hover:bg-gray-100">Kepengurusan</a>
-        </div>
-      </div>
-
-      <div class="sidebar-dropdown">
-        <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100"><span>Aktivitas</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        </button>
-        <div class="sidebar-submenu mt-1 flex flex-col gap-1">
-          <a href="https://sites.google.com/view/history-club-32/aktivitas/agenda" class="px-3 py-2 rounded-lg hover:bg-gray-100">Agenda</a>
-          <a href="https://sites.google.com/view/history-club-32/aktivitas/kegiatan" class="px-3 py-2 rounded-lg hover:bg-gray-100">Kegiatan</a>
-        </div>
-      </div>
-
-      <div class="sidebar-dropdown">
-        <button class="sidebar-dropdown-toggle px-3 py-2 rounded-lg hover:bg-gray-100"><span>Keanggotaan</span>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-        </button>
-        <div class="sidebar-submenu mt-1 flex flex-col gap-1">
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan/anggota" class="px-3 py-2 rounded-lg hover:bg-gray-100">Anggota</a>
-          <a href="#" class="px-3 py-2 rounded-lg bg-blue-50 text-hc-blue font-semibold">Presensi</a>
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan/pendaftaran" class="px-3 py-2 rounded-lg hover:bg-gray-100">Pendaftaran</a>
-          <a href="https://sites.google.com/view/history-club-32/keanggotaan/login-pengurus" class="px-3 py-2 rounded-lg hover:bg-gray-100">Login Pengurus</a>
-        </div>
-      </div>
-    </nav>
-  </div>
-
   <script>
-    // ======================== Konfigurasi ========================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRJr31SeGSAG1uJcVTboTTfH-RNswG5P7z0zsPljNUvW-vTVClGJgKjxYgvAv1Jy8lTw/exec"; // /exec wajib
-    const LOGO_HC_URL = "https://drive.google.com/uc?id=1lAev2D5Pxp5Rt36iy4y0YMibEnYu5BgI";
-    const LOGO_NFC_URL = "https://drive.google.com/uc?id=1F42BAD5bDPLJBEYrjfGdv-7f7KtAVWIg";
+    // ====== KONFIGURASI ======
+    // Ganti dengan URL Web App GAS kamu (Deploy type: "Web app", Anyone has access)
+    const WEB_APP_URL = "https://script.google.com/macros/s/PASTE_EXEC_URL_HERE/exec";
 
-    // ======================== Elemen DOM ========================
-    const menuBtn = document.getElementById('menu-btn');
-    const menuCloseBtn = document.getElementById('menu-close-btn');
-    const sidebarMenu = document.getElementById('sidebar-menu');
-    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    // ====== STATE ======
+    let scanner = null;
+    let scanning = false;
 
-    const statusBox = document.getElementById('status-box');
-    const statusIcon = document.getElementById('status-icon');
-    const statusTitle = document.getElementById('status-title');
-    const statusMsg = document.getElementById('status-msg');
+    // ====== DOM ======
+    const btnScan   = document.getElementById('btnScan');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const nisInput  = document.getElementById('nisInput');
+    const alertBox  = document.getElementById('alertBox');
+    const alertMsg  = document.getElementById('alertMsg');
+    const resultBox = document.getElementById('resultBox');
+    const resultBody= document.getElementById('resultBody');
+    const resultTag = document.getElementById('resultTag');
+    const readerDiv = document.getElementById('reader');
+    const cameraPh  = document.getElementById('cameraPlaceholder');
 
-    const manualInput = document.getElementById('manual-input');
-    const manualBtn = document.getElementById('btn-send-manual');
-    const scopedLoader = document.getElementById('scoped-loader');
-    const loadingText = document.getElementById('loading-text');
+    function showAlert(msg) {
+      alertMsg.textContent = msg;
+      alertBox.classList.remove('hidden');
+    }
+    function hideAlert() {
+      alertBox.classList.add('hidden');
+      alertMsg.textContent = '';
+    }
+    function showResult(tagText, tagClass, lines) {
+      resultTag.textContent = tagText;
+      resultTag.className = "tag " + tagClass;
+      resultBody.textContent = lines.join("\n");
+      resultBox.classList.remove('hidden');
+    }
+    function hideResult() {
+      resultBox.classList.add('hidden');
+    }
 
-    const resultBox = document.getElementById('result-box');
-    const resultName = document.getElementById('result-name');
-    const resultMeta = document.getElementById('result-meta');
-    const resultAvatar = document.getElementById('result-avatar');
+    // ====== FETCH (tanpa custom header; simple request) ======
+    async function sendPresensi(id) {
+      hideAlert();
+      hideResult();
+      if (!id) {
+        showAlert('ID tidak boleh kosong.');
+        return;
+      }
 
-    const btnCameraToggle = document.getElementById('btn-camera-toggle');
-    const btnCameraText = document.getElementById('btn-camera-text');
-    const iconCameraStart = document.getElementById('icon-camera-start');
-    const iconCameraStop = document.getElementById('icon-camera-stop');
-    const qrReaderDiv = document.getElementById('qr-reader');
-    const qrPlaceholder = document.getElementById('qr-placeholder');
+      btnSubmit.disabled = true;
+      btnScan.disabled = true;
 
-    const headerLogo = document.getElementById('header-logo');
-    const loadingLogo = document.getElementById('loading-logo');
-    const sidebarLogo = document.getElementById('sidebar-logo');
-    const nfcLogo = document.getElementById('nfc-logo');
+      // Abort bila terlalu lama
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 15000);
 
-    let qrReader = null; let cameraOn = false; let lastScannedCode = ""; let lastScanTime = 0; let isProcessing = false;
+      try {
+        const res = await fetch(WEB_APP_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'presensi', nis: id.trim() }),
+          signal: ctrl.signal,
+          cache: 'no-store',
+        });
 
-    // ======================== Audio ========================
-    let synthSuccess, synthError;
-    function initAudio(){
-      if(!synthSuccess){
-        Tone.start();
-        synthSuccess = new Tone.Synth({ oscillator:{type:'sine'}, envelope:{attack:.01,decay:.1,sustain:.1,release:.2} }).toDestination();
-        synthError   = new Tone.Synth({ oscillator:{type:'square'}, envelope:{attack:.01,decay:.2,sustain:0,release:.2} }).toDestination();
+        if (!res.ok) {
+          // GAS akan selalu 200 pada sukses; kalau bukan 200 kemungkinan URL salah/izin salah.
+          showAlert(`HTTP ${res.status}. Cek URL Web App & akses (Anyone).`);
+          return;
+        }
+
+        // Jika balasan bukan JSON valid, ini biasanya akibat CORS mode salah atau endpoint salah.
+        const data = await res.json().catch(() => ({}));
+        if (!data || typeof data !== 'object') {
+          showAlert('Respon tidak valid. Pastikan fungsi json_ di GAS tidak memakai setHeader().');
+          return;
+        }
+
+        switch (data.status) {
+          case 'ok': {
+            const lines = [
+              'Status: Berhasil',
+              `Nama : ${data.nama || '-'}`,
+              `NIS  : ${data.nis || '-'}`,
+              `ID HC: ${data.id_hc || '-'}`,
+              `Jam  : ${data.jam || '-'}`,
+              `Pertemuan: ${data.pertemuan || '-'}`
+            ];
+            showResult('BERHASIL', 'bg-green-600 text-white', lines);
+            break;
+          }
+          case 'duplicate': {
+            const lines = ['Status: Sudah presensi hari ini.'];
+            showResult('DUPLIKAT', 'bg-amber-600 text-white', lines);
+            break;
+          }
+          case 'not-registered': {
+            const lines = ['Status: ID belum terdaftar.'];
+            showResult('TIDAK TERDAFTAR', 'bg-red-600 text-white', lines);
+            break;
+          }
+          default: {
+            const msg = data.message || 'Terjadi kesalahan.';
+            showResult('ERROR', 'bg-red-600 text-white', ['Status: ' + msg]);
+          }
+        }
+      } catch (err) {
+        if (err.name === 'AbortError') {
+          showAlert('Timeout. Coba lagi, atau cek koneksi internet.');
+        } else {
+          showAlert(`Gagal fetch: ${err.message}`);
+        }
+      } finally {
+        clearTimeout(t);
+        btnSubmit.disabled = false;
+        btnScan.disabled = false;
       }
     }
-    function playSuccessSound(){ initAudio(); synthSuccess.triggerAttackRelease('G5','8n',Tone.now()); }
-    function playErrorSound(){ initAudio(); synthError.triggerAttackRelease('C3','8n',Tone.now()); }
 
-    // ======================== Sidebar ========================
-    function openMenu(){ sidebarMenu.classList.add('open'); sidebarOverlay.classList.remove('opacity-0','pointer-events-none'); sidebarOverlay.classList.add('opacity-100'); }
-    function closeMenu(){ sidebarMenu.classList.remove('open'); sidebarOverlay.classList.remove('opacity-100'); sidebarOverlay.classList.add('opacity-0','pointer-events-none'); }
-    menuBtn.addEventListener('click', openMenu);
-    menuCloseBtn.addEventListener('click', closeMenu);
-    sidebarOverlay.addEventListener('click', closeMenu);
-    document.querySelectorAll('.sidebar-dropdown-toggle').forEach(btn=>{
-      btn.addEventListener('click',()=>{ const sm = btn.nextElementSibling; btn.classList.toggle('open'); sm.style.display = (sm.style.display==='flex'?'none':'flex'); sm.style.flexDirection='column'; });
+    // ====== EVENT: Input manual ======
+    btnSubmit.addEventListener('click', () => {
+      const id = nisInput.value.trim();
+      sendPresensi(id);
+    });
+    nisInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btnSubmit.click();
     });
 
-    // ======================== Status Helper ========================
-    function setStatus(type, title, msg){
-      statusBox.className = "card flex gap-3 items-center border-l-4"; statusIcon.innerHTML = "";
-      if(type==='loading'){ statusBox.classList.add('border-blue-300'); statusIcon.innerHTML='<div class="w-6 h-6 border-2 border-gray-200 border-t-hc-blue rounded-full animate-spin"></div>'; }
-      else if(type==='success'){ statusBox.classList.add('border-green-400'); statusIcon.innerHTML='<div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293A1 1 0 003.293 10.707l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z" clip-rule="evenodd"/></svg></div>'; }
-      else if(type==='error'){ statusBox.classList.add('border-red-400'); statusIcon.innerHTML='<div class="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white shrink-0"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/></svg></div>'; }
-      else { statusBox.classList.add('border-gray-300'); statusIcon.innerHTML='<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'; }
-      statusTitle.textContent = title || ''; statusMsg.textContent = msg || '';
-    }
+    // ====== EVENT: Scanner ======
+    btnScan.addEventListener('click', async () => {
+      if (scanning) {
+        // stop
+        scanning = false;
+        btnScan.textContent = 'Mulai Pindai Barcode';
+        if (scanner) await scanner.stop().catch(()=>{});
+        readerDiv.innerHTML = '';
+        readerDiv.classList.add('hidden');
+        cameraPh.classList.remove('hidden');
+        return;
+      }
 
-    function showResult(data){
-      resultBox.classList.remove('hidden'); resultBox.classList.add('flex');
-      resultName.textContent = data.nama || 'Anggota';
-      resultMeta.textContent = (data.pertemuan || '-') + ' • ' + (data.jam || '');
-      if(data.foto){ resultAvatar.src = data.foto; } else { resultAvatar.src = 'https://placehold.co/64x64/FFFFFF/1a4787?text=' + getInitials(data.nama); }
-    }
-    function getInitials(name){ if(!name) return 'HC'; const w = name.split(' ').filter(Boolean); return (w[0][0] + ((w[1]||'')[0]||'')).toUpperCase(); }
+      // start
+      if (!window.Html5Qrcode) {
+        showAlert('Library scanner belum termuat. Coba lagi beberapa detik.');
+        return;
+      }
 
-    function showLoader(text){ loadingText.textContent = text || 'Memeriksa...'; scopedLoader.classList.add('show'); isProcessing = true; manualBtn.classList.add('disabled'); btnCameraToggle.classList.add('disabled'); }
-    function hideLoader(){ scopedLoader.classList.remove('show'); isProcessing = false; manualBtn.classList.remove('disabled'); btnCameraToggle.classList.remove('disabled'); }
+      scanning = true;
+      btnScan.textContent = 'Hentikan Pemindaian';
+      readerDiv.classList.remove('hidden');
+      cameraPh.classList.add('hidden');
 
-    // ======================== Presensi: Fetch tanpa preflight ========================
-   async function sendPresensi(id, source) {
-  if (isProcessing) return;
-  const cleanId = (id || '').trim();
-  if (!cleanId) {
-    setStatus('error', 'Input kosong', 'Masukkan ID Anggota / NIS / NISN / NIP.');
-    playErrorSound(); return;
-  }
+      try {
+        scanner = new Html5Qrcode("reader");
+        const cams = await Html5Qrcode.getCameras();
+        const camId = cams?.[0]?.id;
+        if (!camId) throw new Error('Kamera tidak ditemukan');
 
-  initAudio();
-  showLoader(source === 'scanner' ? 'Memeriksa Pindaian...' : 'Memeriksa ID...');
-  resultBox.classList.add('hidden');
-
-  try {
-    // === GUNAKAN GET: TANPA preflight, tanpa header custom ===
-    const url = new URL(WEB_APP_URL);
-    url.searchParams.set('action','presensi');
-    url.searchParams.set('nis', cleanId);
-
-   const res = await fetch(WEB_APP_URL, {
-  method: 'POST',
-  body: new URLSearchParams({ action:'presensi', nis: cleanId })
-});
-
-    handlePresensiResponse(json);
-
-  } catch (e) {
-    console.error(e);
-    hideLoader();
-    setStatus('error','Gagal terhubung',
-      'Request terkirim tapi respons tidak bisa dibaca. Cek URL /exec & deploy.');
-    playErrorSound();
-  }
-}
-
-    // ======================== Events ========================
-    manualBtn.addEventListener('click', ()=> sendPresensi(manualInput.value,'manual'));
-    manualInput.addEventListener('keyup', (e)=>{ if(e.key==='Enter') sendPresensi(manualInput.value,'manual'); });
-
-    btnCameraToggle.addEventListener('click', ()=>{ if(isProcessing) return; initAudio(); if(cameraOn) stopCamera(); else startCamera(); });
-
-    async function startCamera(){
-      try{
-        qrPlaceholder.classList.add('hidden'); qrReaderDiv.classList.remove('hidden'); setStatus('loading','Mengaktifkan kamera...','Jika muncul permintaan izin, pilih "Allow".'); btnCameraToggle.classList.add('disabled');
-        qrReader = new Html5Qrcode('qr-reader');
-        const cfg = { fps:10, qrbox:{ width:250, height:150 }, aspectRatio: 1.7777778 };
-        await qrReader.start({ facingMode:'environment' }, cfg, (decoded)=>{
-          const now = Date.now(); if(isProcessing || (decoded===lastScannedCode && (now-lastScanTime)<3000)) return; lastScannedCode = decoded; lastScanTime = now; sendPresensi(decoded,'scanner');
-        });
-        cameraOn = true; setStatus('info','Kamera aktif','Arahkan barcode atau QR code ke area pindai.'); btnCameraText.textContent='Matikan Kamera'; btnCameraToggle.classList.add('btn-danger'); iconCameraStart.classList.add('hidden'); iconCameraStop.classList.remove('hidden'); btnCameraToggle.classList.remove('disabled');
-      }catch(err){ console.error(err); setStatus('error','Kamera tidak tersedia','Gunakan input manual di bawah.'); qrPlaceholder.classList.remove('hidden'); qrReaderDiv.classList.add('hidden'); btnCameraToggle.classList.remove('disabled'); }
-    }
-
-    async function stopCamera(){
-      if(!qrReader) return; try{ await qrReader.stop(); }catch(e){ console.error('Stop camera error', e); }
-      cameraOn=false; qrReader=null; qrPlaceholder.classList.remove('hidden'); qrReaderDiv.classList.add('hidden'); setStatus('info','Kamera nonaktif','Silakan pindai barcode atau isi ID Anggota.'); btnCameraText.textContent='Mulai Pindai Barcode'; btnCameraToggle.classList.remove('btn-danger'); iconCameraStart.classList.remove('hidden'); iconCameraStop.classList.add('hidden');
-    }
-
-    // ======================== Boot ========================
-    document.addEventListener('DOMContentLoaded', ()=>{
-      headerLogo.src = LOGO_HC_URL; loadingLogo.src = LOGO_HC_URL; sidebarLogo.src = LOGO_HC_URL; nfcLogo.src = LOGO_NFC_URL;
+        await scanner.start(
+          camId,
+          { fps: 12, qrbox: { width: 260, height: 160 } },
+          (decodedText) => {
+            // Ambil segera dan stop, lalu kirim
+            nisInput.value = decodedText.trim();
+            btnScan.click(); // stop
+            sendPresensi(decodedText.trim());
+          },
+          () => {}
+        );
+      } catch (e) {
+        btnScan.textContent = 'Mulai Pindai Barcode';
+        scanning = false;
+        readerDiv.classList.add('hidden');
+        cameraPh.classList.remove('hidden');
+        showAlert('Tidak bisa membuka kamera: ' + (e?.message || e));
+      }
     });
   </script>
 </body>
