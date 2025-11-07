@@ -1,1085 +1,313 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <title>Panel Pengurus • History Club 32</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="color-scheme" content="light">
-  <style>
-    :root {
-      --hc-blue: #005A9C;
-      --hc-dark: #0f172a;
-      --hc-bg: #edf2f7;
-      --hc-green: #0F766E;
-      --hc-cyan: #0EA5E9;
-      --hc-orange: #F97316;
-      --hc-red: #DC2626;
-      --radius: 16px;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-      background: var(--hc-bg);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    /* header */
-    .topbar {
-      background: #fff;
-      border-bottom: 1px solid rgba(15,23,42,.05);
-      height: 54px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 16px 0 16px;
-      position: sticky;
-      top: 0;
-      z-index: 40;
-    }
-    .top-left {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-    .logo-circle {
-      width: 32px;
-      height: 32px;
-      background: var(--hc-blue);
-      color: #fff;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 700;
-      font-size: 13px;
-    }
-    .top-title {
-      font-weight: 600;
-      font-size: .9rem;
-      color: var(--hc-dark);
-    }
-    .top-sub {
-      font-size: .65rem;
-      color: #94a3b8;
-      margin-top: 1px;
-    }
-    .top-right {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-    .top-avatar {
-      width: 30px;
-      height: 30px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .7rem;
-      font-weight: 600;
-      color: #0f172a;
-    }
-    .icon-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      border: 1px solid rgba(15,23,42,.08);
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-    }
-    /* layout */
-    .app {
-      display: flex;
-      min-height: calc(100vh - 54px);
-    }
-    .sidebar {
-      width: 232px;
-      background: #0f172a;
-      color: #fff;
-      padding: 12px 12px 60px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      position: sticky;
-      top: 54px;
-      height: calc(100vh - 54px);
-      overflow-y: auto;
-      transition: transform .25s ease-in-out;
-    }
-    .sb-user {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 6px;
-      padding: 6px 6px;
-    }
-    .sb-avatar {
-      width: 36px; height: 36px; border-radius: 999px;
-      background: rgba(148,163,184,.1);
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 600;
-    }
-    .sb-name { font-size: .8rem; }
-    .sb-meta { font-size: .6rem; opacity: .6; }
-    .sb-link {
-      padding: 7px 9px;
-      border-radius: 10px;
-      font-size: .75rem;
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      cursor: pointer;
-      transition: background .2s;
-    }
-    .sb-link.active {
-      background: rgba(255,255,255,.07);
-    }
-    .sb-link:hover {
-      background: rgba(255,255,255,.03);
-    }
-    .main {
-      flex: 1;
-      padding: 16px;
-      overflow-y: auto;
-    }
-    .page-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
-    .card {
-      background: #fff;
-      border-radius: var(--radius);
-      box-shadow: 0 6px 20px rgba(15,23,42,.03);
-      margin-bottom: 14px;
-      padding: 12px;
-    }
-    table { width: 100%; border-collapse: collapse; }
-    th,td { padding: 6px 6px; border-bottom: 1px solid #edf2f7; font-size: .7rem; text-align: left; }
-    th { background: #e2e8f0; font-weight: 600; }
-    .badge {
-      display: inline-block;
-      padding: 2px 7px;
-      border-radius: 999px;
-      font-size: .65rem;
-      font-weight: 600;
-    }
-    .badge-siswa { background: rgba(34,197,94,.15); color: #166534; }
-    .badge-guru  { background: rgba(14,165,233,.16); color: #0369a1; }
-    .badge-alumni{ background: rgba(249,115,22,.12); color: #c2410c; }
-    .badge-non32 { background: rgba(148,163,184,.25); color: #475569; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struktur Kepengurusan - HC 32</title>
 
-    .btn {
-      background: var(--hc-blue);
-      border: none;
-      color: #fff;
-      font-size: .7rem;
-      border-radius: 7px;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-    .btn-secondary {
-      background: #fff;
-      border: 1px solid #cbd5e1;
-      color: #0f172a;
-      border-radius: 7px;
-      padding: 5px 10px;
-      font-size: .7rem;
-      cursor: pointer;
-    }
-    .input {
-      width: 100%;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      padding: 4px 6px;
-      font-size: .7rem;
-    }
-    .avatar-sm {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      overflow: hidden;
-      display: inline-block;
-      vertical-align: middle;
-      margin-right: 5px;
-      background: #e2e8f0;
-    }
-    .avatar-sm img { width: 100%; height: 100%; object-fit: cover; }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    footer {
-      background: #06243d;
-      color: #fff;
-      text-align: center;
-      padding: 12px 16px;
-      font-size: .65rem;
-      margin-top: auto;
-    }
+    <style>
+        :root {
+            /* Warna dari Brand Guide */
+            --hc-blue: #1a4787;
+            --hc-toska: #0f8a94;
+            --hc-dark: #2e2e2e;
+            --hc-green: #15a256;
+            --hc-red: #d30e14;
+            --hc-bg: #e7e9ea;
+            --hc-blue-light: #2e5eab; /* Warna pendamping */
+        }
 
-    .hidden { display: none !important; }
+        @keyframes hcspin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        body {
+            font-family: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            background-color: #f8fafc; /* Latar belakang netral */
+            color: var(--hc-dark);
+            margin: 0;
+            padding: 0;
+        }
 
-    /* mobile */
-    @media(max-width: 880px) {
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 54px;
-        transform: translateX(-100%);
-        z-index: 60;
-      }
-      .sidebar.open { transform: translateX(0); }
-      .main { padding: 12px 10px 70px 10px; }
-    }
-  </style>
+        /* Wrapper Konten Utama */
+        #hc32-struktur {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 16px; /* Padding untuk HP */
+            position: relative;
+            min-height: 50vh; /* Agar loading terlihat */
+        }
+        
+        /* Judul Halaman */
+        .hc-page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--hc-dark);
+            margin: 0 0 6px 0;
+        }
+        .hc-page-subtitle {
+            color: #475569;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+        
+        /* Judul Section */
+        .hc-section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--hc-dark);
+            margin: 32px 0 16px 0;
+            border-bottom: 2px solid var(--hc-bg);
+            padding-bottom: 8px;
+        }
+
+        /* Grid Responsif */
+        .hc-struktur-grid {
+            display: grid;
+            gap: 16px;
+            /* Dibuat lebih responsif, mirip Daftar Anggota */
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            margin-bottom: 24px;
+        }
+
+        /* Desain Card Baru */
+        .hc-struktur-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 6px 20px rgba(15, 23, 42, .06);
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            /* Border atas berwarna (sesuai inspirasi) */
+            border-top: 5px solid; 
+            border-color: #e2e8f0; /* Default */
+            transition: all 0.2s ease;
+        }
+        .hc-struktur-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(15, 23, 42, .08);
+        }
+
+        .hc-card-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 999px;
+            margin: 0 auto 12px auto;
+            overflow: hidden;
+            background: var(--hc-bg);
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .hc-card-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .hc-card-nama {
+            font-weight: 600;
+            color: var(--hc-dark);
+            font-size: 16px;
+        }
+        .hc-card-jabatan {
+            font-weight: 600;
+            font-size: 13px;
+            margin-top: 2px;
+            color: #475569; /* Warna default */
+        }
+        .hc-card-periode {
+            color: #94a3b8; /* Lebih pudar */
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        /* Loading Overlay (BARU) */
+        #hc32-loading-overlay {
+            position: fixed; /* Full Screen */
+            inset: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(2px);
+            display: flex; /* Tampil di awal */
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .hc-loader {
+            position: relative;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .hc-loader-spinner {
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 5px solid var(--hc-blue);
+            border-top-color: var(--hc-toska);
+            animation: hcspin 1s linear infinite;
+        }
+        .hc-loader-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+        }
+
+        /* Footer (BARU) */
+        #hc32-footer {
+            background: var(--hc-dark);
+            color: white;
+            text-align: center;
+            padding: 20px 10px;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 80px;
+        }
+        #hc32-footer .footer-sub {
+            font-size: 12px; 
+            margin-top: 4px; 
+            color: #e7e9ea; 
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <div class="topbar">
-    <div class="top-left">
-      <div class="icon-btn" id="btn-open-sidebar">☰</div>
-      <div class="logo-circle">HC</div>
-      <div>
-        <div class="top-title">Pengurus HC</div>
-        <div class="top-sub" id="top-sub">SMAN 32 Jakarta</div>
-      </div>
+    <div id="hc32-loading-overlay">
+        <div class="hc-loader">
+            <div class="hc-loader-spinner"></div>
+            <img src="https://lh3.googleusercontent.com/d/1lAev2D5Pxp5Rt36iy4y0YMibEnYu5BgI" class="hc-loader-logo" alt="Logo HC">
+        </div>
     </div>
-    <div class="top-right">
-      <div id="top-name" style="font-size:.7rem;"></div>
-      <div class="top-avatar" id="top-avatar">HC</div>
+
+    <div id="hc32-struktur">
+        <h2 class="hc-page-title">Struktur Kepengurusan</h2>
+        <p class="hc-page-subtitle">Tim di balik History Club 32 Jakarta.</p>
+
+        <h3 class="hc-section-title">Pembina & Pelatih</h3>
+        <div id="hc32-pembina" class="hc-struktur-grid"></div>
+
+        <h3 class="hc-section-title">Pimpinan Klub</h3>
+        <div id="hc32-pimpinan" class="hc-struktur-grid"></div>
+
+        <h3 class="hc-section-title">Divisi</h3>
+        <div id="hc32-divisi" class="hc-struktur-grid"></div>
     </div>
-  </div>
 
-  <div class="app">
-    <!-- SIDEBAR -->
-    <nav class="sidebar" id="sidebar">
-      <div class="sb-user">
-        <div class="sb-avatar" id="sb-avatar">HC</div>
-        <div>
-          <div class="sb-name" id="sb-name">Pengurus</div>
-          <div class="sb-meta" id="sb-meta">-</div>
+    <div id="hc32-footer">
+        <div style="font-size: 13px;">© 2025 History Club SMAN 32 Jakarta. All rights reserved.</div>
+        <div class="footer-sub">
+            Dibuat dan dikembangkan oleh <span style="font-weight: 600; color: white;">@vitezegi</span>.
         </div>
-      </div>
-      <div class="sb-link active" data-view="dashboard">📊 Dashboard & Presensi</div>
-      <div class="sb-link" data-view="agenda">🗓 Agenda</div>
-      <div class="sb-link" data-view="posting">📰 Posting</div>
-      <div class="sb-link" data-view="anggota">👥 Anggota</div>
-      <div class="sb-link" data-view="kepengurusan">🏛 Kepengurusan</div>
-      <div class="sb-link" id="btn-logout">🚪 Keluar</div>
-    </nav>
+    </div>
 
-    <!-- MAIN -->
-    <main class="main">
-      <!-- DASHBOARD -->
-      <section id="view-dashboard">
-        <div class="page-title">Dashboard & Presensi</div>
-
-        <div class="card" id="dash-presensi-box">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-            <div>
-              <div style="font-weight:600;">Presensi Terbaru</div>
-              <div style="font-size:.65rem;color:#94a3b8;">150 baris terakhir (otomatis dari sheet Presensi)</div>
-            </div>
-            <button class="btn-secondary" id="btn-refresh-dash">⟳ Muat ulang</button>
-          </div>
-          <div id="dash-presensi-loading" style="font-size:.65rem;">Memuat...</div>
-          <div id="dash-presensi"></div>
-        </div>
-
-        <div class="card">
-          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:6px;">
-            <select id="presensi-pertemuan" class="input" style="max-width:220px;"></select>
-            <button class="btn" id="btn-show-presensi">Tampilkan</button>
-            <button class="btn-secondary" id="btn-csv">Export CSV</button>
-            <span id="ptm-msg" style="font-size:.6rem;color:#94a3b8;"></span>
-          </div>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Anggota</th>
-                  <th>NIS</th>
-                  <th>Kelas</th>
-                  <th>Pertemuan</th>
-                  <th>Waktu</th>
-                  <th>Tipe</th>
-                </tr>
-              </thead>
-              <tbody id="tbl-presensi">
-                <tr><td colspan="7">Pilih pertemuan di atas.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- AGENDA -->
-      <section id="view-agenda" class="hidden">
-        <div class="page-title">Agenda</div>
-        <div class="card">
-          <form id="form-agenda" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:10px;">
-            <div>
-              <label style="font-size:.6rem;">Judul *</label>
-              <input id="ag-judul" class="input" required>
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Tanggal *</label>
-              <input id="ag-tanggal" type="date" class="input" required>
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Waktu</label>
-              <input id="ag-waktu" class="input" placeholder="08.00 - 10.00">
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Tempat</label>
-              <input id="ag-tempat" class="input" placeholder="Ruang ...">
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Kategori</label>
-              <select id="ag-kategori" class="input">
-                <option value="umum">Umum</option>
-                <option value="internal">Internal</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Status</label>
-              <select id="ag-status" class="input">
-                <option value="aktif">Aktif</option>
-                <option value="selesai">Selesai</option>
-              </select>
-            </div>
-            <div style="grid-column:1/-1;">
-              <label style="font-size:.6rem;">Deskripsi</label>
-              <textarea id="ag-deskripsi" rows="2" class="input"></textarea>
-            </div>
-            <div style="grid-column:1/-1;">
-              <button class="btn" type="submit">Simpan Agenda</button>
-              <span id="ag-msg" style="font-size:.65rem;margin-left:5px;"></span>
-            </div>
-          </form>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Judul</th>
-                  <th>Tempat</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="tbody-agenda">
-                <tr><td colspan="5">Memuat...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- POSTING -->
-      <section id="view-posting" class="hidden">
-        <div class="page-title">Posting</div>
-        <div class="card">
-          <form id="form-posting" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:8px;">
-            <div>
-              <label style="font-size:.6rem;">Judul *</label>
-              <input id="po-judul" class="input" required>
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Tanggal *</label>
-              <input id="po-tanggal" type="date" class="input" required>
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Kategori</label>
-              <select id="po-kategori" class="input">
-                <option value="hasil-kegiatan">Hasil kegiatan</option>
-                <option value="info-gram">Info-gram</option>
-                <option value="pengumuman">Pengumuman</option>
-              </select>
-            </div>
-            <div>
-              <label style="font-size:.6rem;">Status</label>
-              <select id="po-status" class="input">
-                <option value="published">Published</option>
-                <option value="draft">Draft</option>
-              </select>
-            </div>
-            <div style="grid-column:1/-1;">
-              <label style="font-size:.6rem;">Isi singkat</label>
-              <textarea id="po-isi" class="input" rows="2"></textarea>
-            </div>
-            <div style="grid-column:1/-1;">
-              <label style="font-size:.6rem;">URL gambar (opsi)</label>
-              <input id="po-gambar" class="input">
-            </div>
-            <div style="grid-column:1/-1;">
-              <button class="btn" type="submit">Simpan Posting</button>
-              <span id="po-msg" style="font-size:.65rem;margin-left:5px;"></span>
-            </div>
-          </form>
-
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Judul</th>
-                  <th>Kategori</th>
-                  <th>Status</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="tbody-posting">
-                <tr><td colspan="5">Memuat...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- ANGGOTA -->
-      <section id="view-anggota" class="hidden">
-        <div class="page-title">Anggota</div>
-        <div class="card">
-          <p style="font-size:.65rem;color:#64748b;margin-bottom:6px;">
-            Data diambil dari sheet <b>Pendaftaran</b>. NISN & NIP ada di kolom M dan N.
-          </p>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr>
-                  <th>NIS</th>
-                  <th>Nama</th>
-                  <th>Kelas</th>
-                  <th>Angkatan</th>
-                  <th>No HP</th>
-                  <th>Email</th>
-                  <th>Tipe</th>
-                  <th>Foto</th>
-                  <th>NISN</th>
-                  <th>NIP</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="tbody-anggota">
-                <tr><td colspan="11">Memuat...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- KEPENGURUSAN -->
-      <section id="view-kepengurusan" class="hidden">
-        <div class="page-title">Kepengurusan</div>
-        <div class="card">
-          <h3 style="margin:0 0 6px 0;font-size:.85rem;">Struktur (periode berjalan)</h3>
-          <p style="font-size:.6rem;color:#94a3b8;margin-bottom:6px;">Isi NIS saja, nama & foto akan diisi dari pendaftaran.</p>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Jabatan</th>
-                  <th>NIS</th>
-                  <th>Nama</th>
-                  <th>Foto</th>
-                  <th>Periode</th>
-                  <th>Keterangan</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="tbody-struktur">
-                <tr><td colspan="8">Memuat...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin:0 0 6px 0;font-size:.85rem;">Arsip Kepengurusan</h3>
-          <p style="font-size:.6rem;color:#94a3b8;margin-bottom:6px;">Isi NIS Ketua / Wakil / Sekretaris → nama & foto akan diisi otomatis.</p>
-          <div style="overflow-x:auto;">
-            <table>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Periode</th>
-                  <th>Ketua (NIS)</th>
-                  <th>Wakil (NIS)</th>
-                  <th>Sekretaris (NIS)</th>
-                  <th>Keterangan</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody id="tbody-arsip">
-                <tr><td colspan="7">Memuat...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <footer>
-        © 2025 History Club SMAN 32 Jakarta. All rights reserved.
-        <br> Dibuat dan dikembangkan oleh <b>@vitezegi</b>.
-      </footer>
-    </main>
-  </div>
-
-  <script>
-    /* =========================
-       0. CONFIG
-       ========================= */
+    <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzRJr31SeGSAG1uJcVTboTTfH-RNswG5P7z0zsPljNUvW-vTVClGJgKjxYgvAv1Jy8lTw/exec";
-    const LOGIN_FALLBACK = "https://sites.google.com/view/history-club-32/keanggotaan/login-pengurus";
+    const PLACEHOLDER = "https://placehold.co/200x200/2e2e2e/ffffff?text=HC";
+    const LOADER = document.getElementById("hc32-loading-overlay");
 
-    /* ============ Helper ============ */
-    function getQueryParams() {
-      const out = {};
-      const url = new URL(window.location.href);
-      url.searchParams.forEach((v,k)=> out[k] = v);
-      return out;
+    // Palet Warna Jabatan (Sesuai Brand Guide & V5 Anggota)
+    const ROLE_COLORS = { 
+        "Pembina": "var(--hc-dark)",         // Hitam/Dark
+        "Pelatih": "var(--hc-blue-light)", // Biru Pendamping
+        "Ketua": "var(--hc-toska)",      // Toska
+        "Wakil Ketua": "var(--hc-blue)",   // Biru Utama
+        "Pengurus": "var(--hc-red)"        // Merah
+    };
+
+    // Deteksi Role (Dipisah, V5 Anggota)
+    function detectRole(j) {
+        if (!j) return null;
+        j = j.toLowerCase();
+        if (j.includes("pembina")) return { label: "Pembina", level: 1 };
+        if (j.includes("pelatih") || j.includes("pembimbing")) return { label: "Pelatih", level: 2 };
+        if (j.includes("ketua") && !j.includes("wakil")) return { label: "Ketua", level: 3 };
+        if (j.includes("wakil")) return { label: "Wakil Ketua", level: 4 };
+        return { label: "Pengurus", level: 5 };
     }
-    function saveSession(s) {
-      if (s.token) localStorage.setItem("hc32_admin_token", s.token);
-      if (s.username) localStorage.setItem("hc32_admin_username", s.username);
-      if (s.nama) localStorage.setItem("hc32_admin_nama", s.nama);
-      if (s.role) localStorage.setItem("hc32_admin_role", s.role);
-      if (s.tipe) localStorage.setItem("hc32_admin_tipe", s.tipe);
+
+    // Fungsi Buat Card (BARU)
+    function makeCard(person, color, showPeriode) {
+        const foto = person.foto || PLACEHOLDER;
+        const nama = person.nama || "[Belum diisi]";
+        const jab  = person.jabatan || "";
+        // Tampilkan periode HANYA jika showPeriode = true
+        const periode = showPeriode ? (person.periode || "") : "";
+
+        const wrap = document.createElement("div");
+        wrap.className = "hc-struktur-card";
+        wrap.style.borderColor = color; // Warna di border atas
+
+        wrap.innerHTML = `
+            <div class="hc-card-avatar" style="border-color: ${color};">
+                <img src="${foto}" style="width:100%;height:100%;object-fit:cover;">
+            </div>
+            <div>
+                <div class="hc-card-nama">${nama}</div>
+                <div class="hc-card-jabatan" style="color:${color};">${jab}</div>
+                <div class="hc-card-periode">${periode}</div>
+            </div>
+        `;
+        return wrap;
     }
-    function getSession() {
-      return {
-        token: localStorage.getItem("hc32_admin_token") || "",
-        username: localStorage.getItem("hc32_admin_username") || "",
-        nama: localStorage.getItem("hc32_admin_nama") || "",
-        role: localStorage.getItem("hc32_admin_role") || "",
-        tipe: localStorage.getItem("hc32_admin_tipe") || "",
-      };
-    }
-    function logout() {
-      localStorage.removeItem("hc32_admin_token");
-      localStorage.removeItem("hc32_admin_username");
-      localStorage.removeItem("hc32_admin_nama");
-      localStorage.removeItem("hc32_admin_role");
-      localStorage.removeItem("hc32_admin_tipe");
-      window.location.href = LOGIN_FALLBACK;
-    }
-    async function postToScript(action, payload={}) {
-      const body = { action, ...payload };
-      const res = await fetch(WEB_APP_URL, {
+
+    // Tampilkan loading saat fetch
+    LOADER.style.display = 'flex';
+
+    fetch(WEB_APP_URL, {
         method: "POST",
-        body: JSON.stringify(body)
-      });
-      const text = await res.text();
-      try {
-        return JSON.parse(text);
-      } catch(e) {
-        return { status: "error", message: "Respon bukan JSON", raw: text };
-      }
-    }
-    function roleColor(roleTag) {
-      if (!roleTag) return "#E11D48";
-      const r = roleTag.toLowerCase();
-      if (r.includes("pembina")) return "#0F172A";
-      if (r.includes("pelatih") || r.includes("pembimbing")) return "#F97316";
-      if (r.includes("ketua")) return "#0F766E";
-      if (r.includes("wakil")) return "#0EA5E9";
-      return "#E11D48";
-    }
-    function badgeTipe(tipe) {
-      const t = (tipe || "").toLowerCase();
-      if (t === "siswa-aktif") return '<span class="badge badge-siswa">Siswa</span>';
-      if (t === "guru") return '<span class="badge badge-guru">Guru/Tendik</span>';
-      if (t === "alumni") return '<span class="badge badge-alumni">Alumni</span>';
-      if (t === "non-32") return '<span class="badge badge-non32">Non 32</span>';
-      return '<span class="badge badge-non32">'+(tipe || "lainnya")+'</span>';
-    }
-    function formatDateID(s) {
-      if (!s) return "-";
-      const d = new Date(s);
-      if (isNaN(d)) return s;
-      return d.toLocaleString("id-ID");
-    }
+        body: JSON.stringify({ action: "getStrukturKepengurusanPublik" })
+    })
+    .then(r => r.json())
+    .then(out => {
+        if (out.status !== "ok") throw new Error("Gagal mengambil data");
+        
+        const data = out.data || [];
+        const elPembina  = document.getElementById("hc32-pembina");
+        const elPimpinan = document.getElementById("hc32-pimpinan");
+        const elDivisi   = document.getElementById("hc32-divisi");
 
-    /* ============ INIT SESSION ============ */
-    (function init() {
-      const q = getQueryParams();
-      if (q.token) {
-        saveSession({
-          token: q.token,
-          username: q.u || "",
-          nama: q.n || "",
-          role: q.role || q.r || "",
-          tipe: q.t || ""
+        data.forEach(item => {
+            const role = detectRole(item.jabatan);
+            if (!role) return; // Skip jika tidak ada role
+
+            const color = ROLE_COLORS[role.label] || 'var(--hc-dark)';
+            
+            // Tentukan card dan tujuannya
+            if (role.level <= 2) {
+                // Pembina & Pelatih (tidak menampilkan periode)
+                elPembina.appendChild(makeCard(item, color, false));
+            } else if (role.level <= 4) {
+                // Pimpinan Klub (menampilkan periode)
+                elPimpinan.appendChild(makeCard(item, color, true));
+            } else {
+                // Divisi (menampilkan periode)
+                elDivisi.appendChild(makeCard(item, color, true));
+            }
         });
-        // hapus query di address biar rapi
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-      const sess = getSession();
-      if (!sess.token) {
-        // nggak ada token sama sekali
-        alert("Akses dashboard pengurus harus dari halaman login pengurus.");
-        window.location.href = LOGIN_FALLBACK;
-        return;
-      }
-      // pasang nama
-      document.getElementById("top-name").textContent = sess.nama || sess.username || "Pengurus";
-      document.getElementById("sb-name").textContent = sess.nama || "Pengurus";
-      document.getElementById("sb-meta").textContent = (sess.tipe || "-") + " • " + (sess.role || "pengurus");
-      document.getElementById("top-avatar").textContent = (sess.nama || "HC").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
-      document.getElementById("sb-avatar").textContent = (sess.nama || "HC").split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase();
 
-      // load semua
-      loadDashboard();
-      loadPertemuan();
-      loadAgenda();
-      loadPosting();
-      loadAnggota();
-      loadStruktur();
-      loadArsip();
-    })();
-
-    /* ============ SIDEBAR NAV ============ */
-    document.getElementById("btn-open-sidebar").addEventListener("click", ()=>{
-      document.getElementById("sidebar").classList.toggle("open");
+        // Tampilkan placeholder jika kosong
+        if (!elPembina.innerHTML.trim()) elPembina.innerHTML = "<p style='color:#94a3b8;'>Belum diisi.</p>";
+        if (!elPimpinan.innerHTML.trim()) elPimpinan.innerHTML = "<p style='color:#94a3b8;'>Belum diisi.</p>";
+        if (!elDivisi.innerHTML.trim()) elDivisi.innerHTML = "<p style='color:#94a3b8;'>Belum diisi.</p>";
+    })
+    .catch(err => {
+        console.error("Gagal memuat data:", err);
+        const container = document.getElementById("hc32-struktur");
+        container.innerHTML = `<h2 class="hc-page-title" style="color:var(--hc-red);">Gagal Memuat Data</h2><p style="text-align:center; color: #475569;">${err.message}. Periksa koneksi internet Anda atau hubungi admin.</p>`;
+    })
+    .finally(() => {
+        // Selalu sembunyikan loading
+        LOADER.style.display = 'none';
     });
-    document.querySelectorAll(".sb-link").forEach(el=>{
-      el.addEventListener("click", ()=>{
-        const v = el.dataset.view;
-        if (!v && el.id === "btn-logout") {
-          logout();
-          return;
-        }
-        document.querySelectorAll(".sb-link").forEach(a=>a.classList.remove("active"));
-        el.classList.add("active");
-        document.querySelectorAll("main section").forEach(sec=>sec.classList.add("hidden"));
-        document.getElementById("view-"+v).classList.remove("hidden");
-        document.getElementById("sidebar").classList.remove("open");
-      });
-    });
-    document.getElementById("btn-logout").addEventListener("click", logout);
+    </script>
 
-    /* ============ DASHBOARD PRESENSI ============ */
-    async function loadDashboard() {
-      const sess = getSession();
-      const box = document.getElementById("dash-presensi");
-      document.getElementById("dash-presensi-loading").textContent = "Memuat...";
-      const out = await postToScript("getPresensiDashboard", { token: sess.token });
-      document.getElementById("dash-presensi-loading").textContent = "";
-      if (out.status !== "ok") {
-        box.innerHTML = "<p style='font-size:.65rem;color:#f43f5e;'>Gagal memuat presensi.</p>";
-        return;
-      }
-      const list = out.data || [];
-      if (!list.length) {
-        box.innerHTML = "<p style='font-size:.65rem;'>Belum ada presensi.</p>";
-        return;
-      }
-      let html = `
-        <div style="overflow-x:auto;">
-        <table>
-          <thead>
-            <tr>
-              <th>Anggota</th>
-              <th>NIS</th>
-              <th>Kelas</th>
-              <th>Pertemuan</th>
-              <th>Waktu</th>
-              <th>Tipe</th>
-            </tr>
-          </thead>
-          <tbody>`;
-      list.forEach(row=>{
-        const foto = row.foto || "https://placehold.co/64x64/0f172a/fff?text=HC";
-        const rCol = roleColor(row.roleTag);
-        const namaHtml = row.roleTag
-          ? `<div>${row.nama || "-"}</div><div style="font-size:.6rem;color:${rCol};">${row.roleTag}</div>`
-          : `<div>${row.nama || "-"}</div>`;
-        html += `
-          <tr>
-            <td>
-              <span class="avatar-sm" style="border:2px solid ${rCol};"><img src="${foto}"></span>
-              ${namaHtml}
-            </td>
-            <td>${row.nis || "-"}</td>
-            <td>${row.kelas || "-"}</td>
-            <td>${row.pertemuan || "-"}</td>
-            <td>${row.timestamp ? formatDateID(row.timestamp) : (row.jam || "-")}</td>
-            <td>${badgeTipe(row.tipe)}</td>
-          </tr>
-        `;
-      });
-      html += "</tbody></table></div>";
-      box.innerHTML = html;
-    }
-    document.getElementById("btn-refresh-dash").addEventListener("click", loadDashboard);
-
-    /* ============ PRESENSI PER PERTEMUAN ============ */
-    async function loadPertemuan() {
-      const sess = getSession();
-      const sel = document.getElementById("presensi-pertemuan");
-      sel.innerHTML = "";
-      const out = await postToScript("listPertemuan", { token: sess.token });
-      if (out.status !== "ok") {
-        sel.innerHTML = "<option value=''>Gagal ambil</option>";
-        return;
-      }
-      (out.data || []).forEach(ptm=>{
-        const o = document.createElement("option");
-        o.value = ptm;
-        o.textContent = ptm;
-        sel.appendChild(o);
-      });
-    }
-    document.getElementById("btn-show-presensi").addEventListener("click", async ()=>{
-      const sess = getSession();
-      const ptm = document.getElementById("presensi-pertemuan").value;
-      const tbody = document.getElementById("tbl-presensi");
-      tbody.innerHTML = "<tr><td colspan='7'>Memuat...</td></tr>";
-      const out = await postToScript("listPresensiByPertemuan", { token: sess.token, pertemuan: ptm });
-      if (out.status !== "ok") {
-        tbody.innerHTML = "<tr><td colspan='7'>Gagal ambil data.</td></tr>";
-        return;
-      }
-      const list = out.data || [];
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td colspan='7'>Tidak ada presensi.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      list.forEach((row,idx)=>{
-        const foto = row.foto || "https://placehold.co/48x48/0f172a/fff?text=HC";
-        const rCol = roleColor(row.roleTag);
-        const namaHtml = row.roleTag
-          ? `<div>${row.nama || "-"}</div><div style="font-size:.6rem;color:${rCol};">${row.roleTag}</div>`
-          : `<div>${row.nama || "-"}</div>`;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx+1}</td>
-          <td>
-            <span class="avatar-sm" style="border:2px solid ${rCol};"><img src="${foto}"></span>
-            ${namaHtml}
-          </td>
-          <td>${row.nis || "-"}</td>
-          <td>${row.kelas || "-"}</td>
-          <td>${row.pertemuan || "-"}</td>
-          <td>${row.timestamp ? formatDateID(row.timestamp) : (row.jam || "-")}</td>
-          <td>${badgeTipe(row.tipe)}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-    });
-    /* export csv */
-    document.getElementById("btn-csv").addEventListener("click", async ()=>{
-      const sess = getSession();
-      const ptm = document.getElementById("presensi-pertemuan").value;
-      if (!ptm) { alert("Pilih pertemuan dulu"); return; }
-      const out = await postToScript("listPresensiByPertemuan", { token: sess.token, pertemuan: ptm });
-      if (out.status !== "ok") { alert("Gagal ambil data"); return; }
-      const rows = out.data || [];
-      let csv = "Nama,NIS,Kelas,Pertemuan,Waktu,Tipe,Jabatan\n";
-      rows.forEach(r=>{
-        csv += `"${r.nama||""}","${r.nis||""}","${r.kelas||""}","${r.pertemuan||""}","${r.timestamp||r.jam||""}","${r.tipe||""}","${r.roleTag||""}"\n`;
-      });
-      const blob = new Blob([csv], { type:"text/csv" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "presensi_"+ptm.replace(/\s+/g,"_")+".csv";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
-
-    /* ============ AGENDA ============ */
-    async function loadAgenda() {
-      const sess = getSession();
-      const tbody = document.getElementById("tbody-agenda");
-      tbody.innerHTML = "<tr><td colspan='5'>Memuat...</td></tr>";
-      const out = await postToScript("listKegiatanAdmin", { token: sess.token });
-      if (out.status !== "ok") {
-        tbody.innerHTML = "<tr><td colspan='5'>Gagal memuat.</td></tr>";
-        return;
-      }
-      const list = out.data || [];
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td colspan='5'>Belum ada agenda.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      list.forEach(keg=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${keg.tanggal || "-"}</td>
-          <td>${keg.judul || "-"}</td>
-          <td>${keg.tempat || "-"}</td>
-          <td>${keg.status || "-"}</td>
-          <td>
-            <button class="btn-secondary btn-ptm" data-judul="${keg.judul}">Jadikan Pertemuan</button>
-            <button class="btn-secondary btn-del" data-id="${keg.id}">Hapus</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-      tbody.querySelectorAll(".btn-ptm").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const judul = btn.dataset.judul;
-          const out2 = await postToScript("setCurrentMeetingFromAgenda", { token: getSession().token, judul });
-          alert(out2.message || "Pertemuan diubah.");
-          loadPertemuan();
-        });
-      });
-      tbody.querySelectorAll(".btn-del").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          if (!confirm("Hapus agenda ini?")) return;
-          const id = btn.dataset.id;
-          const out3 = await postToScript("deleteKegiatan", { token: getSession().token, id });
-          if (out3.status === "ok") loadAgenda();
-          else alert(out3.message || "Gagal");
-        });
-      });
-    }
-
-    document.getElementById("form-agenda").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const sess = getSession();
-      const body = {
-        token: sess.token,
-        judul: document.getElementById("ag-judul").value.trim(),
-        tanggal: document.getElementById("ag-tanggal").value.trim(),
-        waktu: document.getElementById("ag-waktu").value.trim(),
-        tempat: document.getElementById("ag-tempat").value.trim(),
-        deskripsi: document.getElementById("ag-deskripsi").value.trim(),
-        kategori: document.getElementById("ag-kategori").value,
-        status: document.getElementById("ag-status").value
-      };
-      const msg = document.getElementById("ag-msg");
-      msg.textContent = "Menyimpan...";
-      const out = await postToScript("addKegiatan", body);
-      if (out.status === "ok") {
-        msg.textContent = "Tersimpan.";
-        e.target.reset();
-        loadAgenda();
-      } else {
-        msg.textContent = out.message || "Gagal.";
-      }
-    });
-
-    /* ============ POSTING ============ */
-    async function loadPosting() {
-      const sess = getSession();
-      const tbody = document.getElementById("tbody-posting");
-      tbody.innerHTML = "<tr><td colspan='5'>Memuat...</td></tr>";
-      const out = await postToScript("listPostingAdmin", { token: sess.token });
-      if (out.status !== "ok") {
-        tbody.innerHTML = "<tr><td colspan='5'>Gagal memuat.</td></tr>";
-        return;
-      }
-      const list = out.data || [];
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td colspan='5'>Belum ada posting.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      list.forEach(p=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${p.tanggal || "-"}</td>
-          <td><b>${p.judul || "-"}</b><br><small>${(p.isi || "").substring(0,60)}</small></td>
-          <td>${p.kategori || "-"}</td>
-          <td>${p.status || "-"}</td>
-          <td><button class="btn-secondary btn-del-post" data-id="${p.id}">Hapus</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-      tbody.querySelectorAll(".btn-del-post").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          if (!confirm("Hapus posting ini?")) return;
-          const id = btn.dataset.id;
-          const out2 = await postToScript("deletePosting", { token: getSession().token, id });
-          if (out2.status === "ok") loadPosting();
-          else alert(out2.message || "Gagal");
-        });
-      });
-    }
-    document.getElementById("form-posting").addEventListener("submit", async (e)=>{
-      e.preventDefault();
-      const sess = getSession();
-      const body = {
-        token: sess.token,
-        judul: document.getElementById("po-judul").value.trim(),
-        tanggal: document.getElementById("po-tanggal").value.trim(),
-        kategori: document.getElementById("po-kategori").value,
-        isi: document.getElementById("po-isi").value.trim(),
-        gambar: document.getElementById("po-gambar").value.trim(),
-        status: document.getElementById("po-status").value
-      };
-      const msg = document.getElementById("po-msg");
-      msg.textContent = "Menyimpan...";
-      const out = await postToScript("addPosting", body);
-      if (out.status === "ok") {
-        msg.textContent = "Tersimpan.";
-        e.target.reset();
-        loadPosting();
-      } else {
-        msg.textContent = out.message || "Gagal.";
-      }
-    });
-
-    /* ============ ANGGOTA ============ */
-    async function loadAnggota() {
-      const sess = getSession();
-      const tbody = document.getElementById("tbody-anggota");
-      tbody.innerHTML = "<tr><td colspan='11'>Memuat...</td></tr>";
-      const out = await postToScript("listAnggotaAdmin", { token: sess.token });
-      if (out.status !== "ok") {
-        tbody.innerHTML = "<tr><td colspan='11'>Gagal memuat.</td></tr>";
-        return;
-      }
-      const list = out.data || [];
-      if (!list.length) {
-        tbody.innerHTML = "<tr><td colspan='11'>Belum ada anggota.</td></tr>";
-        return;
-      }
-      tbody.innerHTML = "";
-      list.forEach(row=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${row.nis}</td>
-          <td><input class="input" value="${row.nama||""}" data-nis="${row.nis}" data-field="nama"></td>
-          <td><input class="input" value="${row.kelas||""}" data-nis="${row.nis}" data-field="kelas"></td>
-          <td><input class="input" value="${row.angkatan||""}" data-nis="${row.nis}" data-field="angkatan"></td>
-          <td><input class="input" value="${row.nohp||""}" data-nis="${row.nis}" data-field="nohp"></td>
-          <td><input class="input" value="${row.email||""}" data-nis="${row.nis}" data-field="email"></td>
-          <td>
-            <select class="input" data-nis="${row.nis}" data-field="tipe">
-              <option value="siswa-aktif"${row.tipe==="siswa-aktif"?" selected":""}>Siswa aktif</option>
-              <option value="guru"${row.tipe==="guru"?" selected":""}>Guru</option>
-              <option value="alumni"${row.tipe==="alumni"?" selected":""}>Alumni</option>
-              <option value="non-32"${row.tipe==="non-32"?" selected":""}>Non 32</option>
-            </select>
-          </td>
-          <td><input class="input" value="${row.foto||""}" data-nis="${row.nis}" data-field="foto" placeholder="URL foto"></td>
-          <td><input class="input" value="${row.nisn||row.NISN||""}" data-nis="${row.nis}" data-field="nisn"></td>
-          <td><input class="input" value="${row.nip||row.NIP||""}" data-nis="${row.nis}" data-field="nip"></td>
-          <td><button class="btn-secondary btn-save-anggota" data-nis="${row.nis}">Simpan</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-      tbody.querySelectorAll(".btn-save-anggota").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const nis = btn.dataset.nis;
-          const inputs = tbody.querySelectorAll(`[data-nis='${nis}']`);
-          const payload = { nis };
-          inputs.forEach(inp=> payload[inp.dataset.field] = inp.value );
-          // simpan utama
-          const out1 = await postToScript("updateAnggotaAdmin", {
-            token: getSession().token,
-            nis,
-            nama: payload.nama,
-            kelas: payload.kelas,
-            angkatan: payload.angkatan,
-            nohp: payload.nohp,
-            email: payload.email,
-            foto: payload.foto,
-            jabatan: "", // kamu bisa pecah nanti
-            tahunLulus: "", // sementara
-            tanggalLahir: "",
-            nisn: payload.nisn,
-            nip: payload.nip
-          });
-          if (out1.status !== "ok") { alert(out1.message || "Gagal simpan"); return; }
-          // tipe
-          if (payload.tipe) {
-            const out2 = await postToScript("updateAnggotaTipe", {
-              token: getSession().token,
-              nis,
-              tipe: payload.tipe
-            });
-            if (out2.status !== "ok") { alert(out2.message || "Gagal ubah tipe"); return; }
-          }
-          alert("Tersimpan");
-          loadAnggota();
-        });
-      });
-    }
-
-    /* ============ KEPENGURUSAN ============ */
-    async function loadStruktur() {
-      const out = await postToScript("listStrukturKepengurusan", { token: getSession().token });
-      const tbody = document.getElementById("tbody-struktur");
-      tbody.innerHTML = "";
-      if (out.status !== "ok" || !(out.data||[]).length) {
-        tbody.innerHTML = "<tr><td colspan='8'>Belum ada data.</td></tr>";
-        return;
-      }
-      out.data.forEach((row,idx)=>{
-        const sheetRow = idx + 2;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx+1}</td>
-          <td><input class="input" value="${row.jabatan||""}" data-row="${sheetRow}" data-field="jabatan"></td>
-          <td><input class="input" value="${row.nis||""}" data-row="${sheetRow}" data-field="nis" placeholder="NIS keanggotaan"></td>
-          <td><input class="input" value="${row.nama||""}" disabled></td>
-          <td><input class="input" value="${row.foto||""}" disabled></td>
-          <td><input class="input" value="${row.periode||""}" data-row="${sheetRow}" data-field="periode"></td>
-          <td><input class="input" value="${row.keterangan||""}" data-row="${sheetRow}" data-field="keterangan"></td>
-          <td><button class="btn-secondary btn-save-struktur" data-row="${sheetRow}">Simpan</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-      tbody.querySelectorAll(".btn-save-struktur").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const row = btn.dataset.row;
-          const inputs = tbody.querySelectorAll(`[data-row='${row}']`);
-          const payload = { action:"saveStrukturKepengurusan", token: getSession().token, row };
-          inputs.forEach(inp=> payload[inp.dataset.field] = inp.value );
-          const out2 = await postToScript("saveStrukturKepengurusan", payload);
-          alert(out2.status === "ok" ? "Tersimpan." : (out2.message || "Gagal"));
-          loadStruktur();
-        });
-      });
-    }
-
-    async function loadArsip() {
-      const out = await postToScript("listArsipKepengurusan", { token: getSession().token });
-      const tbody = document.getElementById("tbody-arsip");
-      tbody.innerHTML = "";
-      if (out.status !== "ok" || !(out.data||[]).length) {
-        tbody.innerHTML = "<tr><td colspan='7'>Belum ada arsip.</td></tr>";
-        return;
-      }
-      out.data.forEach((row,idx)=>{
-        const sheetRow = idx + 2;
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${idx+1}</td>
-          <td><input class="input" value="${row.periode||""}" data-rowa="${sheetRow}" data-field="periode"></td>
-          <td><input class="input" value="${row.ketuaNIS||""}" data-rowa="${sheetRow}" data-field="ketuaNIS"></td>
-          <td><input class="input" value="${row.wakilNIS||""}" data-rowa="${sheetRow}" data-field="wakilNIS"></td>
-          <td><input class="input" value="${row.sekNIS||""}" data-rowa="${sheetRow}" data-field="sekNIS"></td>
-          <td><input class="input" value="${row.keterangan||""}" data-rowa="${sheetRow}" data-field="keterangan"></td>
-          <td><button class="btn-secondary btn-save-arsip" data-rowa="${sheetRow}">Simpan</button></td>
-        `;
-        tbody.appendChild(tr);
-      });
-      tbody.querySelectorAll(".btn-save-arsip").forEach(btn=>{
-        btn.addEventListener("click", async ()=>{
-          const row = btn.dataset.rowa;
-          const inputs = tbody.querySelectorAll(`[data-rowa='${row}']`);
-          const payload = { action:"saveArsipKepengurusan", token: getSession().token, row };
-          inputs.forEach(inp=> payload[inp.dataset.field] = inp.value );
-          const out2 = await postToScript("saveArsipKepengurusan", payload);
-          alert(out2.status === "ok" ? "Tersimpan." : (out2.message || "Gagal"));
-          loadArsip();
-        });
-      });
-    }
-
-  </script>
 </body>
 </html>
